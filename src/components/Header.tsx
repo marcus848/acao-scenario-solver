@@ -1,11 +1,13 @@
-import { Upload } from "lucide-react";
+import { Upload, Sun, Moon } from "lucide-react";
 import { useState, useRef } from "react";
+import { useTheme } from "next-themes";
 
 interface HeaderProps {
   badges?: { label: string; value: string }[];
 }
 
 export const Header = ({ badges = [] }: HeaderProps) => {
+  const { theme, setTheme } = useTheme();
   const [logo, setLogo] = useState<string | null>(
     localStorage.getItem("acao_logo")
   );
@@ -66,8 +68,22 @@ export const Header = ({ badges = [] }: HeaderProps) => {
             </p>
           </div>
 
-          {/* Badges Section */}
+          {/* Badges and Theme Toggle Section */}
           <div className="flex items-center gap-3 flex-wrap">
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors"
+              aria-label="Alternar tema"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </button>
+            
+            {/* Badges */}
             {badges.map((badge, index) => (
               <div
                 key={index}
