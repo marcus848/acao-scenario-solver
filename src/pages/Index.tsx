@@ -21,6 +21,7 @@ interface DecisionTrail {
   escolha: string;
   nota?: string;
   efeito: Partial<Score>;
+  justificativa?: string;
 }
 
 const Index = () => {
@@ -51,6 +52,7 @@ const Index = () => {
       escolha: choice.label,
       nota: choice.note,
       efeito: choice.effect,
+      justificativa: choice.justification,
     };
 
     setScore(newScore);

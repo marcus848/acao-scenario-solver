@@ -6,6 +6,7 @@ export type Choice = {
   label: string;
   note?: string;
   effect: Partial<Score>;
+  justification?: string; // Justificativa para escolhas que causam impacto negativo
 };
 
 export type Stage = {
@@ -62,7 +63,8 @@ export const CONFIG: SimulatorConfig = {
         {
           label: "Postergar até a parada geral",
           effect: { produtividade: +3, confianca: -6, visao: -8, sustentabilidade: -4 },
-          note: "Ganha fôlego imediato; risco de falha catastrófica."
+          note: "Ganha fôlego imediato; risco de falha catastrófica.",
+          justification: "A equipe perdeu confiança (-6) pois percebeu que você priorizou ganhos imediatos sobre a segurança. A visão estratégica (-8) foi comprometida pela falta de planejamento preventivo, e a sustentabilidade (-4) sofreu devido ao risco ambiental de uma possível falha catastrófica."
         }
       ]
     },
@@ -79,7 +81,8 @@ export const CONFIG: SimulatorConfig = {
         {
           label: "Continuar e ajustar na próxima parada",
           effect: { produtividade: +2, confianca: -5, visao: -7, sustentabilidade: -8 },
-          note: "Mantém ritmo, mas compromete qualidade e meio ambiente."
+          note: "Mantém ritmo, mas compromete qualidade e meio ambiente.",
+          justification: "A confiança da equipe diminuiu (-5) ao perceber que qualidade foi sacrificada. A visão estratégica (-7) foi afetada pela decisão reativa, e a sustentabilidade (-8) sofreu gravemente devido ao impacto ambiental da contaminação não tratada adequadamente."
         }
       ]
     },
@@ -101,7 +104,8 @@ export const CONFIG: SimulatorConfig = {
         {
           label: "Ignorar e focar na produção",
           effect: { produtividade: +3, confianca: -8, visao: -6, sustentabilidade: -3 },
-          note: "Mantém ritmo, mas tensão pode escalar."
+          note: "Mantém ritmo, mas tensão pode escalar.",
+          justification: "A confiança despencou (-8) pois a equipe percebeu que você não se importa com o bem-estar deles. A visão estratégica (-6) foi comprometida por ignorar problemas de liderança, e a sustentabilidade (-3) sofreu devido ao clima organizacional tóxico que pode gerar mais conflitos."
         }
       ]
     },
@@ -135,7 +139,8 @@ export const CONFIG: SimulatorConfig = {
         {
           label: "Aceitar meta e forçar ritmo",
           effect: { produtividade: +8, confianca: -6, visao: -4, sustentabilidade: -7 },
-          note: "Ganho imediato, mas risco de burnout e acidentes."
+          note: "Ganho imediato, mas risco de burnout e acidentes.",
+          justification: "A confiança caiu (-6) porque a equipe se sentiu sobrecarregada e desvalorizada. A visão estratégica (-4) foi prejudicada pela pressão de curto prazo, e a sustentabilidade (-7) sofreu devido ao risco de burnout, acidentes e rotatividade de pessoal."
         }
       ]
     },
@@ -169,7 +174,8 @@ export const CONFIG: SimulatorConfig = {
         {
           label: "Aguardar possível fiscalização",
           effect: { produtividade: +2, confianca: -4, visao: -3, sustentabilidade: -8 },
-          note: "Economiza recursos, mas compromete credibilidade."
+          note: "Economiza recursos, mas compromete credibilidade.",
+          justification: "A confiança diminuiu (-4) pois a equipe questionou sua integridade ética. A visão estratégica (-3) foi afetada pela postura reativa, e a sustentabilidade (-8) sofreu severamente devido à falta de transparência e compromisso ambiental genuíno."
         }
       ]
     },
@@ -191,7 +197,8 @@ export const CONFIG: SimulatorConfig = {
         {
           label: "Acelerar ao máximo",
           effect: { produtividade: +10, confianca: -3, visao: -2, sustentabilidade: -5 },
-          note: "Máximo resultado imediato, com riscos para o futuro."
+          note: "Máximo resultado imediato, com riscos para o futuro.",
+          justification: "A confiança caiu (-3) devido ao estresse excessivo imposto à equipe no final da safra. A visão estratégica (-2) foi comprometida pelo foco apenas no curto prazo, e a sustentabilidade (-5) sofreu pelo desgaste de equipamentos e pessoas, comprometendo resultados futuros."
         }
       ]
     }

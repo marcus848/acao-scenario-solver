@@ -7,6 +7,7 @@ interface DecisionTrail {
   escolha: string;
   nota?: string;
   efeito: Partial<Score>;
+  justificativa?: string;
 }
 
 interface ResultProps {
@@ -150,6 +151,16 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
                     <p className="text-xs text-muted-foreground mt-1 italic">
                       {decision.nota}
                     </p>
+                  )}
+                  {decision.justificativa && (
+                    <div className="mt-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                      <p className="text-xs text-destructive font-medium mb-1">
+                        💡 Análise do Impacto:
+                      </p>
+                      <p className="text-xs text-destructive/80 leading-relaxed">
+                        {decision.justificativa}
+                      </p>
+                    </div>
                   )}
                 </div>
                 <div className="text-xs text-muted-foreground whitespace-nowrap">
