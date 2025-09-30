@@ -13,6 +13,7 @@ import {
   riskLabel, 
   riskClass 
 } from "@/config/simulador";
+import { NEW_STAGES } from "@/config/newStages";
 import { renderQuestion } from "@/utils/renderQuestion";
 import { Effect, AnswerDetail } from "@/types/questions";
 import { RotateCcw, FileJson, Printer } from "lucide-react";
@@ -32,13 +33,13 @@ const Index = () => {
   const [trail, setTrail] = useState<DecisionTrail[]>([]);
 
   // Combinar stages antigos com newStages (modulares)
-  const allStages = [...CONFIG.stages, ...(CONFIG.newStages || [])];
+  const allStages = [...CONFIG.stages, ...NEW_STAGES];
   const isFinished = currentStage >= allStages.length;
   const currentStageData = currentStage < CONFIG.stages.length 
     ? CONFIG.stages[currentStage] 
     : null;
-  const currentNewStageData = currentStage >= CONFIG.stages.length && CONFIG.newStages
-    ? CONFIG.newStages[currentStage - CONFIG.stages.length]
+  const currentNewStageData = currentStage >= CONFIG.stages.length
+    ? NEW_STAGES[currentStage - CONFIG.stages.length]
     : null;
   
   const avgScore = useMemo(() => average(score), [score]);
