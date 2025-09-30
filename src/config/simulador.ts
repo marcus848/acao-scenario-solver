@@ -14,6 +14,14 @@ export type Stage = {
   title: string;
   text: string;
   choices: Choice[];
+  type?: "default" | "split" | "word-selection-1" | "word-selection-2";
+  words?: Array<{
+    id: string;
+    text: string;
+    isCorrect?: boolean;
+    points?: number;
+  }>;
+  maxSelections?: number;
 };
 
 export type Theme = {
@@ -199,6 +207,90 @@ export const CONFIG: SimulatorConfig = {
           effect: { produtividade: +10, confianca: -3, visao: -2, sustentabilidade: -5 },
           note: "Máximo resultado imediato, com riscos para o futuro.",
           justification: "A confiança caiu (-3) devido ao estresse excessivo imposto à equipe no final da safra. A visão estratégica (-2) foi comprometida pelo foco apenas no curto prazo, e a sustentabilidade (-5) sofreu pelo desgaste de equipamentos e pessoas, comprometendo resultados futuros."
+        }
+      ]
+    },
+    {
+      id: 9,
+      title: "Prioridades Estratégicas",
+      text: "Analise o cenário atual e identifique as 5 práticas mais importantes para o sucesso da operação:",
+      type: "word-selection-1",
+      maxSelections: 5,
+      words: [
+        { id: "w1", text: "Gemba Walk", isCorrect: true },
+        { id: "w2", text: "5S Disciplina", isCorrect: true },
+        { id: "w3", text: "Kaizen Contínuo", isCorrect: true },
+        { id: "w4", text: "Poka-Yoke", isCorrect: true },
+        { id: "w5", text: "OEE Tracking", isCorrect: true },
+        { id: "w6", text: "Ignorar métricas", isCorrect: false },
+        { id: "w7", text: "Processos soltos", isCorrect: false },
+        { id: "w8", text: "Retrabalho constante", isCorrect: false },
+        { id: "w9", text: "Falta de padrão", isCorrect: false },
+        { id: "w10", text: "PDCA", isCorrect: false },
+        { id: "w11", text: "TPM", isCorrect: false },
+        { id: "w12", text: "Six Sigma", isCorrect: false },
+        { id: "w13", text: "Lean Manufacturing", isCorrect: false },
+        { id: "w14", text: "Just in Time", isCorrect: false },
+        { id: "w15", text: "Kanban", isCorrect: false },
+        { id: "w16", text: "Andon", isCorrect: false },
+        { id: "w17", text: "Jidoka", isCorrect: false },
+        { id: "w18", text: "Heijunka", isCorrect: false },
+        { id: "w19", text: "Muda", isCorrect: false },
+        { id: "w20", text: "Hoshin Kanri", isCorrect: false }
+      ],
+      choices: [] // Used by word selection logic
+    },
+    {
+      id: 10,
+      title: "Avaliação de Práticas",
+      text: "Selecione até 5 práticas que você considera mais relevantes. Algumas agregam valor, outras podem prejudicar:",
+      type: "word-selection-2",
+      maxSelections: 5,
+      words: [
+        { id: "p1", text: "Padronização", points: 5 },
+        { id: "p2", text: "Melhoria contínua", points: 5 },
+        { id: "p3", text: "Qualidade total", points: 5 },
+        { id: "p4", text: "Segurança primeiro", points: 5 },
+        { id: "p5", text: "Ignorar dados", points: -5 },
+        { id: "p6", text: "Postergar manutenção", points: -5 },
+        { id: "p7", text: "Atropelos no processo", points: -4 },
+        { id: "p8", text: "Comunicação clara", points: 4 },
+        { id: "p9", text: "Treinamento constante", points: 4 },
+        { id: "p10", text: "Documentação precisa", points: 3 },
+        { id: "p11", text: "Falta de supervisão", points: -3 },
+        { id: "p12", text: "Trabalho em equipe", points: 4 },
+        { id: "p13", text: "Inovação responsável", points: 3 },
+        { id: "p14", text: "Resistência à mudança", points: -4 },
+        { id: "p15", text: "Foco no cliente", points: 4 },
+        { id: "p16", text: "Pressão excessiva", points: -3 },
+        { id: "p17", text: "Análise de causa-raiz", points: 4 },
+        { id: "p18", text: "Decisões impulsivas", points: -4 },
+        { id: "p19", text: "Sustentabilidade", points: 4 },
+        { id: "p20", text: "Desrespeito às normas", points: -5 }
+      ],
+      choices: []
+    },
+    {
+      id: 11,
+      title: "Layout de Pergunta Dividido",
+      text: "Teste do container de duas colunas. Esta é a pergunta à esquerda, enquanto as alternativas ficam à direita.",
+      type: "split",
+      choices: [
+        {
+          label: "Opção A - Abordagem conservadora",
+          effect: { produtividade: +2, confianca: +3, visao: +1, sustentabilidade: +2 },
+          note: "Mantém estabilidade mas limita inovação."
+        },
+        {
+          label: "Opção B - Abordagem inovadora",
+          effect: { produtividade: +4, confianca: +2, visao: +5, sustentabilidade: +3 },
+          note: "Maior potencial de ganho com risco calculado."
+        },
+        {
+          label: "Opção C - Abordagem reativa",
+          effect: { produtividade: +1, confianca: -2, visao: -3, sustentabilidade: -1 },
+          note: "Ação imediata sem planejamento.",
+          justification: "Decisão reativa compromete visão estratégica e confiança da equipe."
         }
       ]
     }

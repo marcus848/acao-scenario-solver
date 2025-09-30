@@ -3,6 +3,9 @@ import { Header } from "@/components/Header";
 import { AspectCard } from "@/components/AspectCard";
 import { ProgressBar } from "@/components/ProgressBar";
 import { Question } from "@/components/Question";
+import { SplitQuestion } from "@/components/SplitQuestion";
+import { WordSelection1 } from "@/components/WordSelection1";
+import { WordSelection2 } from "@/components/WordSelection2";
 import { Result } from "@/components/Result";
 import { 
   CONFIG, 
@@ -53,6 +56,73 @@ const Index = () => {
       nota: choice.note,
       efeito: choice.effect,
       justificativa: choice.justification,
+    };
+
+    setScore(newScore);
+    setTrail(prev => [...prev, decision]);
+    setCurrentStage(prev => prev + 1);
+  };
+
+  const handleWordSelection = (selectedIds: string[], type: "word-selection-1" | "word-selection-2") => {
+    const words = currentStageData.words || [];
+    let effect: Partial<Score> = {};
+    let resultText = "";
+
+    if (type === "word-selection-1") {
+      // Type 1: Only correct words give points
+      const correctSelected = selectedIds.filter(id => 
+        words.find(w => w.id === id && w.isCorrect)
+      );
+      const correctPercentage = (correctSelected.length / selectedIds.length) * 100;
+      
+      if (correctPercentage >= 80) {
+        effect = { produtividade: +5, confianca: +5, visao: +5, sustentabilidade: +5 };
+        resultText = "Excelente seleção!";
+      } else if (correctPercentage >= 60) {
+        effect = { produtividade: +3, confianca: +3, visao: +3, sustentabilidade: +3 };
+        resultText = "Boa seleção!";
+      } else {
+        effect = { produtividade: +1, confianca: +1, visao: +1, sustentabilidade: +1 };
+        resultText = "Seleção regular.";
+      }
+    } else {
+      // Type 2: Words have positive or negative points
+      let totalPoints = 0;
+      selectedIds.forEach(id => {
+        const word = words.find(w => w.id === id);
+        if (word && word.points) {
+          totalPoints += word.points;
+        }
+      });
+
+      const pointsPerAspect = Math.round(totalPoints / 4);
+      effect = {
+        produtividade: pointsPerAspect,
+        confianca: pointsPerAspect,
+        visao: pointsPerAspect,
+        sustentabilidade: pointsPerAspect
+      };
+      resultText = totalPoints > 0 ? "Boas escolhas!" : "Escolhas questionáveis.";
+    }
+
+    // Update score
+    const newScore = { ...score };
+    Object.entries(effect).forEach(([key, value]) => {
+      if (value !== undefined) {
+        newScore[key as keyof Score] = clamp(newScore[key as keyof Score] + value);
+      }
+    });
+
+    // Add to trail
+    const selectedWords = selectedIds.map(id => 
+      words.find(w => w.id === id)?.text || id
+    ).join(", ");
+
+    const decision: DecisionTrail = {
+      etapa: currentStage + 1,
+      titulo: currentStageData.title,
+      escolha: `${resultText} Selecionou: ${selectedWords}`,
+      efeito: effect,
     };
 
     setScore(newScore);
@@ -156,6 +226,37 @@ const Index = () => {
               trail={trail}
               aspects={CONFIG.aspects}
               onRestart={handleRestart}
+            />
+          ) : currentStageData.type === "split" ? (
+            <SplitQuestion
+              title={currentStageData.title}
+              text={currentStageData.text}
+              choices={currentStageData.choices}
+              onChoose={handleChoice}
+            />
+          ) : currentStageData.type === "word-selection-1" ? (
+            <WordSelection1
+              title={currentStageData.title}
+              description={currentStageData.text}
+              words={currentStageData.words?.map(w => ({
+                id: w.id,
+                text: w.text,
+                isCorrect: w.isCorrect || false
+              })) || []}
+              maxSelections={currentStageData.maxSelections}
+              onComplete={(ids) => handleWordSelection(ids, "word-selection-1")}
+            />
+          ) : currentStageData.type === "word-selection-2" ? (
+            <WordSelection2
+              title={currentStageData.title}
+              description={currentStageData.text}
+              words={currentStageData.words?.map(w => ({
+                id: w.id,
+                text: w.text,
+                points: w.points || 0
+              })) || []}
+              maxSelections={currentStageData.maxSelections}
+              onComplete={(ids) => handleWordSelection(ids, "word-selection-2")}
             />
           ) : (
             <Question

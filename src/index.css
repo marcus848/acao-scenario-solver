@@ -8,7 +8,7 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Ação Consultoria Theme */
+    /* Ação Consultoria Theme - Dark Mode */
     --background: 11 22% 6%;
     --foreground: 210 40% 98%;
 
@@ -54,6 +54,56 @@ All colors MUST be HSL.
     --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
     --shadow-choice: 0 8px 25px -8px rgba(0, 151, 167, 0.3);
   }
+
+  :root.light,
+  [data-theme="light"],
+  .light {
+    /* Ação Consultoria Theme - Light Mode */
+    --background: 210 20% 98%; /* #f9fafb */
+    --foreground: 220 13% 13%; /* gray-900 */
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 13%;
+
+    --primary: 186 100% 33%; /* #0097A7 - teal */
+    --primary-foreground: 0 0% 100%;
+
+    --accent: 50 100% 50%; /* #FFD600 - yellow */
+    --accent-foreground: 220 13% 13%;
+
+    --secondary: 220 13% 91%;
+    --secondary-foreground: 220 13% 13%;
+
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 9% 46%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 45 93% 47%;
+    --warning-foreground: 220 13% 13%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 186 100% 33%;
+
+    --radius: 0.75rem;
+
+    /* Gradients */
+    --gradient-radial: radial-gradient(1200px 600px at 70% 0%, hsl(210 20% 98%), hsl(220 13% 95%) 60%);
+    --gradient-aspect: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+    --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(249,250,251,0.8));
+
+    /* Shadows */
+    --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-choice: 0 8px 25px -8px rgba(0, 151, 167, 0.2);
+  }
 }
 
 @layer base {
@@ -70,7 +120,7 @@ All colors MUST be HSL.
 
 @layer components {
   .card-simulator {
-    @apply rounded-2xl bg-card/80 backdrop-blur-sm border border-white/10;
+    @apply rounded-2xl bg-card/80 backdrop-blur-sm border border-border;
     background: var(--gradient-card);
     box-shadow: var(--shadow-card);
   }
