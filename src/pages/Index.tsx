@@ -13,9 +13,6 @@ import {
   riskLabel, 
   riskClass 
 } from "@/config/simulador";
-import { NEW_STAGES } from "@/config/newStages";
-import { renderQuestion } from "@/utils/renderQuestion";
-import { Effect, AnswerDetail } from "@/types/questions";
 import { RotateCcw, FileJson, Printer } from "lucide-react";
 
 interface DecisionTrail {
@@ -32,15 +29,8 @@ const Index = () => {
   const [score, setScore] = useState<Score>(CONFIG.initial);
   const [trail, setTrail] = useState<DecisionTrail[]>([]);
 
-  // Combinar stages antigos com newStages (modulares)
-  const allStages = [...CONFIG.stages, ...NEW_STAGES];
-  const isFinished = currentStage >= allStages.length;
-  const currentStageData = currentStage < CONFIG.stages.length 
-    ? CONFIG.stages[currentStage] 
-    : null;
-  const currentNewStageData = currentStage >= CONFIG.stages.length
-    ? NEW_STAGES[currentStage - CONFIG.stages.length]
-    : null;
+  const isFinished = currentStage >= CONFIG.stages.length;
+  const currentStageData = CONFIG.stages[currentStage];
   
   const avgScore = useMemo(() => average(score), [score]);
   const risk = useMemo(() => riskLabel(avgScore), [avgScore]);
@@ -58,44 +48,11 @@ const Index = () => {
     // Add to trail
     const decision: DecisionTrail = {
       etapa: currentStage + 1,
-      titulo: currentStageData?.title || "Pergunta modular",
+      titulo: currentStageData.title,
       escolha: choice.label,
       nota: choice.note,
       efeito: choice.effect,
       justificativa: choice.justification,
-    };
-
-    setScore(newScore);
-    setTrail(prev => [...prev, decision]);
-    setCurrentStage(prev => prev + 1);
-  };
-
-  const handleModularAnswer = (effect: Effect, detail: AnswerDetail) => {
-    // Update score with clamping
-    const newScore = { ...score };
-    Object.entries(effect).forEach(([key, value]) => {
-      if (value !== undefined) {
-        newScore[key as keyof Score] = clamp(newScore[key as keyof Score] + value);
-      }
-    });
-
-    // Add to trail
-    const decision: DecisionTrail = {
-      etapa: currentStage + 1,
-      titulo: currentNewStageData?.type === "multiple-choice" 
-        ? currentNewStageData.question 
-        : currentNewStageData?.prompt || "Pergunta interativa",
-      escolha: detail.optionId 
-        ? `Opção ${detail.optionId}` 
-        : detail.selectedIds 
-          ? `Selecionadas: ${detail.selectedIds.join(", ")}` 
-          : detail.rankedIds 
-            ? `Ranking: ${detail.rankedIds.join(" > ")}` 
-            : "Resposta",
-      efeito: effect,
-      justificativa: detail.optionId && currentNewStageData?.type !== "word-picker"
-        ? (currentNewStageData as any).options?.find((o: any) => o.id === detail.optionId)?.justification
-        : undefined,
     };
 
     setScore(newScore);
@@ -152,7 +109,7 @@ const Index = () => {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3 flex-wrap">
             <div className="badge-status bg-muted/30 text-foreground border-border">
-              Etapa {currentStage + 1} / {allStages.length}
+              Etapa {currentStage + 1} / {CONFIG.stages.length}
             </div>
             <div className={`badge-status ${riskStyle}`}>
               Risco: {risk}
@@ -187,7 +144,7 @@ const Index = () => {
         {/* Progress Bar */}
         <ProgressBar 
           current={currentStage} 
-          total={allStages.length}
+          total={CONFIG.stages.length}
           className="max-w-2xl mx-auto"
         />
 
@@ -200,16 +157,14 @@ const Index = () => {
               aspects={CONFIG.aspects}
               onRestart={handleRestart}
             />
-          ) : currentStageData ? (
+          ) : (
             <Question
               title={currentStageData.title}
               text={currentStageData.text}
               choices={currentStageData.choices}
               onChoose={handleChoice}
             />
-          ) : currentNewStageData ? (
-            renderQuestion(currentNewStageData, handleModularAnswer)
-          ) : null}
+          )}
         </div>
       </main>
     </div>
