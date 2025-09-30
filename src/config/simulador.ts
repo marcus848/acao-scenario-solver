@@ -1,3 +1,5 @@
+import { QuestionConfig } from "@/types/questions";
+
 export type AspectKey = "produtividade" | "confianca" | "visao" | "sustentabilidade";
 export type Score = Record<AspectKey, number>;
 
@@ -28,6 +30,7 @@ export type SimulatorConfig = {
   aspects: { key: AspectKey; label: string }[];
   initial: Score;
   stages: Stage[];
+  newStages?: QuestionConfig[]; // Novos tipos modulares de perguntas
   badges?: { label: string; value: string }[];
 };
 
@@ -203,6 +206,77 @@ export const CONFIG: SimulatorConfig = {
       ]
     }
   ],
+  newStages: [
+    // Q1: Multiple Choice simples - centralizado
+    {
+      type: "multiple-choice",
+      question: "Comunicar plano ao time e pares?",
+      options: [
+        { 
+          id: "a", 
+          label: "Transparência radical (dash + premissas)", 
+          note: "Alinhamento e aderência.",
+          effect: { produtividade: +2, confianca: +10, visao: +4, sustentabilidade: +2 }
+        },
+        { 
+          id: "b", 
+          label: "Mensagem vaga e otimista", 
+          note: "Evita pânico, piora conformidade.",
+          effect: { produtividade: 0, confianca: -10, visao: -2, sustentabilidade: -2 },
+          justification: "A confiança caiu devido à falta de transparência, comprometendo o alinhamento da equipe."
+        }
+      ]
+    },
+    // Q2: Vídeo + Alternativas - layout split
+    {
+      type: "video-choice",
+      layout: "split",
+      video: { 
+        src: "/videos/seguranca-turno.mp4", 
+        poster: "/videos/poster1.jpg", 
+        controls: true 
+      },
+      prompt: "Com base no vídeo, qual ação imediata adotar?",
+      options: [
+        { 
+          id: "a", 
+          label: "Manter rigor de pausas e rituais", 
+          note: "Protege pessoas/ativos.",
+          effect: { produtividade: -2, confianca: +10, visao: +6, sustentabilidade: +3 }
+        },
+        { 
+          id: "b", 
+          label: "Flexibilizar protocolos no pico", 
+          note: "Ganha throughput, aumenta risco.",
+          effect: { produtividade: +4, confianca: -8, visao: -8, sustentabilidade: -6 },
+          justification: "A flexibilização de protocolos de segurança aumentou riscos e reduziu confiança da equipe."
+        }
+      ]
+    },
+    // Q3: Vídeo + Seleção de Palavras - layout split, modo rank
+    {
+      type: "word-picker",
+      layout: "split",
+      video: { 
+        src: "/videos/gemba-5s.mp4", 
+        poster: "/videos/poster2.jpg", 
+        controls: true 
+      },
+      prompt: "Ordene de mais adequada → menos adequada (após o vídeo)",
+      mode: "rank",
+      items: [
+        { id: "i1", text: "Eliminar desperdícios" },
+        { id: "i2", text: "Padronizar 5S" },
+        { id: "i3", text: "Focar só em volume" },
+        { id: "i4", text: "Auditar causa-raiz" }
+      ],
+      scoring: {
+        rankWeights: [4, 3, 2, 1],
+        correctEffect: { produtividade: +4, visao: +4, sustentabilidade: +4, confianca: +2 },
+        wrongEffect: { produtividade: -2, visao: -2, sustentabilidade: -2, confianca: -1 }
+      }
+    }
+  ]
 };
 
 // Utility functions
