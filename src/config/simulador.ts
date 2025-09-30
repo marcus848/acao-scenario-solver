@@ -227,42 +227,29 @@ export const CONFIG: SimulatorConfig = {
         }
       ]
     },
-    // Q2: Vídeo + Alternativas - layout split
-    {
-      type: "video-choice",
-      layout: "split",
-      video: { 
-        src: "/videos/seguranca-turno.mp4", 
-        poster: "/videos/poster1.jpg", 
-        controls: true 
-      },
-      prompt: "Com base no vídeo, qual ação imediata adotar?",
-      options: [
-        { 
-          id: "a", 
-          label: "Manter rigor de pausas e rituais", 
-          note: "Protege pessoas/ativos.",
-          effect: { produtividade: -2, confianca: +10, visao: +6, sustentabilidade: +3 }
-        },
-        { 
-          id: "b", 
-          label: "Flexibilizar protocolos no pico", 
-          note: "Ganha throughput, aumenta risco.",
-          effect: { produtividade: +4, confianca: -8, visao: -8, sustentabilidade: -6 },
-          justification: "A flexibilização de protocolos de segurança aumentou riscos e reduziu confiança da equipe."
-        }
-      ]
-    },
-    // Q3: Vídeo + Seleção de Palavras - layout split, modo rank
+    // Q2: Word Picker - modo select (sem vídeo)
     {
       type: "word-picker",
-      layout: "split",
-      video: { 
-        src: "/videos/gemba-5s.mp4", 
-        poster: "/videos/poster2.jpg", 
-        controls: true 
-      },
-      prompt: "Ordene de mais adequada → menos adequada (após o vídeo)",
+      layout: "center",
+      prompt: "Selecione as práticas recomendadas para melhoria contínua",
+      mode: "select",
+      items: [
+        { id: "s1", text: "Gemba (ir e ver)", correct: true },
+        { id: "s2", text: "5S", correct: true },
+        { id: "s3", text: "Ignorar padrões", correct: false },
+        { id: "s4", text: "Kaizen diário", correct: true },
+        { id: "s5", text: "Focar só em volume", correct: false }
+      ],
+      scoring: {
+        correctEffect: { produtividade: +3, confianca: +2, visao: +3, sustentabilidade: +2 },
+        wrongEffect: { produtividade: -2, confianca: -2, visao: -1, sustentabilidade: -1 }
+      }
+    },
+    // Q3: Word Picker - modo rank
+    {
+      type: "word-picker",
+      layout: "center",
+      prompt: "Ordene as ações de mais adequada para menos adequada",
       mode: "rank",
       items: [
         { id: "i1", text: "Eliminar desperdícios" },
