@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
+import { Score } from "@/config/simulador";
 
 interface Word {
   id: string;
   text: string;
-  points: number; // positive or negative
+  points?: number; // legado
+  effectByAspect?: Partial<Score>; // preferir este
 }
 
 interface WordSelection2Props {
   title: string;
-  description: string;
+  description?: string;
   words: Word[];
   maxSelections?: number;
   onComplete: (selectedIds: string[]) => void;

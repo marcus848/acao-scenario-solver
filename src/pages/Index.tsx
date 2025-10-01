@@ -7,6 +7,9 @@ import { SplitQuestion } from "@/components/SplitQuestion";
 import { WordSelection1 } from "@/components/WordSelection1";
 import { WordSelection2 } from "@/components/WordSelection2";
 import { Result } from "@/components/Result";
+import { Center } from "@/components/layout/Center";
+import { Split } from "@/components/layout/Split";
+import { RenderBlock, BlockDef } from "@/components/blocks/RenderBlock";
 import { 
   CONFIG, 
   Score, 
@@ -73,7 +76,9 @@ const Index = () => {
       const correctSelected = selectedIds.filter(id => 
         words.find(w => w.id === id && w.isCorrect)
       );
-      const correctPercentage = (correctSelected.length / selectedIds.length) * 100;
+      const correctPercentage = selectedIds.length > 0 
+        ? (correctSelected.length / selectedIds.length) * 100 
+        : 0;
       
       if (correctPercentage >= 80) {
         effect = { produtividade: +5, confianca: +5, visao: +5, sustentabilidade: +5 };
@@ -86,23 +91,32 @@ const Index = () => {
         resultText = "Seleção regular.";
       }
     } else {
-      // Type 2: Words have positive or negative points
-      let totalPoints = 0;
+      // Type 2: Words can have effectByAspect (preferred) or points (legacy)
+      const aspectTotals: Partial<Score> = {};
+      
       selectedIds.forEach(id => {
         const word = words.find(w => w.id === id);
-        if (word && word.points) {
-          totalPoints += word.points;
+        if (word) {
+          if (word.effectByAspect) {
+            // Use per-aspect effects directly
+            Object.entries(word.effectByAspect).forEach(([key, value]) => {
+              if (value !== undefined) {
+                aspectTotals[key as keyof Score] = (aspectTotals[key as keyof Score] || 0) + value;
+              }
+            });
+          } else if (word.points) {
+            // Legacy: distribute points equally
+            const pointsPerAspect = Math.round(word.points / 4);
+            ["produtividade", "confianca", "visao", "sustentabilidade"].forEach(key => {
+              aspectTotals[key as keyof Score] = (aspectTotals[key as keyof Score] || 0) + pointsPerAspect;
+            });
+          }
         }
       });
 
-      const pointsPerAspect = Math.round(totalPoints / 4);
-      effect = {
-        produtividade: pointsPerAspect,
-        confianca: pointsPerAspect,
-        visao: pointsPerAspect,
-        sustentabilidade: pointsPerAspect
-      };
-      resultText = totalPoints > 0 ? "Boas escolhas!" : "Escolhas questionáveis.";
+      effect = aspectTotals;
+      const totalEffect = Object.values(aspectTotals).reduce((sum, v) => sum + (v || 0), 0);
+      resultText = totalEffect > 0 ? "Boas escolhas!" : totalEffect < 0 ? "Escolhas questionáveis." : "Seleção neutra.";
     }
 
     // Update score
@@ -227,45 +241,97 @@ const Index = () => {
               aspects={CONFIG.aspects}
               onRestart={handleRestart}
             />
-          ) : currentStageData.type === "split" ? (
-            <SplitQuestion
-              title={currentStageData.title}
-              text={currentStageData.text}
-              choices={currentStageData.choices}
-              onChoose={handleChoice}
-            />
-          ) : currentStageData.type === "word-selection-1" ? (
-            <WordSelection1
-              title={currentStageData.title}
-              description={currentStageData.text}
-              words={currentStageData.words?.map(w => ({
-                id: w.id,
-                text: w.text,
-                isCorrect: w.isCorrect || false
-              })) || []}
-              maxSelections={currentStageData.maxSelections}
-              onComplete={(ids) => handleWordSelection(ids, "word-selection-1")}
-            />
-          ) : currentStageData.type === "word-selection-2" ? (
-            <WordSelection2
-              title={currentStageData.title}
-              description={currentStageData.text}
-              words={currentStageData.words?.map(w => ({
-                id: w.id,
-                text: w.text,
-                points: w.points || 0
-              })) || []}
-              maxSelections={currentStageData.maxSelections}
-              onComplete={(ids) => handleWordSelection(ids, "word-selection-2")}
-            />
-          ) : (
-            <Question
-              title={currentStageData.title}
-              text={currentStageData.text}
-              choices={currentStageData.choices}
-              onChoose={handleChoice}
-            />
-          )}
+          ) : (() => {
+            // Inject handlers into block definitions
+            const injectHandlers = (blockDef?: any): any => {
+              if (!blockDef) return blockDef;
+              
+              const injected = { ...blockDef, props: { ...blockDef.props } };
+              
+              if (injected.component === "Question" && injected.props.onChoose === "useIndexHandleChoice") {
+                injected.props.onChoose = handleChoice;
+              }
+              if (injected.component === "WordSelection1" && injected.props.onComplete === "useIndexHandleWordSel1") {
+                injected.props.onComplete = (ids: string[]) => handleWordSelection(ids, "word-selection-1");
+              }
+              if (injected.component === "WordSelection2" && injected.props.onComplete === "useIndexHandleWordSel2") {
+                injected.props.onComplete = (ids: string[]) => handleWordSelection(ids, "word-selection-2");
+              }
+              return injected;
+            };
+
+            // Render with new modular system if layout is defined
+            if (currentStageData.layout === "split") {
+              return (
+                <Split 
+                  left={<RenderBlock def={injectHandlers(currentStageData.leftBlock)} />} 
+                  right={<RenderBlock def={injectHandlers(currentStageData.rightBlock)} />}
+                />
+              );
+            }
+            
+            if (currentStageData.layout === "center") {
+              return (
+                <Center>
+                  <RenderBlock def={injectHandlers(currentStageData.centerBlock)} />
+                </Center>
+              );
+            }
+
+            // Fallback to old system for backward compatibility
+            if (currentStageData.type === "split") {
+              return (
+                <SplitQuestion
+                  title={currentStageData.title}
+                  text={currentStageData.text}
+                  choices={currentStageData.choices}
+                  onChoose={handleChoice}
+                />
+              );
+            }
+            
+            if (currentStageData.type === "word-selection-1") {
+              return (
+                <WordSelection1
+                  title={currentStageData.title}
+                  description={currentStageData.text}
+                  words={currentStageData.words?.map(w => ({
+                    id: w.id,
+                    text: w.text,
+                    isCorrect: w.isCorrect
+                  })) || []}
+                  maxSelections={currentStageData.maxSelections}
+                  onComplete={(ids) => handleWordSelection(ids, "word-selection-1")}
+                />
+              );
+            }
+            
+            if (currentStageData.type === "word-selection-2") {
+              return (
+                <WordSelection2
+                  title={currentStageData.title}
+                  description={currentStageData.text}
+                  words={currentStageData.words?.map(w => ({
+                    id: w.id,
+                    text: w.text,
+                    points: w.points,
+                    effectByAspect: w.effectByAspect
+                  })) || []}
+                  maxSelections={currentStageData.maxSelections}
+                  onComplete={(ids) => handleWordSelection(ids, "word-selection-2")}
+                />
+              );
+            }
+            
+            return (
+              <Question
+                title={currentStageData.title}
+                text={currentStageData.text}
+                choices={currentStageData.choices}
+                onChoose={handleChoice}
+              />
+            );
+          })()}
         </div>
       </main>
     </div>

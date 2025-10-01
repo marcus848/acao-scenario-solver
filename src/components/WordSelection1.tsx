@@ -1,18 +1,24 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
+import { Score } from "@/config/simulador";
 
 interface Word {
   id: string;
   text: string;
-  isCorrect: boolean;
+  isCorrect?: boolean;
 }
 
 interface WordSelection1Props {
   title: string;
-  description: string;
+  description?: string;
   words: Word[];
   maxSelections?: number;
   onComplete: (selectedIds: string[]) => void;
+  scoringByAccuracy?: {
+    excellent?: Partial<Score>;
+    good?: Partial<Score>;
+    regular?: Partial<Score>;
+  };
 }
 
 export const WordSelection1 = ({ 

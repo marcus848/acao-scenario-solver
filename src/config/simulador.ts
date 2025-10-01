@@ -6,8 +6,16 @@ export type Choice = {
   label: string;
   note?: string;
   effect: Partial<Score>;
-  justification?: string; // Justificativa para escolhas que causam impacto negativo
+  justification?: string;
 };
+
+// Block definitions for modular rendering
+export type BlockDef =
+  | { component: "Text"; props: { title?: string; text?: string } }
+  | { component: "Image"; props: { src: string; alt?: string; width?: number; height?: number } }
+  | { component: "Question"; props: any }
+  | { component: "WordSelection1"; props: any }
+  | { component: "WordSelection2"; props: any };
 
 export type Stage = {
   id: number;
@@ -20,8 +28,14 @@ export type Stage = {
     text: string;
     isCorrect?: boolean;
     points?: number;
+    effectByAspect?: Partial<Score>;
   }>;
   maxSelections?: number;
+  // New modular layout system
+  layout?: "center" | "split";
+  centerBlock?: BlockDef;
+  leftBlock?: BlockDef;
+  rightBlock?: BlockDef;
 };
 
 export type Theme = {
@@ -293,6 +307,113 @@ export const CONFIG: SimulatorConfig = {
           justification: "Decisão reativa compromete visão estratégica e confiança da equipe."
         }
       ]
+    },
+    // Novos exemplos com sistema modular
+    {
+      id: 201,
+      title: "Ação prioritária",
+      text: "Escolha baseada em risco e impacto.",
+      layout: "split",
+      leftBlock: { 
+        component: "Text", 
+        props: { 
+          title: "Qual ação tomar?", 
+          text: "Considere risco e impacto ao avaliar as alternativas apresentadas." 
+        } 
+      },
+      rightBlock: {
+        component: "Question",
+        props: {
+          title: "Escolha uma alternativa",
+          text: "Opções a seguir:",
+          choices: [
+            { label: "Opção A - Cautela", effect: { produtividade: +2, confianca: +1, visao: +1, sustentabilidade: +1 } },
+            { label: "Opção B - Ousadia", effect: { produtividade: +4, visao: +3 } },
+          ],
+          onChoose: "useIndexHandleChoice"
+        }
+      },
+      choices: []
+    },
+    {
+      id: 202,
+      title: "Avalie a situação",
+      text: "Imagem ilustra o cenário.",
+      layout: "split",
+      leftBlock: { 
+        component: "Image", 
+        props: { 
+          src: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800", 
+          alt: "Cenário operação industrial" 
+        } 
+      },
+      rightBlock: {
+        component: "Question",
+        props: {
+          title: "Com base na imagem, o que fazer?",
+          text: "Selecione uma opção:",
+          choices: [
+            { 
+              label: "Parada controlada", 
+              effect: { produtividade: -2, confianca: +5, visao: +4, sustentabilidade: +3 },
+              note: "Prioriza segurança e qualidade."
+            },
+            { 
+              label: "Manter operação", 
+              effect: { produtividade: +3, confianca: -2, visao: -3, sustentabilidade: -2 },
+              note: "Mantém produção mas aumenta riscos.",
+              justification: "Equipe percebeu que segurança foi comprometida."
+            },
+          ],
+          onChoose: "useIndexHandleChoice"
+        }
+      },
+      choices: []
+    },
+    {
+      id: 203,
+      title: "Práticas após observar o cenário",
+      text: "Escolha até 5 (algumas positivas e outras negativas).",
+      layout: "split",
+      leftBlock: { 
+        component: "Image", 
+        props: { 
+          src: "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=800", 
+          alt: "Gemba 5S workplace" 
+        } 
+      },
+      rightBlock: {
+        component: "WordSelection2",
+        props: {
+          title: "Selecione até 5 práticas",
+          description: "Cada palavra possui efeitos por aspecto",
+          maxSelections: 5,
+          words: [
+            { id:"p1", text:"Padronização", effectByAspect: { produtividade:+3, visao:+2 } },
+            { id:"p2", text:"Melhoria contínua", effectByAspect: { produtividade:+2, confianca:+1, visao:+2 } },
+            { id:"p3", text:"Ignorar dados", effectByAspect: { produtividade:-3, visao:-3, sustentabilidade:-2 } },
+            { id:"p4", text:"Qualidade total", effectByAspect: { produtividade:+2, confianca:+2, sustentabilidade:+2 } },
+            { id:"p5", text:"Segurança primeiro", effectByAspect: { confianca:+3, sustentabilidade:+3 } },
+            { id:"p6", text:"Postergar manutenção", effectByAspect: { produtividade:+1, confianca:-3, sustentabilidade:-2 } },
+            { id:"p7", text:"Comunicação clara", effectByAspect: { confianca:+2, visao:+2 } },
+            { id:"p8", text:"Trabalho em equipe", effectByAspect: { produtividade:+2, confianca:+2 } },
+            { id:"p9", text:"Decisões impulsivas", effectByAspect: { produtividade:-2, confianca:-2, visao:-3 } },
+            { id:"p10", text:"Inovação responsável", effectByAspect: { produtividade:+2, visao:+3 } },
+            { id:"p11", text:"Treinamento constante", effectByAspect: { produtividade:+1, confianca:+2, visao:+1 } },
+            { id:"p12", text:"Falta de supervisão", effectByAspect: { produtividade:-2, confianca:-2 } },
+            { id:"p13", text:"Documentação precisa", effectByAspect: { confianca:+1, visao:+2 } },
+            { id:"p14", text:"Resistência à mudança", effectByAspect: { produtividade:-2, visao:-3 } },
+            { id:"p15", text:"Análise de causa-raiz", effectByAspect: { produtividade:+2, visao:+2 } },
+            { id:"p16", text:"Pressão excessiva", effectByAspect: { produtividade:+1, confianca:-3, sustentabilidade:-2 } },
+            { id:"p17", text:"Foco no cliente", effectByAspect: { produtividade:+1, visao:+2 } },
+            { id:"p18", text:"Sustentabilidade", effectByAspect: { visao:+2, sustentabilidade:+3 } },
+            { id:"p19", text:"Atropelos no processo", effectByAspect: { produtividade:-1, confianca:-2, visao:-2 } },
+            { id:"p20", text:"Desrespeito às normas", effectByAspect: { confianca:-3, sustentabilidade:-3 } }
+          ],
+          onComplete: "useIndexHandleWordSel2"
+        }
+      },
+      choices: []
     }
   ],
 };
