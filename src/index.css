@@ -125,6 +125,10 @@ All colors MUST be HSL.
     box-shadow: var(--shadow-card);
   }
 
+  .card-question {
+    @apply rounded-2xl border border-border bg-card/90 backdrop-blur p-4 md:p-6;
+  }
+
   .btn-choice {
     @apply w-full p-4 rounded-xl border-2 border-primary/30 bg-card/40 backdrop-blur-sm transition-all duration-200;
     @apply hover:border-primary hover:shadow-[0_8px_25px_-8px_rgba(0,151,167,0.3)] hover:bg-primary/5;

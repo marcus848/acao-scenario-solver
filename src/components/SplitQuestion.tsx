@@ -9,7 +9,7 @@ interface SplitQuestionProps {
 
 export const SplitQuestion = ({ title, text, choices, onChoose }: SplitQuestionProps) => {
   return (
-    <div className="card-simulator p-6 lg:p-8 max-w-6xl mx-auto">
+    <div className="card-question max-w-6xl mx-auto">
       <div className="grid md:grid-cols-2 gap-8">
         {/* Left side - Question */}
         <div className="space-y-4">

@@ -61,9 +61,19 @@ const Index = () => {
       justificativa: choice.justification,
     };
 
+    const nextTrail = [...trail, decision];
     setScore(newScore);
-    setTrail(prev => [...prev, decision]);
+    setTrail(nextTrail);
     setCurrentStage(prev => prev + 1);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem("acao_trail", JSON.stringify(nextTrail));
+      localStorage.setItem("acao_score", JSON.stringify(newScore));
+      localStorage.setItem("acao_avg", JSON.stringify(Math.round(average(newScore))));
+    } catch (e) {
+      console.error("Failed to save to localStorage:", e);
+    }
   };
 
   const handleWordSelection = (selectedIds: string[], type: "word-selection-1" | "word-selection-2") => {
@@ -139,9 +149,19 @@ const Index = () => {
       efeito: effect,
     };
 
+    const nextTrail = [...trail, decision];
     setScore(newScore);
-    setTrail(prev => [...prev, decision]);
+    setTrail(nextTrail);
     setCurrentStage(prev => prev + 1);
+
+    // Persist to localStorage
+    try {
+      localStorage.setItem("acao_trail", JSON.stringify(nextTrail));
+      localStorage.setItem("acao_score", JSON.stringify(newScore));
+      localStorage.setItem("acao_avg", JSON.stringify(Math.round(average(newScore))));
+    } catch (e) {
+      console.error("Failed to save to localStorage:", e);
+    }
   };
 
   const handleRestart = () => {
