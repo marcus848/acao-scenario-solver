@@ -191,9 +191,9 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
                     </div>
                   )}
               </div>
-              <div className="text-xs text-muted-foreground flex flex-wrap gap-2 mt-2 md:mt-0 md:whitespace-nowrap">
+              <div className="text-xs text-muted-foreground flex flex-wrap gap-2 mt-2">
                 {Object.entries(decision.efeito).map(([key, value]) => (
-                  <span key={key} className={`${value! > 0 ? 'text-success' : 'text-destructive'}`}>
+                  <span key={key} className={`${value! > 0 ? 'text-success' : 'text-destructive'} whitespace-nowrap`}>
                     {key}: {value! > 0 ? '+' : ''}{value}
                   </span>
                 ))}
