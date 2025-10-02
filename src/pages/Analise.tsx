@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CONFIG, Score } from "@/config/simulador";
-import { ArrowLeft, Download, FileJson, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2, Eye, ChevronDown, ChevronUp } from "lucide-react";
 
 interface DecisionTrail {
   etapa: number;
@@ -13,76 +13,59 @@ interface DecisionTrail {
   justificativa?: string;
 }
 
+interface HistoryEntry {
+  id: number;
+  timestamp: string;
+  scoreFinal: Score;
+  media: number;
+  faixa: string;
+  trilhaDeDecisoes: DecisionTrail[];
+}
+
 const Analise = () => {
   const navigate = useNavigate();
-  const [trail, setTrail] = useState<DecisionTrail[]>([]);
-  const [score, setScore] = useState<Score | null>(null);
-  const [avgScore, setAvgScore] = useState<number>(0);
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
 
   useEffect(() => {
     try {
-      const storedTrail = localStorage.getItem("acao_trail");
-      const storedScore = localStorage.getItem("acao_score");
-      const storedAvg = localStorage.getItem("acao_avg");
-
-      if (storedTrail) setTrail(JSON.parse(storedTrail));
-      if (storedScore) setScore(JSON.parse(storedScore));
-      if (storedAvg) setAvgScore(JSON.parse(storedAvg));
+      const storedHistory = localStorage.getItem("acao_historico");
+      if (storedHistory) {
+        setHistory(JSON.parse(storedHistory));
+      }
     } catch (e) {
       console.error("Failed to load from localStorage:", e);
     }
   }, []);
 
   const handleClearHistory = () => {
-    if (confirm("Tem certeza que deseja limpar todo o histórico?")) {
-      localStorage.removeItem("acao_trail");
-      localStorage.removeItem("acao_score");
-      localStorage.removeItem("acao_avg");
-      setTrail([]);
-      setScore(null);
-      setAvgScore(0);
+    if (confirm("Tem certeza que deseja limpar todo o histórico de respostas?")) {
+      localStorage.removeItem("acao_historico");
+      setHistory([]);
     }
   };
 
-  const handleExportJSON = () => {
-    const data = {
-      timestamp: new Date().toISOString(),
-      scoreFinal: score,
-      media: avgScore,
-      trilhaDeDecisoes: trail
-    };
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `analise-decisoes-${Date.now()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const handleDeleteEntry = (id: number) => {
+    if (confirm("Deseja excluir esta resposta do histórico?")) {
+      const updated = history.filter(entry => entry.id !== id);
+      setHistory(updated);
+      localStorage.setItem("acao_historico", JSON.stringify(updated));
+    }
   };
 
-  const handleExportCSV = () => {
-    const headers = ["Etapa", "Título", "Escolha", "Nota", "Produtividade", "Confiança", "Visão", "Sustentabilidade", "Justificativa"];
-    const rows = trail.map(t => [
-      t.etapa,
-      `"${t.titulo}"`,
-      `"${t.escolha}"`,
-      `"${t.nota || ''}"`,
-      t.efeito.produtividade || 0,
-      t.efeito.confianca || 0,
-      t.efeito.visao || 0,
-      t.efeito.sustentabilidade || 0,
-      `"${t.justificativa || ''}"`
-    ]);
+  const toggleExpand = (id: number) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
 
-    const csv = [headers, ...rows].map(row => row.join(",")).join("\n");
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `analise-decisoes-${Date.now()}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const formatDate = (isoString: string) => {
+    const date = new Date(isoString);
+    return date.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
   };
 
   const formatEffect = (effect: Partial<Score>) => {
@@ -116,25 +99,9 @@ const Analise = () => {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            {/* <button
-              onClick={handleExportJSON}
-              disabled={trail.length === 0}
-              className="flex items-center gap-2 px-4 py-2 border border-primary/30 text-primary rounded-lg hover:bg-primary/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FileJson className="h-4 w-4" />
-              Exportar JSON
-            </button>
-            <button
-              onClick={handleExportCSV}
-              disabled={trail.length === 0}
-              className="flex items-center gap-2 px-4 py-2 border border-accent/30 text-accent rounded-lg hover:bg-accent/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Download className="h-4 w-4" />
-              Exportar CSV
-            </button> */}
             <button
               onClick={handleClearHistory}
-              disabled={trail.length === 0}
+              disabled={history.length === 0}
               className="flex items-center gap-2 px-4 py-2 border border-destructive/30 text-destructive rounded-lg hover:bg-destructive/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Trash2 className="h-4 w-4" />
@@ -143,77 +110,160 @@ const Analise = () => {
           </div>
         </div>
 
-        {trail.length === 0 ? (
+        {history.length === 0 ? (
           <div className="card-question max-w-2xl mx-auto text-center p-8">
             <p className="text-muted-foreground text-lg">
-              Nenhuma decisão registrada ainda. Complete o simulador para ver a análise.
+              Nenhuma resposta registrada ainda. Complete o simulador para registrar respostas.
             </p>
           </div>
         ) : (
           <>
-            {/* Summary */}
-            {score && (
-              <div className="card-question max-w-4xl mx-auto">
-                <h2 className="text-xl font-bold text-foreground mb-4">
-                  Resumo por Aspecto
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                  {CONFIG.aspects.map(({ key, label }) => (
-                    <div
-                      key={key}
-                      className="p-4 rounded-lg border border-border bg-card/40 backdrop-blur-sm"
-                    >
-                      <p className="text-sm text-muted-foreground mb-1">{label}</p>
-                      <p className="text-2xl font-bold text-foreground">
-                        {score[key]}
-                      </p>
-                    </div>
-                  ))}
+            {/* Summary Stats */}
+            <div className="card-question max-w-4xl mx-auto">
+              <h2 className="text-xl font-bold text-foreground mb-4">
+                Resumo Geral
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="p-4 rounded-lg border border-border bg-card/40 backdrop-blur-sm">
+                  <p className="text-sm text-muted-foreground mb-1">Total de Respostas</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {history.length}
+                  </p>
                 </div>
-                <div className="p-4 rounded-lg border border-primary/30 bg-primary/5">
+                <div className="p-4 rounded-lg border border-border bg-card/40 backdrop-blur-sm">
                   <p className="text-sm text-muted-foreground mb-1">Média Geral</p>
-                  <p className="text-3xl font-bold text-primary">{avgScore}</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {Math.round(history.reduce((sum, h) => sum + h.media, 0) / history.length)}
+                  </p>
+                </div>
+                <div className="p-4 rounded-lg border border-border bg-card/40 backdrop-blur-sm">
+                  <p className="text-sm text-muted-foreground mb-1">Última Resposta</p>
+                  <p className="text-sm font-medium text-foreground">
+                    {formatDate(history[history.length - 1].timestamp)}
+                  </p>
                 </div>
               </div>
-            )}
+            </div>
 
-            {/* Trail Table */}
+            {/* Responses Table */}
             <div className="card-question">
               <h2 className="text-xl font-bold text-foreground mb-4">
-                Trilha de Decisões
+                Todas as Respostas ({history.length})
               </h2>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left p-3 text-sm font-semibold text-foreground">Etapa</th>
-                      <th className="text-left p-3 text-sm font-semibold text-foreground">Título</th>
-                      <th className="text-left p-3 text-sm font-semibold text-foreground">Escolha</th>
-                      <th className="text-left p-3 text-sm font-semibold text-foreground">Nota</th>
-                      <th className="text-left p-3 text-sm font-semibold text-foreground">Efeito</th>
-                      <th className="text-left p-3 text-sm font-semibold text-foreground">Justificativa</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {trail.map((decision, index) => (
-                      <tr
-                        key={index}
-                        className="border-b border-border/50 hover:bg-muted/10 transition-colors"
-                      >
-                        <td className="p-3 text-sm text-foreground">{decision.etapa}</td>
-                        <td className="p-3 text-sm text-foreground">{decision.titulo}</td>
-                        <td className="p-3 text-sm text-foreground">{decision.escolha}</td>
-                        <td className="p-3 text-sm text-muted-foreground">{decision.nota || "-"}</td>
-                        <td className="p-3 text-sm text-muted-foreground">
-                          {formatEffect(decision.efeito) || "-"}
-                        </td>
-                        <td className="p-3 text-sm text-muted-foreground">
-                          {decision.justificativa || "-"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="space-y-4">
+                {history.map((entry) => (
+                  <div key={entry.id} className="border border-border rounded-lg overflow-hidden">
+                    {/* Summary Row */}
+                    <div 
+                      className="p-4 flex items-center justify-between gap-4 cursor-pointer hover:bg-muted/10 transition-colors"
+                      onClick={() => toggleExpand(entry.id)}
+                    >
+                      <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                          <p className="text-xs text-muted-foreground">Data/Hora</p>
+                          <p className="text-sm font-medium text-foreground">
+                            {formatDate(entry.timestamp)}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Média</p>
+                          <p className="text-sm font-bold text-primary">
+                            {entry.media}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground">Faixa</p>
+                          <p className="text-sm font-medium text-foreground">
+                            {entry.faixa}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteEntry(entry.id);
+                          }}
+                          className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                          title="Excluir resposta"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                        {expandedId === entry.id ? (
+                          <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Expanded Details */}
+                    {expandedId === entry.id && (
+                      <div className="border-t border-border bg-muted/5 p-4 space-y-4">
+                        {/* Aspect Scores */}
+                        <div>
+                          <h3 className="text-sm font-semibold text-foreground mb-2">
+                            Scores por Aspecto
+                          </h3>
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            {CONFIG.aspects.map(({ key, label }) => (
+                              <div
+                                key={key}
+                                className="p-3 rounded-lg border border-border bg-card/40"
+                              >
+                                <p className="text-xs text-muted-foreground mb-1">{label}</p>
+                                <p className="text-lg font-bold text-foreground">
+                                  {entry.scoreFinal[key]}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Decision Trail */}
+                        <div>
+                          <h3 className="text-sm font-semibold text-foreground mb-2">
+                            Trilha de Decisões ({entry.trilhaDeDecisoes.length} etapas)
+                          </h3>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-sm">
+                              <thead>
+                                <tr className="border-b border-border">
+                                  <th className="text-left p-2 text-xs font-semibold text-muted-foreground">Etapa</th>
+                                  <th className="text-left p-2 text-xs font-semibold text-muted-foreground">Título</th>
+                                  <th className="text-left p-2 text-xs font-semibold text-muted-foreground">Escolha</th>
+                                  <th className="text-left p-2 text-xs font-semibold text-muted-foreground">Efeito</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {entry.trilhaDeDecisoes.map((decision, index) => (
+                                  <tr
+                                    key={index}
+                                    className="border-b border-border/50 hover:bg-muted/10 transition-colors"
+                                  >
+                                    <td className="p-2 text-foreground">{decision.etapa}</td>
+                                    <td className="p-2 text-foreground">{decision.titulo}</td>
+                                    <td className="p-2 text-foreground">
+                                      {decision.escolha}
+                                      {decision.nota && (
+                                        <span className="block text-xs text-muted-foreground italic mt-1">
+                                          {decision.nota}
+                                        </span>
+                                      )}
+                                    </td>
+                                    <td className="p-2 text-xs text-muted-foreground">
+                                      {formatEffect(decision.efeito) || "-"}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </>

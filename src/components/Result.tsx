@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Score, AspectKey, verdict } from "@/config/simulador";
 import { Download, Printer, FileJson } from "lucide-react";
 
@@ -19,6 +20,28 @@ interface ResultProps {
 
 export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
   const result = verdict(score);
+
+  const saveToHistory = () => {
+    try {
+      const historyKey = "acao_historico";
+      const existingHistory = localStorage.getItem(historyKey);
+      const history = existingHistory ? JSON.parse(existingHistory) : [];
+      
+      const newEntry = {
+        id: Date.now(),
+        timestamp: new Date().toISOString(),
+        scoreFinal: score,
+        media: result.avg,
+        faixa: result.faixa,
+        trilhaDeDecisoes: trail
+      };
+
+      history.push(newEntry);
+      localStorage.setItem(historyKey, JSON.stringify(history));
+    } catch (e) {
+      console.error("Failed to save to history:", e);
+    }
+  };
 
   const getRecommendations = () => {
     const recs: string[] = [];
@@ -65,6 +88,11 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
   };
 
   const recommendations = getRecommendations();
+
+  // Save to history on component mount
+  useEffect(() => {
+    saveToHistory();
+  }, []);
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
@@ -162,14 +190,14 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
                       </p>
                     </div>
                   )}
-                </div>
-                <div className="text-xs text-muted-foreground whitespace-nowrap">
-                  {Object.entries(decision.efeito).map(([key, value]) => (
-                    <span key={key} className={`ml-2 ${value! > 0 ? 'text-success' : 'text-destructive'}`}>
-                      {key}: {value! > 0 ? '+' : ''}{value}
-                    </span>
-                  ))}
-                </div>
+              </div>
+              <div className="text-xs text-muted-foreground flex flex-wrap gap-2 mt-2 md:mt-0 md:whitespace-nowrap">
+                {Object.entries(decision.efeito).map(([key, value]) => (
+                  <span key={key} className={`${value! > 0 ? 'text-success' : 'text-destructive'}`}>
+                    {key}: {value! > 0 ? '+' : ''}{value}
+                  </span>
+                ))}
+              </div>
               </div>
             </div>
           ))}

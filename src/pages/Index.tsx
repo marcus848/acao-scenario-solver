@@ -67,7 +67,7 @@ const Index = () => {
     setTrail(nextTrail);
     setCurrentStage(prev => prev + 1);
 
-    // Persist to localStorage
+    // Persist current session to localStorage
     try {
       localStorage.setItem("acao_trail", JSON.stringify(nextTrail));
       localStorage.setItem("acao_score", JSON.stringify(newScore));
@@ -155,7 +155,7 @@ const Index = () => {
     setTrail(nextTrail);
     setCurrentStage(prev => prev + 1);
 
-    // Persist to localStorage
+    // Persist current session to localStorage
     try {
       localStorage.setItem("acao_trail", JSON.stringify(nextTrail));
       localStorage.setItem("acao_score", JSON.stringify(newScore));
