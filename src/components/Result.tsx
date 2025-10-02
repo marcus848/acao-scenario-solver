@@ -22,7 +22,7 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
 
   const getRecommendations = () => {
     const recs: string[] = [];
-    
+
     if (score.confianca < 75) {
       recs.push("Implementar programa de feedback contínuo e reconhecimento da equipe");
     }
@@ -35,10 +35,10 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
     if (score.sustentabilidade < 80) {
       recs.push("Criar programa de sustentabilidade com métricas ESG definidas");
     }
-    
+
     // Item fixo
     recs.push("AAR de 15 minutos pós-parada para captura de lições aprendidas");
-    
+
     return recs;
   };
 
@@ -50,7 +50,7 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
       faixa: result.faixa,
       trilhaDeDecisoes: trail
     };
-    
+
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -76,9 +76,9 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
         <div className="badge-status bg-primary/20 text-primary border-primary/30">
           Média: {result.avg}
         </div>
-        <div className={`badge-status ${result.classe.includes('success') ? 'bg-success/20 text-success border-success/30' : 
-          result.classe.includes('warning') ? 'bg-warning/20 text-warning border-warning/30' : 
-          'bg-destructive/20 text-destructive border-destructive/30'}`}>
+        <div className={`badge-status ${result.classe.includes('success') ? 'bg-success/20 text-success border-success/30' :
+          result.classe.includes('warning') ? 'bg-warning/20 text-warning border-warning/30' :
+            'bg-destructive/20 text-destructive border-destructive/30'}`}>
           Faixa: {result.faixa}
         </div>
       </div>
@@ -184,7 +184,7 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
         >
           Reiniciar Simulação
         </button>
-        <button
+        {/* <button
           onClick={exportJSON}
           className="flex items-center gap-2 px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors"
         >
@@ -197,7 +197,7 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
         >
           <Printer className="h-4 w-4" />
           Exportar PDF
-        </button>
+        </button> */}
       </div>
     </div>
   );

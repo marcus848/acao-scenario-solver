@@ -1,6 +1,7 @@
 import { Upload, Sun, Moon } from "lucide-react";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useTheme } from "next-themes";
+import acaoLogo from "@/assets/images/logo_header.webp";
 
 interface HeaderProps {
   badges?: { label: string; value: string }[];
@@ -13,6 +14,15 @@ export const Header = ({ badges = [] }: HeaderProps) => {
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    try {
+      const stored = typeof window !== "undefined" ? localStorage.getItem("acao_logo") : null;
+      setLogo(stored ?? acaoLogo);
+    } catch {
+      setLogo(acaoLogo);
+    }
+  }, []);
+
   const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -20,7 +30,11 @@ export const Header = ({ badges = [] }: HeaderProps) => {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         setLogo(result);
-        localStorage.setItem("acao_logo", result);
+        try {
+          localStorage.setItem("acao_logo", result);
+        } catch {
+          console.error("Failed to save logo to localStorage");
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -34,7 +48,7 @@ export const Header = ({ badges = [] }: HeaderProps) => {
           <div className="flex items-center gap-4">
             {logo ? (
               <img
-                src={logo}
+                src={logo ?? acaoLogo}
                 alt="Logo da Ação Consultoria"
                 className="h-12 w-auto object-contain"
                 onClick={() => fileInputRef.current?.click()}
@@ -82,7 +96,7 @@ export const Header = ({ badges = [] }: HeaderProps) => {
                 <Moon className="h-4 w-4" />
               )}
             </button>
-            
+
             {/* Badges */}
             {badges.map((badge, index) => (
               <div

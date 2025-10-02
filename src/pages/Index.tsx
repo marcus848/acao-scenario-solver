@@ -10,14 +10,15 @@ import { Result } from "@/components/Result";
 import { Center } from "@/components/layout/Center";
 import { Split } from "@/components/layout/Split";
 import { RenderBlock, BlockDef } from "@/components/blocks/RenderBlock";
-import { 
-  CONFIG, 
-  Score, 
-  Choice, 
-  clamp, 
-  average, 
-  riskLabel, 
-  riskClass 
+
+import {
+  CONFIG,
+  Score,
+  Choice,
+  clamp,
+  average,
+  riskLabel,
+  riskClass
 } from "@/config/simulador";
 import { RotateCcw, FileJson, Printer } from "lucide-react";
 
@@ -37,7 +38,7 @@ const Index = () => {
 
   const isFinished = currentStage >= CONFIG.stages.length;
   const currentStageData = CONFIG.stages[currentStage];
-  
+
   const avgScore = useMemo(() => average(score), [score]);
   const risk = useMemo(() => riskLabel(avgScore), [avgScore]);
   const riskStyle = useMemo(() => riskClass(avgScore), [avgScore]);
@@ -83,13 +84,13 @@ const Index = () => {
 
     if (type === "word-selection-1") {
       // Type 1: Only correct words give points
-      const correctSelected = selectedIds.filter(id => 
+      const correctSelected = selectedIds.filter(id =>
         words.find(w => w.id === id && w.isCorrect)
       );
-      const correctPercentage = selectedIds.length > 0 
-        ? (correctSelected.length / selectedIds.length) * 100 
+      const correctPercentage = selectedIds.length > 0
+        ? (correctSelected.length / selectedIds.length) * 100
         : 0;
-      
+
       if (correctPercentage >= 80) {
         effect = { produtividade: +5, confianca: +5, visao: +5, sustentabilidade: +5 };
         resultText = "Excelente seleção!";
@@ -103,7 +104,7 @@ const Index = () => {
     } else {
       // Type 2: Words can have effectByAspect (preferred) or points (legacy)
       const aspectTotals: Partial<Score> = {};
-      
+
       selectedIds.forEach(id => {
         const word = words.find(w => w.id === id);
         if (word) {
@@ -138,7 +139,7 @@ const Index = () => {
     });
 
     // Add to trail
-    const selectedWords = selectedIds.map(id => 
+    const selectedWords = selectedIds.map(id =>
       words.find(w => w.id === id)?.text || id
     ).join(", ");
 
@@ -177,7 +178,7 @@ const Index = () => {
       media: Math.round(avgScore),
       trilhaDeDecisoes: trail
     };
-    
+
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -228,7 +229,7 @@ const Index = () => {
               <RotateCcw className="h-4 w-4" />
               Reiniciar
             </button>
-            <button
+            {/* <button
               onClick={exportJSON}
               className="flex items-center gap-2 px-4 py-2 border border-primary/30 text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
             >
@@ -241,13 +242,13 @@ const Index = () => {
             >
               <Printer className="h-4 w-4" />
               Exportar PDF
-            </button>
+            </button> */}
           </div>
         </div>
 
         {/* Progress Bar */}
-        <ProgressBar 
-          current={currentStage} 
+        <ProgressBar
+          current={currentStage}
           total={CONFIG.stages.length}
           className="max-w-2xl mx-auto"
         />
@@ -255,7 +256,7 @@ const Index = () => {
         {/* Main Content */}
         <div className="py-8">
           {isFinished ? (
-            <Result 
+            <Result
               score={score}
               trail={trail}
               aspects={CONFIG.aspects}
@@ -265,9 +266,9 @@ const Index = () => {
             // Inject handlers into block definitions
             const injectHandlers = (blockDef?: any): any => {
               if (!blockDef) return blockDef;
-              
+
               const injected = { ...blockDef, props: { ...blockDef.props } };
-              
+
               if (injected.component === "Question" && injected.props.onChoose === "useIndexHandleChoice") {
                 injected.props.onChoose = handleChoice;
               }
@@ -283,13 +284,13 @@ const Index = () => {
             // Render with new modular system if layout is defined
             if (currentStageData.layout === "split") {
               return (
-                <Split 
-                  left={<RenderBlock def={injectHandlers(currentStageData.leftBlock)} />} 
+                <Split
+                  left={<RenderBlock def={injectHandlers(currentStageData.leftBlock)} />}
                   right={<RenderBlock def={injectHandlers(currentStageData.rightBlock)} />}
                 />
               );
             }
-            
+
             if (currentStageData.layout === "center") {
               return (
                 <Center>
@@ -309,7 +310,7 @@ const Index = () => {
                 />
               );
             }
-            
+
             if (currentStageData.type === "word-selection-1") {
               return (
                 <WordSelection1
@@ -325,7 +326,7 @@ const Index = () => {
                 />
               );
             }
-            
+
             if (currentStageData.type === "word-selection-2") {
               return (
                 <WordSelection2
@@ -342,7 +343,7 @@ const Index = () => {
                 />
               );
             }
-            
+
             return (
               <Question
                 title={currentStageData.title}

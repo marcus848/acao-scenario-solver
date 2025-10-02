@@ -51,7 +51,7 @@ const Analise = () => {
       media: avgScore,
       trilhaDeDecisoes: trail
     };
-    
+
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -116,7 +116,7 @@ const Analise = () => {
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <button
+            {/* <button
               onClick={handleExportJSON}
               disabled={trail.length === 0}
               className="flex items-center gap-2 px-4 py-2 border border-primary/30 text-primary rounded-lg hover:bg-primary/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -131,7 +131,7 @@ const Analise = () => {
             >
               <Download className="h-4 w-4" />
               Exportar CSV
-            </button>
+            </button> */}
             <button
               onClick={handleClearHistory}
               disabled={trail.length === 0}
