@@ -6,6 +6,7 @@ import { RatingQuestion } from "@/components/RatingQuestion";
 export type BlockDef =
   | { component: "Text"; props: { title?: string; text?: string } }
   | { component: "Image"; props: { src: string; alt?: string; ratio?: "16/9" | "4/3" | "1/1" | "21/9" } }
+  | { component: "Video"; props: { src: string; ratio?: "16/9" | "4/3" | "1/1" | "21/9" } }
   | { component: "Question"; props: React.ComponentProps<typeof Question> }
   | { component: "WordSelection1"; props: React.ComponentProps<typeof WordSelection1> }
   | { component: "WordSelection2"; props: React.ComponentProps<typeof WordSelection2> }
@@ -36,6 +37,24 @@ export const RenderBlock = ({ def }: { def?: BlockDef }) => {
           <img 
             src={src} 
             alt={alt ?? ""} 
+            className="w-full h-full object-cover" 
+          />
+        </div>
+      );
+    }
+    case "Video": {
+      const { src, ratio = "16/9" } = props;
+      const aspectClass = 
+        ratio === "4/3" ? "aspect-[4/3]" :
+        ratio === "1/1" ? "aspect-square" :
+        ratio === "21/9" ? "aspect-[21/9]" :
+        "aspect-video"; // 16/9 default
+      
+      return (
+        <div className={`w-full ${aspectClass} overflow-hidden rounded-xl border border-border`}>
+          <video 
+            src={src} 
+            controls
             className="w-full h-full object-cover" 
           />
         </div>

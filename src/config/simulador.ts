@@ -16,9 +16,11 @@ export type Choice = {
 export type BlockDef =
   | { component: "Text"; props: { title?: string; text?: string } }
   | { component: "Image"; props: { src: string; alt?: string; width?: number; height?: number } }
+  | { component: "Video"; props: { src: string; ratio?: "16/9" | "4/3" | "1/1" | "21/9" } }
   | { component: "Question"; props: Record<string, unknown> }
   | { component: "WordSelection1"; props: Record<string, unknown> }
-  | { component: "WordSelection2"; props: Record<string, unknown> };
+  | { component: "WordSelection2"; props: Record<string, unknown> }
+  | { component: "RatingQuestion"; props: Record<string, unknown> };
 
 export type Stage = {
   id: number;
@@ -75,6 +77,26 @@ export const CONFIG: SimulatorConfig = {
     { label: "Desafio", value: "ATR -5%" },
   ],
   stages: [
+    {
+      id: 0,
+      title: "Bem-vindo à Pesquisa de Ação Transformadora",
+      text: "Descubra como suas decisões impactam diferentes aspectos da sua organização",
+      layout: "center",
+      centerBlock: {
+        component: "Text",
+        props: {
+          title: "Meta",
+          text: "Vamos começar nossa jornada de transformação. Clique em 'Começar' para iniciar."
+        }
+      },
+      choices: [
+        {
+          label: "Começar",
+          effect: {},
+          note: "Iniciar pesquisa"
+        }
+      ]
+    },
     {
       id: 1,
       title: "Manutenção agora ou depois?",
@@ -384,6 +406,35 @@ export const CONFIG: SimulatorConfig = {
     //   },
     //   choices: []
     // },
+    {
+      id: 11,
+      title: "Avaliação de Desempenho",
+      text: "Avalie os aspectos abaixo de 0 a 10:",
+      layout: "split",
+      leftBlock: {
+        component: "Image",
+        props: {
+          src: ImageQ,
+          alt: "Avaliação de desempenho"
+        }
+      },
+      rightBlock: {
+        component: "RatingQuestion",
+        props: {
+          title: "Avalie de 0 a 10",
+          items: [
+            { label: "Produtividade da equipe", key: "prod" },
+            { label: "Qualidade dos processos", key: "qual" },
+            { label: "Segurança no trabalho", key: "seg" }
+          ],
+          min: 0,
+          max: 10,
+          step: 1,
+          onSubmit: "useIndexHandleRating"
+        }
+      },
+      choices: []
+    },
     {
       id: 203,
       title: "Práticas após observar o cenário",
