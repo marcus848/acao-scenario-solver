@@ -294,7 +294,19 @@ const Index = () => {
             if (currentStageData.layout === "center") {
               return (
                 <Center>
-                  <RenderBlock def={injectHandlers(currentStageData.centerBlock)} />
+                  <div className="space-y-6 text-center">
+                    <RenderBlock def={injectHandlers(currentStageData.centerBlock)} />
+                    {currentStageData.choices && currentStageData.choices.length > 0 && (
+                      <div className="flex justify-center mt-8">
+                        <button
+                          onClick={() => handleChoice(currentStageData.choices[0])}
+                          className="btn-choice px-8 py-4 text-lg"
+                        >
+                          {currentStageData.choices[0].label}
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </Center>
               );
             }

@@ -79,14 +79,14 @@ export const CONFIG: SimulatorConfig = {
   stages: [
     {
       id: 0,
-      title: "Bem-vindo à Pesquisa de Ação Transformadora",
+      title: "Pesquisa de Ação Transformadora",
       text: "Descubra como suas decisões impactam diferentes aspectos da sua organização",
       layout: "center",
       centerBlock: {
         component: "Text",
         props: {
           title: "Meta",
-          text: "Vamos começar nossa jornada de transformação. Clique em 'Começar' para iniciar."
+          text: "Vamos começar nossa jornada de transformação. Clique em 'Começar' para iniciar a pesquisa."
         }
       },
       choices: [
