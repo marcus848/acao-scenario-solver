@@ -18,7 +18,7 @@ const Cover = () => {
           </p>
           <Button 
             size="lg"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/pesquisa")}
             className="mt-8 text-lg px-8 py-6"
           >
             Iniciar Pesquisa
