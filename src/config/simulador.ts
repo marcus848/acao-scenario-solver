@@ -1,6 +1,8 @@
 export type AspectKey = "produtividade" | "confianca" | "visao" | "sustentabilidade";
 export type Score = Record<AspectKey, number>;
-import Image from "@/assets/images/image1.jpeg";
+import ImageQ from "@/assets/images/Q.jpeg";
+import ImageQ3 from "@/assets/images/Q3.png";
+import { on } from "events";
 
 export type Choice = {
   id?: string;
@@ -113,24 +115,41 @@ export const CONFIG: SimulatorConfig = {
       id: 3,
       title: "Conflito na equipe de campo",
       text: "Desentendimento entre operadores sobre procedimento de segurança.",
-      choices: [
-        {
-          label: "Reunião imediata com toda equipe",
-          effect: { produtividade: -2, confianca: +6, visao: +7, sustentabilidade: +2 },
-          note: "Para produção 1h, mas alinha expectativas e melhora clima."
-        },
-        {
-          label: "Conversa individual com envolvidos",
-          effect: { produtividade: +1, confianca: +2, visao: +3, sustentabilidade: +1 },
-          note: "Menos impacto, mas pode não resolver completamente."
-        },
-        {
-          label: "Ignorar e focar na produção",
-          effect: { produtividade: +3, confianca: -8, visao: -6, sustentabilidade: -3 },
-          note: "Mantém ritmo, mas tensão pode escalar.",
-          justification: "A confiança despencou (-8) pois a equipe percebeu que você não se importa com o bem-estar deles. A visão estratégica (-6) foi comprometida por ignorar problemas de liderança, e a sustentabilidade (-3) sofreu devido ao clima organizacional tóxico que pode gerar mais conflitos."
+      layout: "split",
+      leftBlock: {
+        component: "Image",
+        props: {
+          src: ImageQ3,
+          alt: "Operadores em discussão na usina"
         }
-      ]
+      },
+      rightBlock: {
+        component: "Question",
+        props: {
+          title: "Conflito na equipe de campo",
+          text: "Desentendimento entre operadores sobre procedimento de segurança.",
+          choices: [
+            {
+              label: "Reunião imediata com toda equipe",
+              effect: { produtividade: -2, confianca: +6, visao: +7, sustentabilidade: +2 },
+              note: "Para produção 1h, mas alinha expectativas e melhora clima."
+            },
+            {
+              label: "Conversa individual com envolvidos",
+              effect: { produtividade: +1, confianca: +2, visao: +3, sustentabilidade: +1 },
+              note: "Menos impacto, mas pode não resolver completamente."
+            },
+            {
+              label: "Ignorar e focar na produção",
+              effect: { produtividade: +3, confianca: -8, visao: -6, sustentabilidade: -3 },
+              note: "Mantém ritmo, mas tensão pode escalar.",
+              justification: "A confiança despencou (-8) pois a equipe percebeu que você não se importa com o bem-estar deles. A visão estratégica (-6) foi comprometida por ignorar problemas de liderança, e a sustentabilidade (-3) sofreu devido ao clima organizacional tóxico que pode gerar mais conflitos."
+            },
+          ],
+          onChoose: "useIndexHandleChoice",
+        }
+      },
+      choices: []
     },
     {
       id: 4,
@@ -225,36 +244,36 @@ export const CONFIG: SimulatorConfig = {
         }
       ]
     },
-    {
-      id: 9,
-      title: "Prioridades Estratégicas",
-      text: "Analise o cenário atual e identifique as 5 práticas mais importantes para o sucesso da operação:",
-      type: "word-selection-1",
-      maxSelections: 5,
-      words: [
-        { id: "w1", text: "Gemba Walk", isCorrect: true },
-        { id: "w2", text: "5S Disciplina", isCorrect: true },
-        { id: "w3", text: "Kaizen Contínuo", isCorrect: true },
-        { id: "w4", text: "Poka-Yoke", isCorrect: true },
-        { id: "w5", text: "OEE Tracking", isCorrect: true },
-        { id: "w6", text: "Ignorar métricas", isCorrect: false },
-        { id: "w7", text: "Processos soltos", isCorrect: false },
-        { id: "w8", text: "Retrabalho constante", isCorrect: false },
-        { id: "w9", text: "Falta de padrão", isCorrect: false },
-        { id: "w10", text: "PDCA", isCorrect: false },
-        { id: "w11", text: "TPM", isCorrect: false },
-        { id: "w12", text: "Six Sigma", isCorrect: false },
-        { id: "w13", text: "Lean Manufacturing", isCorrect: false },
-        { id: "w14", text: "Just in Time", isCorrect: false },
-        { id: "w15", text: "Kanban", isCorrect: false },
-        { id: "w16", text: "Andon", isCorrect: false },
-        { id: "w17", text: "Jidoka", isCorrect: false },
-        { id: "w18", text: "Heijunka", isCorrect: false },
-        { id: "w19", text: "Muda", isCorrect: false },
-        { id: "w20", text: "Hoshin Kanri", isCorrect: false }
-      ],
-      choices: [] // Used by word selection logic
-    },
+    // {
+    //   id: 9,
+    //   title: "Prioridades Estratégicas",
+    //   text: "Analise o cenário atual e identifique as 5 práticas mais importantes para o sucesso da operação:",
+    //   type: "word-selection-1",
+    //   maxSelections: 5,
+    //   words: [
+    //     { id: "w1", text: "Gemba Walk", isCorrect: true },
+    //     { id: "w2", text: "5S Disciplina", isCorrect: true },
+    //     { id: "w3", text: "Kaizen Contínuo", isCorrect: true },
+    //     { id: "w4", text: "Poka-Yoke", isCorrect: true },
+    //     { id: "w5", text: "OEE Tracking", isCorrect: true },
+    //     { id: "w6", text: "Ignorar métricas", isCorrect: false },
+    //     { id: "w7", text: "Processos soltos", isCorrect: false },
+    //     { id: "w8", text: "Retrabalho constante", isCorrect: false },
+    //     { id: "w9", text: "Falta de padrão", isCorrect: false },
+    //     { id: "w10", text: "PDCA", isCorrect: false },
+    //     { id: "w11", text: "TPM", isCorrect: false },
+    //     { id: "w12", text: "Six Sigma", isCorrect: false },
+    //     { id: "w13", text: "Lean Manufacturing", isCorrect: false },
+    //     { id: "w14", text: "Just in Time", isCorrect: false },
+    //     { id: "w15", text: "Kanban", isCorrect: false },
+    //     { id: "w16", text: "Andon", isCorrect: false },
+    //     { id: "w17", text: "Jidoka", isCorrect: false },
+    //     { id: "w18", text: "Heijunka", isCorrect: false },
+    //     { id: "w19", text: "Muda", isCorrect: false },
+    //     { id: "w20", text: "Hoshin Kanri", isCorrect: false }
+    //   ],
+    //   choices: [] // Used by word selection logic
+    // },
     {
       id: 10,
       title: "Avaliação de Práticas",
@@ -285,50 +304,50 @@ export const CONFIG: SimulatorConfig = {
       ],
       choices: []
     },
-    {
-      id: 11,
-      title: "Layout de Pergunta Dividido",
-      text: "Teste do container de duas colunas. Esta é a pergunta à esquerda, enquanto as alternativas ficam à direita.",
-      layout: "split",
-      leftBlock: {
-        component: "Text",
-        props: {
-          title: "Pergunta Exemplo",
-          text: "Esta é a área de texto à esquerda. Pode conter qualquer conteúdo relevante para a pergunta."
-        }
-      },
-      rightBlock: {
-        component: "Question",
-        props: {
-          title: "Escolha uma alternativa",
-          text: "Opções a seguir:",
-          choices: [
-            { label: "Opção A - Abordagem conservadora", effect: { produtividade: +2, confianca: +3, visao: +1, sustentabilidade: +2 } },
-            { label: "Opção B - Abordagem inovadora", effect: { produtividade: +4, confianca: +2, visao: +5, sustentabilidade: +3 } },
-            { label: "Opção C - Abordagem reativa", effect: { produtividade: +1, confianca: -2, visao: -3, sustentabilidade: -1 } }
-          ],
-          onChoose: "useIndexHandleChoice"
-        }
-      },
-      choices: [
-        {
-          label: "Opção A - Abordagem conservadora",
-          effect: { produtividade: +2, confianca: +3, visao: +1, sustentabilidade: +2 },
-          note: "Mantém estabilidade mas limita inovação."
-        },
-        {
-          label: "Opção B - Abordagem inovadora",
-          effect: { produtividade: +4, confianca: +2, visao: +5, sustentabilidade: +3 },
-          note: "Maior potencial de ganho com risco calculado."
-        },
-        {
-          label: "Opção C - Abordagem reativa",
-          effect: { produtividade: +1, confianca: -2, visao: -3, sustentabilidade: -1 },
-          note: "Ação imediata sem planejamento.",
-          justification: "Decisão reativa compromete visão estratégica e confiança da equipe."
-        }
-      ]
-    },
+    // {
+    //   id: 11,
+    //   title: "Layout de Pergunta Dividido",
+    //   text: "Teste do container de duas colunas. Esta é a pergunta à esquerda, enquanto as alternativas ficam à direita.",
+    //   layout: "split",
+    //   leftBlock: {
+    //     component: "Text",
+    //     props: {
+    //       title: "Pergunta Exemplo",
+    //       text: "Esta é a área de texto à esquerda. Pode conter qualquer conteúdo relevante para a pergunta."
+    //     }
+    //   },
+    //   rightBlock: {
+    //     component: "Question",
+    //     props: {
+    //       title: "Escolha uma alternativa",
+    //       text: "Opções a seguir:",
+    //       choices: [
+    //         { label: "Opção A - Abordagem conservadora", effect: { produtividade: +2, confianca: +3, visao: +1, sustentabilidade: +2 } },
+    //         { label: "Opção B - Abordagem inovadora", effect: { produtividade: +4, confianca: +2, visao: +5, sustentabilidade: +3 } },
+    //         { label: "Opção C - Abordagem reativa", effect: { produtividade: +1, confianca: -2, visao: -3, sustentabilidade: -1 } }
+    //       ],
+    //       onChoose: "useIndexHandleChoice"
+    //     }
+    //   },
+    //   choices: [
+    //     {
+    //       label: "Opção A - Abordagem conservadora",
+    //       effect: { produtividade: +2, confianca: +3, visao: +1, sustentabilidade: +2 },
+    //       note: "Mantém estabilidade mas limita inovação."
+    //     },
+    //     {
+    //       label: "Opção B - Abordagem inovadora",
+    //       effect: { produtividade: +4, confianca: +2, visao: +5, sustentabilidade: +3 },
+    //       note: "Maior potencial de ganho com risco calculado."
+    //     },
+    //     {
+    //       label: "Opção C - Abordagem reativa",
+    //       effect: { produtividade: +1, confianca: -2, visao: -3, sustentabilidade: -1 },
+    //       note: "Ação imediata sem planejamento.",
+    //       justification: "Decisão reativa compromete visão estratégica e confiança da equipe."
+    //     }
+    //   ]
+    // },
     // Novos exemplos com sistema modular
     // {
     //   id: 202,
@@ -373,7 +392,7 @@ export const CONFIG: SimulatorConfig = {
       leftBlock: {
         component: "Image",
         props: {
-          src: Image,
+          src: ImageQ,
           alt: "Gemba 5S workplace"
         }
       },

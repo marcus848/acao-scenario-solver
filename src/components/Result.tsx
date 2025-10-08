@@ -26,7 +26,7 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
       const historyKey = "acao_historico";
       const existingHistory = localStorage.getItem(historyKey);
       const history = existingHistory ? JSON.parse(existingHistory) : [];
-      
+
       const newEntry = {
         id: Date.now(),
         timestamp: new Date().toISOString(),
@@ -190,14 +190,14 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
                       </p>
                     </div>
                   )}
-              </div>
-              <div className="text-xs text-muted-foreground flex flex-wrap gap-2 mt-2">
-                {Object.entries(decision.efeito).map(([key, value]) => (
-                  <span key={key} className={`${value! > 0 ? 'text-success' : 'text-destructive'} whitespace-nowrap`}>
-                    {key}: {value! > 0 ? '+' : ''}{value}
-                  </span>
-                ))}
-              </div>
+                </div>
+                <div className="text-xs text-muted-foreground flex flex-wrap gap-2 mt-2">
+                  {Object.entries(decision.efeito).map(([key, value]) => (
+                    <span key={key} className={`${value! > 0 ? 'text-success' : 'text-destructive'} whitespace-nowrap`}>
+                      {key}: {value! > 0 ? '+' : ''}{value}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           ))}

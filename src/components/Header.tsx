@@ -75,10 +75,10 @@ export const Header = ({ badges = [] }: HeaderProps) => {
           {/* Title Section */}
           <div className="flex-1 text-center min-w-0">
             <h1 className="text-lg md:text-2xl lg:text-3xl font-bold text-foreground">
-              Decisão na Usina — Simulador (Ação)
+              Pesquisa Usina
             </h1>
             <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">
-              Simulador (ESG + Excelência) — Ação Consultoria
+              Simulador — Ação Consultoria
             </p>
           </div>
 
