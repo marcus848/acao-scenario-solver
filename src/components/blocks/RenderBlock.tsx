@@ -1,13 +1,15 @@
 import { Question } from "@/components/Question";
 import { WordSelection1 } from "@/components/WordSelection1";
 import { WordSelection2 } from "@/components/WordSelection2";
+import { RatingQuestion } from "@/components/RatingQuestion";
 
 export type BlockDef =
   | { component: "Text"; props: { title?: string; text?: string } }
   | { component: "Image"; props: { src: string; alt?: string; ratio?: "16/9" | "4/3" | "1/1" | "21/9" } }
   | { component: "Question"; props: React.ComponentProps<typeof Question> }
   | { component: "WordSelection1"; props: React.ComponentProps<typeof WordSelection1> }
-  | { component: "WordSelection2"; props: React.ComponentProps<typeof WordSelection2> };
+  | { component: "WordSelection2"; props: React.ComponentProps<typeof WordSelection2> }
+  | { component: "RatingQuestion"; props: React.ComponentProps<typeof RatingQuestion> };
 
 export const RenderBlock = ({ def }: { def?: BlockDef }) => {
   if (!def) return null;
@@ -45,6 +47,8 @@ export const RenderBlock = ({ def }: { def?: BlockDef }) => {
       return <WordSelection1 {...props} />;
     case "WordSelection2":
       return <WordSelection2 {...props} />;
+    case "RatingQuestion":
+      return <RatingQuestion {...props} />;
     default:
       return null;
   }
