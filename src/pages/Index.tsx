@@ -92,13 +92,13 @@ const Index = () => {
         : 0;
 
       if (correctPercentage >= 80) {
-        effect = { produtividade: +5, confianca: +5, visao: +5, sustentabilidade: +5 };
+        effect = { seguranca: +5, cpessoas: +5, catitudes: +5, cnegocios: +5 };
         resultText = "Excelente seleção!";
       } else if (correctPercentage >= 60) {
-        effect = { produtividade: +3, confianca: +3, visao: +3, sustentabilidade: +3 };
+        effect = { seguranca: +3, cpessoas: +3, catitudes: +3, cnegocios: +3 };
         resultText = "Boa seleção!";
       } else {
-        effect = { produtividade: +1, confianca: +1, visao: +1, sustentabilidade: +1 };
+        effect = { seguranca: +1, cpessoas: +1, catitudes: +1, cnegocios: +1 };
         resultText = "Seleção regular.";
       }
     } else {
@@ -118,7 +118,7 @@ const Index = () => {
           } else if (word.points) {
             // Legacy: distribute points equally
             const pointsPerAspect = Math.round(word.points / 4);
-            ["produtividade", "confianca", "visao", "sustentabilidade"].forEach(key => {
+            ["seguranca", "cpessoas", "catitudes", "cnegocios"].forEach(key => {
               aspectTotals[key as keyof Score] = (aspectTotals[key as keyof Score] || 0) + pointsPerAspect;
             });
           }
