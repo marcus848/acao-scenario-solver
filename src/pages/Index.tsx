@@ -325,6 +325,43 @@ const Index = () => {
             }
 
             if (currentStageData.layout === "center") {
+              // Special rendering for cover page (stage 0)
+              if (currentStage === 0) {
+                const centerBlock = currentStageData.centerBlock;
+                const title = centerBlock?.component === "Text" ? centerBlock.props.title : "";
+                const blockText = centerBlock?.component === "Text" ? centerBlock.props.text : "";
+
+                return (
+                  <div className="max-w-4xl mx-auto">
+                    <div className="bg-card rounded-2xl shadow-xl p-12 space-y-8 text-center border border-border">
+                      <div className="space-y-4">
+                        <h1 className="text-4xl font-bold text-foreground">
+                          {title}
+                        </h1>
+                        <div className="h-1 w-32 bg-primary mx-auto rounded-full"></div>
+                      </div>
+                      
+                      <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+                        {currentStageData.text}
+                      </p>
+                      
+                      <p className="text-base text-muted-foreground/80 max-w-2xl mx-auto">
+                        {blockText}
+                      </p>
+
+                      <div className="pt-6">
+                        <button
+                          onClick={() => handleChoice(currentStageData.choices[0])}
+                          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-12 py-4 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                        >
+                          {currentStageData.choices[0].label}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
               return (
                 <Center>
                   <div className="space-y-6 text-center">
