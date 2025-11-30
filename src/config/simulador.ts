@@ -2,6 +2,7 @@ export type AspectKey = "produtividade" | "confianca" | "visao" | "sustentabilid
 export type Score = Record<AspectKey, number>;
 import ImageQ from "@/assets/images/Q.jpeg";
 import ImageQ3 from "@/assets/images/Q3.png";
+import Video1 from "@/assets/videos/Video.mp4";
 import { on } from "events";
 
 export type Choice = {
@@ -73,8 +74,8 @@ export const CONFIG: SimulatorConfig = {
   ],
   initial: { produtividade: 70, confianca: 70, visao: 70, sustentabilidade: 70 },
   badges: [
-    { label: "Meta", value: "13 TPH" },
-    { label: "Desafio", value: "ATR -5%" },
+    { label: "Meta", value: "5 Anos sem acidentes com afastamento" },
+    // { label: "Desafio", value: "ATR -5%" },
   ],
   stages: [
     {
@@ -85,7 +86,7 @@ export const CONFIG: SimulatorConfig = {
       centerBlock: {
         component: "Text",
         props: {
-          title: "Meta",
+          title: "5 Anos sem acidentes com afastamento",
           text: "Vamos começar nossa jornada de transformação. Clique em 'Começar' para iniciar a pesquisa."
         }
       },
@@ -100,22 +101,53 @@ export const CONFIG: SimulatorConfig = {
     {
       id: 1,
       title: "Manutenção agora ou depois?",
-      text: "Bombas críticas com vibração acima do normal; parada geral só em 3 semanas.",
+      text: "Bombas críticas com vibração acima do normal; Preventiva prevista para 3 semanas.",
       choices: [
         {
-          label: "Manutenção preventiva agora (parada curta)",
+          label: "Realizar uma manutenção agora com uma estimativa de parada de 12h e risco de não entregar a meta de produção",
           effect: { produtividade: +6, confianca: +4, visao: +8, sustentabilidade: +3 },
-          note: "Perde 6h hoje; reduz chance de quebra (72h) e passivo."
+          note: "Parada planejada; controla risco de quebra."
         },
         {
-          label: "Postergar até a parada geral",
-          effect: { produtividade: +3, confianca: -6, visao: -8, sustentabilidade: -4 },
-          note: "Ganha fôlego imediato; risco de falha catastrófica.",
-          justification: "A equipe perdeu confiança (-6) pois percebeu que você priorizou ganhos imediatos sobre a segurança. A visão estratégica (-8) foi comprometida pela falta de planejamento preventivo, e a sustentabilidade (-4) sofreu devido ao risco ambiental de uma possível falha catastrófica."
+          label: "Tornar a situação conhecida por toda a equipe e seguir analisando a situação até o momento. Se a situação piorar, chamar a manutenção. Do contrário, aguardar até o evento programado.",
+          effect: { produtividade: -3, confianca: -6, visao: -8, sustentabilidade: -4 },
+          note: "Mantém ritmo por ora; aceita risco monitorado.",
+          justification:
+            "A decisão privilegia o curto prazo e adota postura reativa frente a um risco conhecido. Isso fragiliza a percepção de planejamento e de cuidado com a operação, pode desgastar a credibilidade da liderança e expõe a equipe a uma possível parada não programada com custo e impacto maiores caso a condição se agrave."
         }
       ]
     },
     {
+      id: 2,
+      title: "Avaliação de Desempenho",
+      text: "Avalie os aspectos abaixo de 0 a 10:",
+      layout: "split",
+      leftBlock: {
+        component: "Video",
+        props: {
+          src: Video1,
+          // alt: "Avaliação de desempenho"
+        }
+      },
+      rightBlock: {
+        component: "RatingQuestion",
+        props: {
+          title: "Reavaliem este trecho do vídeo e atribua uma nota de 0 – 10:",
+          items: [
+            { label: "Os procedimentos estão sendo seguidos corretamente?", key: "procedimentos" },
+            { label: "Existem riscos visíveis que podem ser evitados?", key: "riscos" },
+            { label: "Pausar, processar e prosseguir foi utilizado com eficiência?", key: "3Ps" },
+            { label: "Estão cuidando uns dos outros?", key: "cuidado" }
+          ],
+          min: 0,
+          max: 10,
+          step: 1,
+          onSubmit: "useIndexHandleRating"
+        }
+      },
+      choices: []
+    },
+    /*{
       id: 2,
       title: "Problema de qualidade detectado",
       text: "ATR do caldo abaixo do padrão. Análise indica contaminação na moenda.",
@@ -242,9 +274,9 @@ export const CONFIG: SimulatorConfig = {
           justification: "A confiança diminuiu (-4) pois a equipe questionou sua integridade ética. A visão estratégica (-3) foi afetada pela postura reativa, e a sustentabilidade (-8) sofreu severamente devido à falta de transparência e compromisso ambiental genuíno."
         }
       ]
-    },
+    },*/
     {
-      id: 8,
+      id: 3,
       title: "Decisão final da safra",
       text: "Últimas semanas. Opção de acelerar para bater meta ou manter ritmo sustentável.",
       choices: [
@@ -297,32 +329,77 @@ export const CONFIG: SimulatorConfig = {
     //   choices: [] // Used by word selection logic
     // },
     {
-      id: 10,
+      id: 4,
+      title: "Práticas após observar o cenário",
+      text: "Escolha até 5 (algumas positivas e outras negativas).",
+      layout: "split",
+      leftBlock: {
+        component: "Image",
+        props: {
+          src: ImageQ,
+          alt: "Gemba 5S workplace"
+        }
+      },
+      rightBlock: {
+        component: "WordSelection2",
+        props: {
+          title: "Quais das nossas práticas de segurança, poderiam ter evitado o acidente?",
+          description: "Cada palavra possui efeitos por aspecto",
+          maxSelections: 5,
+          words: [
+            { id: "p1", text: "Documentação precisa", effectByAspect: { confianca: +1, visao: +2 } },
+            { id: "p2", text: "Sustentabilidade", effectByAspect: { visao: +2, sustentabilidade: +3 } },
+            { id: "p3", text: "EPI", effectByAspect: { confianca: +2, visao: +2 } },
+            { id: "p4", text: "Desrespeito às normas", effectByAspect: { confianca: -3, sustentabilidade: -3 } },
+            { id: "p5", text: "Falta de supervisão", effectByAspect: { produtividade: -2, confianca: -2 } },
+            { id: "p6", text: "Proteção em Máquinas e Equipamentos", effectByAspect: { produtividade: +2, visao: +3 } },
+            { id: "p7", text: "3Ps. Pausar, Processar e Prosseguir", effectByAspect: { confianca: +3, sustentabilidade: +3, visao: +3, produtividade: +3 } },
+            { id: "p8", text: "Limites de Velocidade", effectByAspect: { produtividade: -3, visao: -3, sustentabilidade: -2 } },
+            { id: "p9", text: "Isolamento de Área", effectByAspect: { produtividade: +1, confianca: -3, sustentabilidade: -2 } },
+            { id: "p10", text: "Direito de recusa", effectByAspect: { produtividade: +2, confianca: +2, sustentabilidade: +2 } },
+            { id: "p11", text: "ATE. Autorização para trabalhos especiais", effectByAspect: { produtividade: +3, visao: +2 } },
+            { id: "p12", text: "Foco no cliente", effectByAspect: { produtividade: +1, visao: +2 } },
+            { id: "p13", text: "Comunicação de Acidentes", effectByAspect: { produtividade: -2, confianca: -2, visao: -3 } },
+            { id: "p14", text: "Atropelos no processo", effectByAspect: { produtividade: -1, confianca: -2, visao: -2 } },
+            { id: "p15", text: "ATC. Autorização para trabalhos críticos", effectByAspect: { produtividade: +2, confianca: +1, visao: +2 } },
+            { id: "p16", text: "Bloqueio", effectByAspect: { produtividade: +2, confianca: +2 } },
+            { id: "p17", text: "Resistência à mudança", effectByAspect: { produtividade: -2, visao: -3 } },
+            { id: "p18", text: "Treinamento constante", effectByAspect: { produtividade: +1, confianca: +2, visao: +1 } },
+            { id: "p19", text: "Análise de causa-raiz", effectByAspect: { confiança: +2, visao: +2 } },
+            { id: "p20", text: "Pressão excessiva", effectByAspect: { confianca: -5, sustentabilidade: -4 } }
+          ],
+          onComplete: "useIndexHandleWordSel2"
+        }
+      },
+      choices: []
+    },
+    {
+      id: 5,
       title: "Avaliação de Práticas",
       text: "Selecione até 5 práticas que você considera mais relevantes. Algumas agregam valor, outras podem prejudicar:",
       type: "word-selection-2",
       maxSelections: 5,
       words: [
-        { id: "p1", text: "Padronização", points: 5 },
+        { id: "p15", text: "Foco no cliente", points: 4 },
+        { id: "p19", text: "Sustentabilidade", points: 4 },
         { id: "p2", text: "Melhoria contínua", points: 5 },
-        { id: "p3", text: "Qualidade total", points: 5 },
-        { id: "p4", text: "Segurança primeiro", points: 5 },
-        { id: "p5", text: "Ignorar dados", points: -5 },
-        { id: "p6", text: "Postergar manutenção", points: -5 },
-        { id: "p7", text: "Atropelos no processo", points: -4 },
+        { id: "p13", text: "Inovação responsável", points: 3 },
+        { id: "p18", text: "Decisões impulsivas", points: -4 },
         { id: "p8", text: "Comunicação clara", points: 4 },
-        { id: "p9", text: "Treinamento constante", points: 4 },
+        { id: "p1", text: "Padronização", points: 5 },
+        { id: "p16", text: "Pressão excessiva", points: -3 },
+        { id: "p4", text: "Segurança primeiro", points: 5 },
         { id: "p10", text: "Documentação precisa", points: 3 },
         { id: "p11", text: "Falta de supervisão", points: -3 },
-        { id: "p12", text: "Trabalho em equipe", points: 4 },
-        { id: "p13", text: "Inovação responsável", points: 3 },
+        { id: "p7", text: "Atropelos no processo", points: -4 },
         { id: "p14", text: "Resistência à mudança", points: -4 },
-        { id: "p15", text: "Foco no cliente", points: 4 },
-        { id: "p16", text: "Pressão excessiva", points: -3 },
+        { id: "p12", text: "Trabalho em equipe", points: 4 },
+        { id: "p20", text: "Desrespeito às normas", points: -5 },
+        { id: "p3", text: "Qualidade total", points: 5 },
         { id: "p17", text: "Análise de causa-raiz", points: 4 },
-        { id: "p18", text: "Decisões impulsivas", points: -4 },
-        { id: "p19", text: "Sustentabilidade", points: 4 },
-        { id: "p20", text: "Desrespeito às normas", points: -5 }
+        { id: "p9", text: "Treinamento constante", points: 4 },
+        { id: "p5", text: "Ignorar dados", points: -5 },
+        { id: "p6", text: "Postergar manutenção", points: -5 }
       ],
       choices: []
     },
@@ -406,80 +483,6 @@ export const CONFIG: SimulatorConfig = {
     //   },
     //   choices: []
     // },
-    {
-      id: 11,
-      title: "Avaliação de Desempenho",
-      text: "Avalie os aspectos abaixo de 0 a 10:",
-      layout: "split",
-      leftBlock: {
-        component: "Image",
-        props: {
-          src: ImageQ,
-          alt: "Avaliação de desempenho"
-        }
-      },
-      rightBlock: {
-        component: "RatingQuestion",
-        props: {
-          title: "Avalie de 0 a 10",
-          items: [
-            { label: "Produtividade da equipe", key: "prod" },
-            { label: "Qualidade dos processos", key: "qual" },
-            { label: "Segurança no trabalho", key: "seg" }
-          ],
-          min: 0,
-          max: 10,
-          step: 1,
-          onSubmit: "useIndexHandleRating"
-        }
-      },
-      choices: []
-    },
-    {
-      id: 203,
-      title: "Práticas após observar o cenário",
-      text: "Escolha até 5 (algumas positivas e outras negativas).",
-      layout: "split",
-      leftBlock: {
-        component: "Image",
-        props: {
-          src: ImageQ,
-          alt: "Gemba 5S workplace"
-        }
-      },
-      rightBlock: {
-        component: "WordSelection2",
-        props: {
-          title: "Selecione até 5 práticas",
-          description: "Cada palavra possui efeitos por aspecto",
-          maxSelections: 5,
-          words: [
-            { id: "p1", text: "Padronização", effectByAspect: { produtividade: +3, visao: +2 } },
-            { id: "p2", text: "Melhoria contínua", effectByAspect: { produtividade: +2, confianca: +1, visao: +2 } },
-            { id: "p3", text: "Ignorar dados", effectByAspect: { produtividade: -3, visao: -3, sustentabilidade: -2 } },
-            { id: "p4", text: "Qualidade total", effectByAspect: { produtividade: +2, confianca: +2, sustentabilidade: +2 } },
-            { id: "p5", text: "Segurança primeiro", effectByAspect: { confianca: +3, sustentabilidade: +3 } },
-            { id: "p6", text: "Postergar manutenção", effectByAspect: { produtividade: +1, confianca: -3, sustentabilidade: -2 } },
-            { id: "p7", text: "Comunicação clara", effectByAspect: { confianca: +2, visao: +2 } },
-            { id: "p8", text: "Trabalho em equipe", effectByAspect: { produtividade: +2, confianca: +2 } },
-            { id: "p9", text: "Decisões impulsivas", effectByAspect: { produtividade: -2, confianca: -2, visao: -3 } },
-            { id: "p10", text: "Inovação responsável", effectByAspect: { produtividade: +2, visao: +3 } },
-            { id: "p11", text: "Treinamento constante", effectByAspect: { produtividade: +1, confianca: +2, visao: +1 } },
-            { id: "p12", text: "Falta de supervisão", effectByAspect: { produtividade: -2, confianca: -2 } },
-            { id: "p13", text: "Documentação precisa", effectByAspect: { confianca: +1, visao: +2 } },
-            { id: "p14", text: "Resistência à mudança", effectByAspect: { produtividade: -2, visao: -3 } },
-            { id: "p15", text: "Análise de causa-raiz", effectByAspect: { produtividade: +2, visao: +2 } },
-            { id: "p16", text: "Pressão excessiva", effectByAspect: { produtividade: +1, confianca: -3, sustentabilidade: -2 } },
-            { id: "p17", text: "Foco no cliente", effectByAspect: { produtividade: +1, visao: +2 } },
-            { id: "p18", text: "Sustentabilidade", effectByAspect: { visao: +2, sustentabilidade: +3 } },
-            { id: "p19", text: "Atropelos no processo", effectByAspect: { produtividade: -1, confianca: -2, visao: -2 } },
-            { id: "p20", text: "Desrespeito às normas", effectByAspect: { confianca: -3, sustentabilidade: -3 } }
-          ],
-          onComplete: "useIndexHandleWordSel2"
-        }
-      },
-      choices: []
-    }
   ],
 };
 
