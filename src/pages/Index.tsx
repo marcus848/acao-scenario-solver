@@ -35,6 +35,7 @@ const Index = () => {
   const [currentStage, setCurrentStage] = useState(0);
   const [score, setScore] = useState<Score>(CONFIG.initial);
   const [trail, setTrail] = useState<DecisionTrail[]>([]);
+  const [selectedUnit, setSelectedUnit] = useState<string>(""); // Armazena a unidade selecionada
 
   const isFinished = currentStage >= CONFIG.stages.length;
   const currentStageData = CONFIG.stages[currentStage];
@@ -44,6 +45,11 @@ const Index = () => {
   const riskStyle = useMemo(() => riskClass(avgScore), [avgScore]);
 
   const handleChoice = (choice: Choice) => {
+    // Captura a unidade selecionada no stage 1
+    if (currentStage === 1) {
+      setSelectedUnit(choice.label);
+    }
+
     // Update score with clamping
     const newScore = { ...score };
     Object.entries(choice.effect).forEach(([key, value]) => {
@@ -261,6 +267,7 @@ const Index = () => {
               trail={trail}
               aspects={CONFIG.aspects}
               onRestart={handleRestart}
+              selectedUnit={selectedUnit}
             />
           ) : (() => {
             // Inject handlers into block definitions
