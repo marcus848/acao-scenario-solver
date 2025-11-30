@@ -1,6 +1,8 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Score, AspectKey, verdict } from "@/config/simulador";
-import { Download, Printer, FileJson } from "lucide-react";
+import { Download, Printer, FileJson, Send } from "lucide-react";
+import { sendSessionToBackend, unitIdMap } from "@/lib/api";
+import { toast } from "sonner";
 
 interface DecisionTrail {
   etapa: number;
@@ -16,9 +18,11 @@ interface ResultProps {
   trail: DecisionTrail[];
   aspects: { key: AspectKey; label: string }[];
   onRestart: () => void;
+  selectedUnit: string; // Unidade selecionada no stage 1
 }
 
-export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
+export const Result = ({ score, trail, aspects, onRestart, selectedUnit }: ResultProps) => {
+  const [isSending, setIsSending] = useState(false);
   const result = verdict(score);
   const labelByKey = useMemo(() => {
     const map: Record<AspectKey, string> = {
@@ -96,6 +100,71 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
 
   const exportPDF = () => {
     window.print();
+  };
+
+  /**
+   * Envia os dados da sessão para o backend PHP
+   * 
+   * ATENÇÃO: Certifique-se de que:
+   * 1. O backend PHP está configurado em /api/save_session.php
+   * 2. Os nomes das unidades no unitIdMap correspondem aos labels usados no stage 1
+   * 3. As chaves do score (seguranca, cpessoas, catitudes, cnegocios) estão corretas
+   */
+  const handleSendToBackend = async () => {
+    setIsSending(true);
+    
+    try {
+      // Obter unit_id baseado na unidade selecionada
+      const unit_id = unitIdMap[selectedUnit];
+      
+      if (!unit_id) {
+        toast.error("Unidade não identificada. Verifique a seleção.");
+        setIsSending(false);
+        return;
+      }
+
+      // Gerar data e hora atuais
+      const now = new Date();
+      const date = now.toISOString().split('T')[0]; // YYYY-MM-DD
+      const time = now.toTimeString().split(' ')[0]; // HH:MM:SS
+
+      // Montar o payload
+      // ATENÇÃO: Ajuste as chaves conforme seu banco de dados
+      // O score usa cpessoas, catitudes, cnegocios
+      // Mas o backend espera pessoas, atitudes, negocio (sem o 'c')
+      const payload = {
+        unit_id,
+        date,
+        time,
+        seguranca: Math.round(score.seguranca),
+        pessoas: Math.round(score.cpessoas),      // Remove o 'c' do nome
+        atitudes: Math.round(score.catitudes),    // Remove o 'c' do nome
+        negocio: Math.round(score.cnegocios),     // Remove o 'c' do nome e 's' do final
+        band: result.faixa,                        // Faixa (Verde, Amarela, Vermelha)
+        risk_level: result.faixa,                  // Pode usar a mesma faixa ou criar lógica diferente
+        trail: trail.map(t => ({
+          etapa: t.etapa,
+          titulo: t.titulo,
+          escolha: t.escolha,
+          nota: t.nota,
+          efeito: t.efeito,
+          justificativa: t.justificativa
+        }))
+      };
+
+      const response = await sendSessionToBackend(payload);
+
+      if (response) {
+        toast.success("Sessão enviada com sucesso para o backend!");
+      } else {
+        toast.error("Erro ao enviar sessão. Verifique o console.");
+      }
+    } catch (error) {
+      console.error("Erro ao enviar dados:", error);
+      toast.error("Erro ao enviar sessão para o backend.");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const recommendations = getRecommendations();
@@ -225,6 +294,15 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
 
       {/* Actions */}
       <div className="flex flex-wrap items-center justify-center gap-4 no-print">
+        <button
+          onClick={handleSendToBackend}
+          disabled={isSending}
+          className="flex items-center gap-2 px-6 py-3 bg-success text-success-foreground rounded-lg hover:bg-success/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Send className="h-4 w-4" />
+          {isSending ? "Enviando..." : "Enviar para Backend"}
+        </button>
+        
         <button
           onClick={onRestart}
           className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
