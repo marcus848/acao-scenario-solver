@@ -325,8 +325,8 @@ const Index = () => {
             }
 
             if (currentStageData.layout === "center") {
-              // Special rendering for cover page (stage 0)
-              if (currentStage === 0) {
+              // Special rendering for cover page (stage 0) and unit selection (stage 1)
+              if (currentStage === 0 || currentStage === 1) {
                 const centerBlock = currentStageData.centerBlock;
                 const title = centerBlock?.component === "Text" ? centerBlock.props.title : "";
                 const blockText = centerBlock?.component === "Text" ? centerBlock.props.text : "";
@@ -345,17 +345,33 @@ const Index = () => {
                         {currentStageData.text}
                       </p>
                       
-                      <p className="text-base text-muted-foreground/80 max-w-2xl mx-auto">
-                        {blockText}
-                      </p>
+                      {blockText && (
+                        <p className="text-base text-muted-foreground/80 max-w-2xl mx-auto">
+                          {blockText}
+                        </p>
+                      )}
 
                       <div className="pt-6">
-                        <button
-                          onClick={() => handleChoice(currentStageData.choices[0])}
-                          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-12 py-4 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
-                        >
-                          {currentStageData.choices[0].label}
-                        </button>
+                        {currentStage === 1 ? (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                            {currentStageData.choices.map((choice, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => handleChoice(choice)}
+                                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4 rounded-xl text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                              >
+                                {choice.label}
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => handleChoice(currentStageData.choices[0])}
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-12 py-4 rounded-xl text-lg transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105"
+                          >
+                            {currentStageData.choices[0].label}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
