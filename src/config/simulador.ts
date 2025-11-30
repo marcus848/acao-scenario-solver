@@ -81,18 +81,18 @@ export const CONFIG: SimulatorConfig = {
     {
       id: 0,
       title: "Pesquisa de Ação Transformadora",
-      text: "Descubra como suas decisões impactam diferentes aspectos da sua organização",
+      text: "Descubra como suas decisões impactam diferentes aspectos da sua organização. Esta pesquisa avaliará suas escolhas em cenários reais de gestão, medindo impactos em Segurança, Cuidar das Pessoas, Cuidar das Atitudes e Cuidar dos Negócios.",
       layout: "center",
       centerBlock: {
         component: "Text",
         props: {
           title: "5 Anos sem acidentes com afastamento",
-          text: "Vamos começar nossa jornada de transformação. Clique em 'Começar' para iniciar a pesquisa."
+          text: "Esta é nossa meta. Através desta pesquisa, você enfrentará situações que testam sua capacidade de tomar decisões equilibradas, considerando segurança, pessoas, atitudes e negócios."
         }
       },
       choices: [
         {
-          label: "Começar",
+          label: "Começar Pesquisa",
           effect: {},
           note: "Iniciar pesquisa"
         }
