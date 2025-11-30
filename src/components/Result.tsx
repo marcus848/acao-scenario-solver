@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Score, AspectKey, verdict } from "@/config/simulador";
 import { Download, Printer, FileJson } from "lucide-react";
 
@@ -20,6 +20,17 @@ interface ResultProps {
 
 export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
   const result = verdict(score);
+  const labelByKey = useMemo(() => {
+    const map: Record<AspectKey, string> = {
+      produtividade: "",
+      confianca: "",
+      visao: "",
+      sustentabilidade: ""
+    };
+    aspects.forEach(({ key, label }) => { map[key] = label; });
+    return map;
+  }, [aspects]);
+
 
   const saveToHistory = () => {
     try {
@@ -192,11 +203,19 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
                   )}
                 </div>
                 <div className="text-xs text-muted-foreground flex flex-wrap gap-2 mt-2">
-                  {Object.entries(decision.efeito).map(([key, value]) => (
-                    <span key={key} className={`${value! > 0 ? 'text-success' : 'text-destructive'} whitespace-nowrap`}>
-                      {key}: {value! > 0 ? '+' : ''}{value}
-                    </span>
-                  ))}
+                  {Object.entries(decision.efeito).map(([key, value]) => {
+                    const lbl = labelByKey[key as AspectKey] ?? key;
+                    const v = value ?? 0;
+                    return (
+                      <span
+                        key={key}
+                        className={`${v > 0 ? 'text-success' : 'text-destructive'} whitespace-nowrap`}
+                      >
+                        {lbl}: {v > 0 ? '+' : ''}{v}
+                      </span>
+                    );
+                  })}
+
                 </div>
               </div>
             </div>

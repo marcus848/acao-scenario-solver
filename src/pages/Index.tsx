@@ -278,6 +278,39 @@ const Index = () => {
               if (injected.component === "WordSelection2" && injected.props.onComplete === "useIndexHandleWordSel2") {
                 injected.props.onComplete = (ids: string[]) => handleWordSelection(ids, "word-selection-2");
               }
+              // dentro de injectHandlers(blockDef)
+              if (
+                injected.component === "RatingQuestion" &&
+                injected.props.onSubmit === "useIndexHandleRating"
+              ) {
+                injected.props.onSubmit = (ratings: Record<string, number>) => {
+                  // (opcional) se quiser usar ratings p/ afetar score, faça aqui
+
+                  // registra no trail para auditoria
+                  const decision: DecisionTrail = {
+                    etapa: currentStage + 1,
+                    titulo: currentStageData.title,
+                    escolha: `Avaliação: ${Object.entries(ratings)
+                      .map(([k, v]) => `${k}=${v}`)
+                      .join(", ")}`,
+                    efeito: {}, // sem efeito por enquanto
+                  };
+
+                  const nextTrail = [...trail, decision];
+                  setTrail(nextTrail);
+                  setCurrentStage((prev) => prev + 1);
+
+                  // persistência
+                  try {
+                    localStorage.setItem("acao_trail", JSON.stringify(nextTrail));
+                    localStorage.setItem("acao_score", JSON.stringify(score));
+                    localStorage.setItem("acao_avg", JSON.stringify(Math.round(average(score))));
+                  } catch (e) {
+                    console.error("Failed to save to localStorage:", e);
+                  }
+                };
+              }
+
               return injected;
             };
 
