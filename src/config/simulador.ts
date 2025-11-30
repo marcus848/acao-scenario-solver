@@ -1,4 +1,4 @@
-export type AspectKey = "produtividade" | "confianca" | "visao" | "sustentabilidade";
+export type AspectKey = "seguranca" | "cpessoas" | "catitudes" | "cnegocios";
 export type Score = Record<AspectKey, number>;
 import ImageQ from "@/assets/images/Q.jpeg";
 import ImageQ3 from "@/assets/images/Q3.png";
@@ -67,12 +67,12 @@ export const CONFIG: SimulatorConfig = {
     textOnPrimary: "#0b1220",
   },
   aspects: [
-    { key: "produtividade", label: "Segurança" },
-    { key: "confianca", label: "Cuidar das Pessoas" },
-    { key: "visao", label: "Cuidar das Atitudes" },
-    { key: "sustentabilidade", label: "Cuidar do Negócio" },
+    { key: "seguranca", label: "Segurança" },
+    { key: "cpessoas", label: "Cuidar das Pessoas" },
+    { key: "catitudes", label: "Cuidar das Atitudes" },
+    { key: "cnegocios", label: "Cuidar dos Negócios" },
   ],
-  initial: { produtividade: 70, confianca: 70, visao: 70, sustentabilidade: 70 },
+  initial: { seguranca: 70, cpessoas: 70, catitudes: 70, cnegocios: 70 },
   badges: [
     { label: "Meta", value: "5 Anos sem acidentes com afastamento" },
     // { label: "Desafio", value: "ATR -5%" },
@@ -105,12 +105,12 @@ export const CONFIG: SimulatorConfig = {
       choices: [
         {
           label: "Realizar uma manutenção agora com uma estimativa de parada de 12h e risco de não entregar a meta de produção",
-          effect: { produtividade: +6, confianca: +4, visao: +8, sustentabilidade: +3 },
+          effect: { seguranca: +6, cpessoas: +4, catitudes: +8, cnegocios: +3 },
           note: "Parada planejada; controla risco de quebra."
         },
         {
           label: "Tornar a situação conhecida por toda a equipe e seguir analisando a situação até o momento. Se a situação piorar, chamar a manutenção. Do contrário, aguardar até o evento programado.",
-          effect: { produtividade: -3, confianca: -6, visao: -8, sustentabilidade: -4 },
+          effect: { seguranca: -3, cpessoas: -6, catitudes: -8, cnegocios: -4 },
           note: "Mantém ritmo por ora; aceita risco monitorado.",
           justification:
             "A decisão privilegia o curto prazo e adota postura reativa frente a um risco conhecido. Isso fragiliza a percepção de planejamento e de cuidado com a operação, pode desgastar a credibilidade da liderança e expõe a equipe a uma possível parada não programada com custo e impacto maiores caso a condição se agrave."
@@ -154,14 +154,14 @@ export const CONFIG: SimulatorConfig = {
       choices: [
         {
           label: "Parar para limpeza completa",
-          effect: { produtividade: -3, confianca: +8, visao: +5, sustentabilidade: +6 },
+          effect: { seguranca: -3, cpessoas: +8, catitudes: +5, cnegocios: +6 },
           note: "Perda de 4h de produção, mas resolve o problema na raiz."
         },
         {
           label: "Continuar e ajustar na próxima parada",
-          effect: { produtividade: +2, confianca: -5, visao: -7, sustentabilidade: -8 },
+          effect: { seguranca: +2, cpessoas: -5, catitudes: -7, cnegocios: -8 },
           note: "Mantém ritmo, mas compromete qualidade e meio ambiente.",
-          justification: "A confiança da equipe diminuiu (-5) ao perceber que qualidade foi sacrificada. A visão estratégica (-7) foi afetada pela decisão reativa, e a sustentabilidade (-8) sofreu gravemente devido ao impacto ambiental da contaminação não tratada adequadamente."
+          justification: "A confiança da equipe diminuiu (-5) ao perceber que qualidade foi sacrificada. A visão estratégica (-7) foi afetada pela decisão reativa, e a cnegocios (-8) sofreu gravemente devido ao impacto ambiental da contaminação não tratada adequadamente."
         }
       ]
     },
@@ -185,19 +185,19 @@ export const CONFIG: SimulatorConfig = {
           choices: [
             {
               label: "Reunião imediata com toda equipe",
-              effect: { produtividade: -2, confianca: +6, visao: +7, sustentabilidade: +2 },
+              effect: { seguranca: -2, cpessoas: +6, catitudes: +7, cnegocios: +2 },
               note: "Para produção 1h, mas alinha expectativas e melhora clima."
             },
             {
               label: "Conversa individual com envolvidos",
-              effect: { produtividade: +1, confianca: +2, visao: +3, sustentabilidade: +1 },
+              effect: { seguranca: +1, cpessoas: +2, catitudes: +3, cnegocios: +1 },
               note: "Menos impacto, mas pode não resolver completamente."
             },
             {
               label: "Ignorar e focar na produção",
-              effect: { produtividade: +3, confianca: -8, visao: -6, sustentabilidade: -3 },
+              effect: { seguranca: +3, cpessoas: -8, catitudes: -6, cnegocios: -3 },
               note: "Mantém ritmo, mas tensão pode escalar.",
-              justification: "A confiança despencou (-8) pois a equipe percebeu que você não se importa com o bem-estar deles. A visão estratégica (-6) foi comprometida por ignorar problemas de liderança, e a sustentabilidade (-3) sofreu devido ao clima organizacional tóxico que pode gerar mais conflitos."
+              justification: "A confiança despencou (-8) pois a equipe percebeu que você não se importa com o bem-estar deles. A visão estratégica (-6) foi comprometida por ignorar problemas de liderança, e a cnegocios (-3) sofreu devido ao clima organizacional tóxico que pode gerar mais conflitos."
             },
           ],
           onChoose: "useIndexHandleChoice",
@@ -212,12 +212,12 @@ export const CONFIG: SimulatorConfig = {
       choices: [
         {
           label: "Implementar teste controlado",
-          effect: { produtividade: +5, confianca: +3, visao: +8, sustentabilidade: +2 },
+          effect: { seguranca: +5, cpessoas: +3, catitudes: +8, cnegocios: +2 },
           note: "Risco calculado com potencial de ganho significativo."
         },
         {
           label: "Agendar para próxima safra",
-          effect: { produtividade: 0, confianca: +1, visao: -2, sustentabilidade: +1 },
+          effect: { seguranca: 0, cpessoas: +1, catitudes: -2, cnegocios: +1 },
           note: "Conservador, mas perde oportunidade de ganho imediato."
         }
       ]
@@ -229,14 +229,14 @@ export const CONFIG: SimulatorConfig = {
       choices: [
         {
           label: "Negociar meta realista",
-          effect: { produtividade: +2, confianca: +8, visao: +6, sustentabilidade: +4 },
+          effect: { seguranca: +2, cpessoas: +8, catitudes: +6, cnegocios: +4 },
           note: "Protege equipe e estabelece expectativas viáveis."
         },
         {
           label: "Aceitar meta e forçar ritmo",
-          effect: { produtividade: +8, confianca: -6, visao: -4, sustentabilidade: -7 },
+          effect: { seguranca: +8, cpessoas: -6, catitudes: -4, cnegocios: -7 },
           note: "Ganho imediato, mas risco de burnout e acidentes.",
-          justification: "A confiança caiu (-6) porque a equipe se sentiu sobrecarregada e desvalorizada. A visão estratégica (-4) foi prejudicada pela pressão de curto prazo, e a sustentabilidade (-7) sofreu devido ao risco de burnout, acidentes e rotatividade de pessoal."
+          justification: "A confiança caiu (-6) porque a equipe se sentiu sobrecarregada e desvalorizada. A visão estratégica (-4) foi prejudicada pela pressão de curto prazo, e a cnegocios (-7) sofreu devido ao risco de burnout, acidentes e rotatividade de pessoal."
         }
       ]
     },
@@ -247,12 +247,12 @@ export const CONFIG: SimulatorConfig = {
       choices: [
         {
           label: "Aprovar investimento",
-          effect: { produtividade: +4, confianca: +5, visao: +9, sustentabilidade: +6 },
+          effect: { seguranca: +4, cpessoas: +5, catitudes: +9, cnegocios: +6 },
           note: "Cuidar das Atitudes de longo prazo com benefícios sustentáveis."
         },
         {
           label: "Rejeitar por falta de verba",
-          effect: { produtividade: +1, confianca: -2, visao: -5, sustentabilidade: -2 },
+          effect: { seguranca: +1, cpessoas: -2, catitudes: -5, cnegocios: -2 },
           note: "Mantém caixa, mas perde vantagem competitiva."
         }
       ]
@@ -264,14 +264,14 @@ export const CONFIG: SimulatorConfig = {
       choices: [
         {
           label: "Reportar proativamente",
-          effect: { produtividade: -1, confianca: +7, visao: +5, sustentabilidade: +9 },
-          note: "Transparência total, demonstra compromisso com sustentabilidade."
+          effect: { seguranca: -1, cpessoas: +7, catitudes: +5, cnegocios: +9 },
+          note: "Transparência total, demonstra compromisso com cnegocios."
         },
         {
           label: "Aguardar possível fiscalização",
-          effect: { produtividade: +2, confianca: -4, visao: -3, sustentabilidade: -8 },
+          effect: { seguranca: +2, cpessoas: -4, catitudes: -3, cnegocios: -8 },
           note: "Economiza recursos, mas compromete credibilidade.",
-          justification: "A confiança diminuiu (-4) pois a equipe questionou sua integridade ética. A visão estratégica (-3) foi afetada pela postura reativa, e a sustentabilidade (-8) sofreu severamente devido à falta de transparência e compromisso ambiental genuíno."
+          justification: "A confiança diminuiu (-4) pois a equipe questionou sua integridade ética. A visão estratégica (-3) foi afetada pela postura reativa, e a cnegocios (-8) sofreu severamente devido à falta de transparência e compromisso ambiental genuíno."
         }
       ]
     },*/
@@ -282,19 +282,19 @@ export const CONFIG: SimulatorConfig = {
       choices: [
         {
           label: "Sprint final controlado",
-          effect: { produtividade: +6, confianca: +4, visao: +7, sustentabilidade: +3 },
+          effect: { seguranca: +6, cpessoas: +4, catitudes: +7, cnegocios: +3 },
           note: "Empurra limites com responsabilidade e planejamento."
         },
         {
           label: "Manter ritmo atual",
-          effect: { produtividade: +2, confianca: +6, visao: +3, sustentabilidade: +5 },
+          effect: { seguranca: +2, cpessoas: +6, catitudes: +3, cnegocios: +5 },
           note: "Prioriza bem-estar da equipe e equipamentos."
         },
         {
           label: "Acelerar ao máximo",
-          effect: { produtividade: +10, confianca: -3, visao: -2, sustentabilidade: -5 },
+          effect: { seguranca: +10, cpessoas: -3, catitudes: -2, cnegocios: -5 },
           note: "Máximo resultado imediato, com riscos para o futuro.",
-          justification: "A confiança caiu (-3) devido ao estresse excessivo imposto à equipe no final da safra. A visão estratégica (-2) foi comprometida pelo foco apenas no curto prazo, e a sustentabilidade (-5) sofreu pelo desgaste de equipamentos e pessoas, comprometendo resultados futuros."
+          justification: "A confiança caiu (-3) devido ao estresse excessivo imposto à equipe no final da safra. A visão estratégica (-2) foi comprometida pelo foco apenas no curto prazo, e a cnegocios (-5) sofreu pelo desgaste de equipamentos e pessoas, comprometendo resultados futuros."
         }
       ]
     },
@@ -347,26 +347,26 @@ export const CONFIG: SimulatorConfig = {
           description: "Cada palavra possui efeitos por aspecto",
           maxSelections: 5,
           words: [
-            { id: "p1", text: "Documentação precisa", effectByAspect: { confianca: +1, visao: +2 } },
-            { id: "p2", text: "Sustentabilidade", effectByAspect: { visao: +2, sustentabilidade: +3 } },
-            { id: "p3", text: "EPI", effectByAspect: { confianca: +2, visao: +2 } },
-            { id: "p4", text: "Desrespeito às normas", effectByAspect: { confianca: -3, sustentabilidade: -3 } },
-            { id: "p5", text: "Falta de supervisão", effectByAspect: { produtividade: -2, confianca: -2 } },
-            { id: "p6", text: "Proteção em Máquinas e Equipamentos", effectByAspect: { produtividade: +2, visao: +3 } },
-            { id: "p7", text: "3Ps. Pausar, Processar e Prosseguir", effectByAspect: { confianca: +3, sustentabilidade: +3, visao: +3, produtividade: +3 } },
-            { id: "p8", text: "Limites de Velocidade", effectByAspect: { produtividade: -3, visao: -3, sustentabilidade: -2 } },
-            { id: "p9", text: "Isolamento de Área", effectByAspect: { produtividade: +1, confianca: -3, sustentabilidade: -2 } },
-            { id: "p10", text: "Direito de recusa", effectByAspect: { produtividade: +2, confianca: +2, sustentabilidade: +2 } },
-            { id: "p11", text: "ATE. Autorização para trabalhos especiais", effectByAspect: { produtividade: +3, visao: +2 } },
-            { id: "p12", text: "Foco no cliente", effectByAspect: { produtividade: +1, visao: +2 } },
-            { id: "p13", text: "Comunicação de Acidentes", effectByAspect: { produtividade: -2, confianca: -2, visao: -3 } },
-            { id: "p14", text: "Atropelos no processo", effectByAspect: { produtividade: -1, confianca: -2, visao: -2 } },
-            { id: "p15", text: "ATC. Autorização para trabalhos críticos", effectByAspect: { produtividade: +2, confianca: +1, visao: +2 } },
-            { id: "p16", text: "Bloqueio", effectByAspect: { produtividade: +2, confianca: +2 } },
-            { id: "p17", text: "Resistência à mudança", effectByAspect: { produtividade: -2, visao: -3 } },
-            { id: "p18", text: "Treinamento constante", effectByAspect: { produtividade: +1, confianca: +2, visao: +1 } },
-            { id: "p19", text: "Análise de causa-raiz", effectByAspect: { confiança: +2, visao: +2 } },
-            { id: "p20", text: "Pressão excessiva", effectByAspect: { confianca: -5, sustentabilidade: -4 } }
+            { id: "p1", text: "Documentação precisa", effectByAspect: { cpessoas: +1, catitudes: +2 } },
+            { id: "p2", text: "cnegocios", effectByAspect: { catitudes: +2, cnegocios: +3 } },
+            { id: "p3", text: "EPI", effectByAspect: { cpessoas: +2, catitudes: +2 } },
+            { id: "p4", text: "Desrespeito às normas", effectByAspect: { cpessoas: -3, cnegocios: -3 } },
+            { id: "p5", text: "Falta de supervisão", effectByAspect: { seguranca: -2, cpessoas: -2 } },
+            { id: "p6", text: "Proteção em Máquinas e Equipamentos", effectByAspect: { seguranca: +2, catitudes: +3 } },
+            { id: "p7", text: "3Ps. Pausar, Processar e Prosseguir", effectByAspect: { cpessoas: +3, cnegocios: +3, catitudes: +3, seguranca: +3 } },
+            { id: "p8", text: "Limites de Velocidade", effectByAspect: { seguranca: -3, catitudes: -3, cnegocios: -2 } },
+            { id: "p9", text: "Isolamento de Área", effectByAspect: { seguranca: +1, cpessoas: -3, cnegocios: -2 } },
+            { id: "p10", text: "Direito de recusa", effectByAspect: { seguranca: +2, cpessoas: +2, cnegocios: +2 } },
+            { id: "p11", text: "ATE. Autorização para trabalhos especiais", effectByAspect: { seguranca: +3, catitudes: +2 } },
+            { id: "p12", text: "Foco no cliente", effectByAspect: { seguranca: +1, catitudes: +2 } },
+            { id: "p13", text: "Comunicação de Acidentes", effectByAspect: { seguranca: -2, cpessoas: -2, catitudes: -3 } },
+            { id: "p14", text: "Atropelos no processo", effectByAspect: { seguranca: -1, cpessoas: -2, catitudes: -2 } },
+            { id: "p15", text: "ATC. Autorização para trabalhos críticos", effectByAspect: { seguranca: +2, cpessoas: +1, catitudes: +2 } },
+            { id: "p16", text: "Bloqueio", effectByAspect: { seguranca: +2, cpessoas: +2 } },
+            { id: "p17", text: "Resistência à mudança", effectByAspect: { seguranca: -2, catitudes: -3 } },
+            { id: "p18", text: "Treinamento constante", effectByAspect: { seguranca: +1, cpessoas: +2, catitudes: +1 } },
+            { id: "p19", text: "Análise de causa-raiz", effectByAspect: { confiança: +2, catitudes: +2 } },
+            { id: "p20", text: "Pressão excessiva", effectByAspect: { cpessoas: -5, cnegocios: -4 } }
           ],
           onComplete: "useIndexHandleWordSel2"
         }
@@ -381,7 +381,7 @@ export const CONFIG: SimulatorConfig = {
       maxSelections: 5,
       words: [
         { id: "p15", text: "Foco no cliente", points: 4 },
-        { id: "p19", text: "Sustentabilidade", points: 4 },
+        { id: "p19", text: "cnegocios", points: 4 },
         { id: "p2", text: "Melhoria contínua", points: 5 },
         { id: "p13", text: "Inovação responsável", points: 3 },
         { id: "p18", text: "Decisões impulsivas", points: -4 },
@@ -421,9 +421,9 @@ export const CONFIG: SimulatorConfig = {
     //       title: "Escolha uma alternativa",
     //       text: "Opções a seguir:",
     //       choices: [
-    //         { label: "Opção A - Abordagem conservadora", effect: { produtividade: +2, confianca: +3, visao: +1, sustentabilidade: +2 } },
-    //         { label: "Opção B - Abordagem inovadora", effect: { produtividade: +4, confianca: +2, visao: +5, sustentabilidade: +3 } },
-    //         { label: "Opção C - Abordagem reativa", effect: { produtividade: +1, confianca: -2, visao: -3, sustentabilidade: -1 } }
+    //         { label: "Opção A - Abordagem conservadora", effect: { seguranca: +2, cpessoas: +3, catitudes: +1, cnegocios: +2 } },
+    //         { label: "Opção B - Abordagem inovadora", effect: { seguranca: +4, cpessoas: +2, catitudes: +5, cnegocios: +3 } },
+    //         { label: "Opção C - Abordagem reativa", effect: { seguranca: +1, cpessoas: -2, catitudes: -3, cnegocios: -1 } }
     //       ],
     //       onChoose: "useIndexHandleChoice"
     //     }
@@ -431,17 +431,17 @@ export const CONFIG: SimulatorConfig = {
     //   choices: [
     //     {
     //       label: "Opção A - Abordagem conservadora",
-    //       effect: { produtividade: +2, confianca: +3, visao: +1, sustentabilidade: +2 },
+    //       effect: { seguranca: +2, cpessoas: +3, catitudes: +1, cnegocios: +2 },
     //       note: "Mantém estabilidade mas limita inovação."
     //     },
     //     {
     //       label: "Opção B - Abordagem inovadora",
-    //       effect: { produtividade: +4, confianca: +2, visao: +5, sustentabilidade: +3 },
+    //       effect: { seguranca: +4, cpessoas: +2, catitudes: +5, cnegocios: +3 },
     //       note: "Maior potencial de ganho com risco calculado."
     //     },
     //     {
     //       label: "Opção C - Abordagem reativa",
-    //       effect: { produtividade: +1, confianca: -2, visao: -3, sustentabilidade: -1 },
+    //       effect: { seguranca: +1, cpessoas: -2, catitudes: -3, cnegocios: -1 },
     //       note: "Ação imediata sem planejamento.",
     //       justification: "Decisão reativa compromete visão estratégica e confiança da equipe."
     //     }
@@ -468,12 +468,12 @@ export const CONFIG: SimulatorConfig = {
     //       choices: [
     //         {
     //           label: "Parada controlada",
-    //           effect: { produtividade: -2, confianca: +5, visao: +4, sustentabilidade: +3 },
+    //           effect: { seguranca: -2, cpessoas: +5, catitudes: +4, cnegocios: +3 },
     //           note: "Prioriza segurança e qualidade."
     //         },
     //         {
     //           label: "Manter operação",
-    //           effect: { produtividade: +3, confianca: -2, visao: -3, sustentabilidade: -2 },
+    //           effect: { seguranca: +3, cpessoas: -2, catitudes: -3, cnegocios: -2 },
     //           note: "Mantém produção mas aumenta riscos.",
     //           justification: "Equipe percebeu que segurança foi comprometida."
     //         },
@@ -490,7 +490,7 @@ export const CONFIG: SimulatorConfig = {
 export const clamp = (n: number) => Math.max(0, Math.min(100, n));
 
 export const average = (s: Score) =>
-  (s.produtividade + s.confianca + s.visao + s.sustentabilidade) / 4;
+  (s.seguranca + s.cpessoas + s.catitudes + s.cnegocios) / 4;
 
 export const riskLabel = (avg: number) =>
   avg >= 80 ? "Baixo" : avg >= 60 ? "Médio" : "Alto";

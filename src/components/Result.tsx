@@ -22,10 +22,10 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
   const result = verdict(score);
   const labelByKey = useMemo(() => {
     const map: Record<AspectKey, string> = {
-      produtividade: "",
-      confianca: "",
-      visao: "",
-      sustentabilidade: ""
+      seguranca: "",
+      cpessoas: "",
+      catitudes: "",
+      cnegocios: ""
     };
     aspects.forEach(({ key, label }) => { map[key] = label; });
     return map;
@@ -57,17 +57,17 @@ export const Result = ({ score, trail, aspects, onRestart }: ResultProps) => {
   const getRecommendations = () => {
     const recs: string[] = [];
 
-    if (score.confianca < 75) {
+    if (score.cpessoas < 75) {
       recs.push("Implementar programa de feedback contínuo e reconhecimento da equipe");
     }
-    if (score.visao < 80) {
+    if (score.catitudes < 80) {
       recs.push("Desenvolver plano estratégico com metas claras e comunicação efetiva");
     }
-    if (score.produtividade < 80) {
+    if (score.seguranca < 80) {
       recs.push("Revisar processos operacionais e investir em automação");
     }
-    if (score.sustentabilidade < 80) {
-      recs.push("Criar programa de sustentabilidade com métricas ESG definidas");
+    if (score.cnegocios < 80) {
+      recs.push("Criar programa de cnegocios com métricas ESG definidas");
     }
 
     // Item fixo
