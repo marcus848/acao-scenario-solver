@@ -100,6 +100,33 @@ export const CONFIG: SimulatorConfig = {
     },
     {
       id: 1,
+      title: "Selecione sua Unidade",
+      text: "Escolha a unidade em que você atua para iniciar a pesquisa:",
+      choices: [
+        {
+          label: "Usina São Martinho",
+          effect: {},
+          note: "Unidade selecionada"
+        },
+        {
+          label: "Usina Iracema",
+          effect: {},
+          note: "Unidade selecionada"
+        },
+        {
+          label: "Usina Santa Cruz",
+          effect: {},
+          note: "Unidade selecionada"
+        },
+        {
+          label: "Usina Boa Vista",
+          effect: {},
+          note: "Unidade selecionada"
+        }
+      ]
+    },
+    {
+      id: 2,
       title: "Manutenção agora ou depois?",
       text: "Bombas críticas com vibração acima do normal; Preventiva prevista para 3 semanas.",
       choices: [
@@ -118,7 +145,7 @@ export const CONFIG: SimulatorConfig = {
       ]
     },
     {
-      id: 2,
+      id: 3,
       title: "Avaliação de Desempenho",
       text: "Avalie os aspectos abaixo de 0 a 10:",
       layout: "split",
@@ -276,7 +303,7 @@ export const CONFIG: SimulatorConfig = {
       ]
     },*/
     {
-      id: 3,
+      id: 4,
       title: "Decisão final da safra",
       text: "Últimas semanas. Opção de acelerar para bater meta ou manter ritmo sustentável.",
       choices: [
@@ -329,7 +356,7 @@ export const CONFIG: SimulatorConfig = {
     //   choices: [] // Used by word selection logic
     // },
     {
-      id: 4,
+      id: 5,
       title: "Práticas após observar o cenário",
       text: "Escolha até 5 (algumas positivas e outras negativas).",
       layout: "split",
@@ -374,7 +401,7 @@ export const CONFIG: SimulatorConfig = {
       choices: []
     },
     {
-      id: 5,
+      id: 6,
       title: "Avaliação de Práticas",
       text: "Selecione até 5 práticas que você considera mais relevantes. Algumas agregam valor, outras podem prejudicar:",
       type: "word-selection-2",
