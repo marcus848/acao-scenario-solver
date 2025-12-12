@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { AspectCards } from "@/components/AspectCards";
 import { CONFIG } from "@/config/simulador";
 import { getGroupName, saveGroupName } from "@/lib/api";
+import { useScores } from "@/hooks/useScores";
 import { toast } from "sonner";
 import { Save, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +12,7 @@ import { Input } from "@/components/ui/input";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { score } = useScores();
   const [groupName, setGroupName] = useState("");
   const [savedGroupName, setSavedGroupName] = useState<string | null>(null);
 
@@ -47,6 +50,11 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header badges={CONFIG.badges} />
+
+      {/* Aspect Cards - Always visible at top */}
+      <div className="container mx-auto px-4 pt-6">
+        <AspectCards score={score} />
+      </div>
 
       <main className="container mx-auto px-4 py-8 space-y-8">
         {/* Intro Section */}
