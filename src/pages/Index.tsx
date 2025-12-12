@@ -73,7 +73,7 @@ const Index = () => {
             <h2 className="text-xl font-semibold text-foreground">
               Identificação do Grupo
             </h2>
-            
+
             <div className="space-y-3">
               <label htmlFor="groupName" className="text-sm text-muted-foreground">
                 Nome do Grupo
@@ -92,7 +92,7 @@ const Index = () => {
                   Salvar
                 </Button>
               </div>
-              
+
               {savedGroupName && (
                 <p className="text-sm text-success">
                   ✓ Grupo salvo: <strong>{savedGroupName}</strong>
@@ -108,7 +108,7 @@ const Index = () => {
             <h2 className="text-xl font-semibold text-foreground">
               Perguntas Disponíveis
             </h2>
-            
+
             <div className="grid gap-3">
               {CONFIG.stages.map((stage, index) => (
                 <button
@@ -131,22 +131,6 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Aspects Info */}
-        <div className="max-w-xl mx-auto">
-          <div className="card-simulator p-6 space-y-4">
-            <h2 className="text-xl font-semibold text-foreground">
-              Aspectos Avaliados
-            </h2>
-            <div className="grid gap-2">
-              {CONFIG.aspects.map(({ key, label }) => (
-                <div key={key} className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg">
-                  <div className="w-3 h-3 rounded-full bg-primary" />
-                  <span className="text-foreground">{label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       </main>
     </div>
   );
