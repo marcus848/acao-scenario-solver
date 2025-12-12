@@ -1,15 +1,17 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
+import { AspectCards } from "@/components/AspectCards";
 import { Question as QuestionComponent } from "@/components/Question";
 import { WordSelection1 } from "@/components/WordSelection1";
 import { WordSelection2 } from "@/components/WordSelection2";
 import { Split } from "@/components/layout/Split";
 import { RenderBlock } from "@/components/blocks/RenderBlock";
-import { CONFIG, Score, Choice, clamp } from "@/config/simulador";
+import { CONFIG, Score, Choice } from "@/config/simulador";
 import { sendAnswerToBackend, getGroupName, AnswerPayload } from "@/lib/api";
+import { useScores } from "@/hooks/useScores";
 import { toast } from "sonner";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -25,6 +27,7 @@ import {
 const Question = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { score, applyEffect } = useScores();
   const [pendingAnswer, setPendingAnswer] = useState<{
     type: "choice" | "rating" | "word-selection";
     value: string | Record<string, number> | string[];
@@ -153,6 +156,8 @@ const Question = () => {
     const response = await sendAnswerToBackend(payload);
 
     if (response) {
+      // Apply effect to scores after successful submission
+      applyEffect(pendingAnswer.effect);
       toast.success("Resposta enviada com sucesso!");
       navigate("/");
     } else {
@@ -252,6 +257,11 @@ const Question = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header badges={CONFIG.badges} />
+
+      {/* Aspect Cards - Always visible at top */}
+      <div className="container mx-auto px-4 pt-6">
+        <AspectCards score={score} />
+      </div>
 
       <main className="container mx-auto px-4 py-8 space-y-6">
         {/* Back Button */}
