@@ -1,45 +1,34 @@
 /**
- * API utilities for sending session data to backend
+ * API utilities for sending data to backend
  * 
- * Backend endpoint: /api/save_session.php (implemented separately)
+ * Backend endpoints:
+ * - /api/save_answer.php - Salva resposta individual de pergunta
  */
 
-export interface SessionPayload {
-  unit_id: number;
+import { Score } from "@/config/simulador";
+
+export interface AnswerPayload {
+  group_name: string;
+  question_id: number;
+  answer: {
+    type: "choice" | "rating" | "word-selection";
+    value: string | Record<string, number> | string[];
+    label?: string;
+  };
+  effect: Partial<Score>;
   date: string;      // YYYY-MM-DD
   time: string;      // HH:MM:SS
-  seguranca: number;
-  pessoas: number;
-  atitudes: number;
-  negocio: number;
-  band: string;
-  risk_level: string;
-  trail: any[];
 }
 
 /**
- * Mapeamento das unidades para unit_id conforme banco de dados
+ * Envia a resposta de uma pergunta para o backend PHP
  * 
- * ATENÇÃO: Caso os nomes das unidades mudem no frontend,
- * ajuste as chaves deste objeto para corresponder aos labels usados
- * na seleção de unidade (stage 1 do simulador)
- */
-export const unitIdMap: Record<string, number> = {
-  "Usina Iracema": 1,      // UIR
-  "Usina São Martinho": 2, // USM
-  "Usina Santa Cruz": 3,   // USC
-  "Usina Boa Vista": 4,    // UBV
-};
-
-/**
- * Envia os dados da sessão para o backend PHP
- * 
- * @param payload - Dados da sessão formatados conforme SessionPayload
+ * @param payload - Dados da resposta formatados conforme AnswerPayload
  * @returns Promise com a resposta do backend ou null em caso de erro
  */
-export async function sendSessionToBackend(payload: SessionPayload) {
+export async function sendAnswerToBackend(payload: AnswerPayload) {
   try {
-    const response = await fetch('/api/save_session.php', {
+    const response = await fetch('http://localhost/sensibilizacao_2026/api/save_answer.php', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json' 
@@ -53,7 +42,32 @@ export async function sendSessionToBackend(payload: SessionPayload) {
 
     return await response.json();
   } catch (error) {
-    console.error('Erro ao enviar sessão para backend:', error);
+    console.error('Erro ao enviar resposta para backend:', error);
     return null;
+  }
+}
+
+/**
+ * Obtém o nome do grupo salvo no localStorage
+ */
+export function getGroupName(): string | null {
+  try {
+    return localStorage.getItem("acao_group_name");
+  } catch (e) {
+    console.error("Erro ao ler nome do grupo:", e);
+    return null;
+  }
+}
+
+/**
+ * Salva o nome do grupo no localStorage
+ */
+export function saveGroupName(name: string): boolean {
+  try {
+    localStorage.setItem("acao_group_name", name);
+    return true;
+  } catch (e) {
+    console.error("Erro ao salvar nome do grupo:", e);
+    return false;
   }
 }
