@@ -111,14 +111,17 @@ const Question = () => {
       effect = aspectTotals;
     }
 
-    const selectedWords = selectedIds
-      .map((id) => words.find((w) => w.id === id)?.text || id)
+    const selectedLabels = selectedIds
+      .map((id) => {
+        const index = words.findIndex((w) => w.id === id);
+        return index >= 0 ? `Opção ${index + 1}` : id;
+      })
       .join(", ");
 
     setPendingAnswer({
       type: "word-selection",
       value: selectedIds,
-      label: `Selecionou: ${selectedWords}`,
+      label: `Selecionou: ${selectedLabels}`,
       effect,
     });
     setShowConfirm(true);
