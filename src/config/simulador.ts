@@ -89,8 +89,8 @@ export const CONFIG: SimulatorConfig = {
       rightBlock: {
         component: "WordSelection2",
         props: {
-          title: "Selecione até 5 opções",
-          description: "Escolha as ações, ferramentas e equipamentos adequados",
+          // title: "Selecione até 5 opções",
+          description: "Se este evento se passasse aqui na empresa, quais ações, ferramentas e equipamentos poderiam e deveriam ser utilizadas para redução de perigos e riscos e termos assim, uma operação segura?",
           maxSelections: 5,
           words: [
             { id: "p1_01", text: "ATC – Autorização para Trabalho Crítico", effectByAspect: { pessoas: +1, atitudes: +3, negocio: +2 } },
@@ -123,8 +123,8 @@ export const CONFIG: SimulatorConfig = {
       rightBlock: {
         component: "WordSelection2",
         props: {
-          title: "Selecione até 5 opções",
-          description: "Escolha as ações para garantir a segurança",
+          // title: "Selecione até 5 opções",
+          description: "Felizmente algo pior não aconteceu, pois ele estava com o ponto de segurança, ainda assim, o incidente aconteceu e precisará ser devidamente comunicado, para que não aconteça mais.\nO que deve ser feito para garantir a máxima segurança do trabalhador daqui pra frente? Assinale todas que julgar correta:",
           maxSelections: 5,
           words: [
             { id: "p2_01", text: "Treinamento em Saúde e Segurança Ocupacional", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +1 } },
@@ -160,8 +160,8 @@ export const CONFIG: SimulatorConfig = {
       rightBlock: {
         component: "WordSelection2",
         props: {
-          title: "Selecione até 3 opções",
-          description: "Identifique as situações que não foram seguidas",
+          // title: "Selecione até 3 opções",
+          description: "O Nosso Jeito Seguro de Ser, apresenta 10 situações de riscos que precisam ser observadas para termos uma operação segura. Quais delas não foram seguidas nesta cena?",
           maxSelections: 3,
           words: [
             { id: "p3_01", text: "1. Utilizamos os Equipamentos de Proteção Individual (EPI) recomendados e as ferramentas requeridas e adequadas para cada atividade", effectByAspect: { pessoas: +3, atitudes: +3, negocio: +2 } },
