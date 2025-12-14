@@ -285,13 +285,9 @@ const Question = () => {
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar envio desta resposta?</AlertDialogTitle>
+            <AlertDialogTitle>Confirmar resposta?</AlertDialogTitle>
             <AlertDialogDescription>
-              {pendingAnswer?.label && (
-                <span className="block mt-2 text-foreground font-medium">
-                  Resposta: {pendingAnswer.label}
-                </span>
-              )}
+              Deseja confirmar e enviar sua resposta?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
