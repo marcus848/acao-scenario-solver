@@ -17,12 +17,12 @@ interface WordSelection2Props {
   onComplete: (selectedIds: string[]) => void;
 }
 
-export const WordSelection2 = ({ 
-  title, 
-  description, 
-  words, 
+export const WordSelection2 = ({
+  title,
+  description,
+  words,
   maxSelections = 5,
-  onComplete 
+  onComplete
 }: WordSelection2Props) => {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -59,7 +59,7 @@ export const WordSelection2 = ({
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 gap-3">
           {words.map((word) => {
             const isSelected = selectedIds.includes(word.id);
             const canSelect = !isMaxed || isSelected;
@@ -71,8 +71,8 @@ export const WordSelection2 = ({
                 disabled={!canSelect}
                 className={`
                   relative p-3 rounded-lg border-2 transition-all duration-200
-                  ${isSelected 
-                    ? 'border-primary bg-primary/10 text-primary' 
+                  ${isSelected
+                    ? 'border-primary bg-primary/10 text-primary'
                     : 'border-border bg-card/40 text-foreground hover:border-primary/50'
                   }
                   ${!canSelect && !isSelected ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'}
