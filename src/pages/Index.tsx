@@ -1,136 +1,98 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
-import { AspectCards } from "@/components/AspectCards";
 import { CONFIG } from "@/config/simulador";
-import { getGroupName, saveGroupName } from "@/lib/api";
-import { useScores } from "@/hooks/useScores";
+import { getActiveEvent, saveUnitEventData, UNIT_MAP } from "@/lib/api";
 import { toast } from "sonner";
-import { Save, ArrowRight } from "lucide-react";
+import { Building2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
+const UNITS = [
+  { code: "USM", name: "Usina São Martinho" },
+  { code: "UIR", name: "Usina Iracema" },
+  { code: "USC", name: "Usina Santa Cruz" },
+  { code: "UBV", name: "Usina Boa Vista" },
+];
 
 const Index = () => {
   const navigate = useNavigate();
-  const { score } = useScores();
-  const [groupName, setGroupName] = useState("");
-  const [savedGroupName, setSavedGroupName] = useState<string | null>(null);
+  const [loadingUnit, setLoadingUnit] = useState<string | null>(null);
 
-  useEffect(() => {
-    const saved = getGroupName();
-    if (saved) {
-      setSavedGroupName(saved);
-      setGroupName(saved);
-    }
-  }, []);
+  const handleSelectUnit = async (unitCode: string) => {
+    setLoadingUnit(unitCode);
 
-  const handleSaveGroupName = () => {
-    const trimmedName = groupName.trim();
-    if (!trimmedName) {
-      toast.error("Por favor, preencha o nome do grupo.");
-      return;
-    }
+    try {
+      const response = await getActiveEvent(unitCode);
 
-    if (saveGroupName(trimmedName)) {
-      setSavedGroupName(trimmedName);
-      toast.success("Nome do grupo salvo com sucesso!");
-    } else {
-      toast.error("Erro ao salvar o nome do grupo.");
+      if (response.ok && response.event_id) {
+        const unitId = UNIT_MAP[unitCode];
+        saveUnitEventData(unitCode, unitId, response.event_id);
+        toast.success(`Usina ${unitCode} selecionada!`);
+        // TODO: navegar para próxima etapa quando implementada
+        // navigate("/grupo");
+      } else {
+        toast.error("Nenhuma rodada ativa para esta usina. Peça ao consultor para iniciar.");
+      }
+    } catch (error) {
+      console.error("Erro ao selecionar usina:", error);
+      toast.error("Erro ao conectar com o servidor.");
+    } finally {
+      setLoadingUnit(null);
     }
-  };
-
-  const handleGoToQuestion = (questionId: number) => {
-    if (!savedGroupName) {
-      toast.error("Salve o nome do grupo antes de responder as perguntas.");
-      return;
-    }
-    navigate(`/question/${questionId}`);
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header badges={CONFIG.badges} />
 
-      {/* Aspect Cards - Always visible at top */}
-      <div className="container mx-auto px-4 pt-6">
-        <AspectCards score={score} />
-      </div>
-
-      <main className="container mx-auto px-4 py-8 space-y-8">
+      <main className="container mx-auto px-4 py-12 space-y-10">
         {/* Intro Section */}
         <div className="max-w-3xl mx-auto text-center space-y-4">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground">
             Pesquisa de Ação Transformadora
           </h1>
           <p className="text-muted-foreground text-lg">
-            Descubra como suas decisões impactam diferentes aspectos da sua organização.
+            Selecione a sua usina para iniciar
           </p>
         </div>
 
-        {/* Group Name Section */}
-        <div className="max-w-xl mx-auto">
-          <div className="card-simulator p-6 space-y-4">
-            <h2 className="text-xl font-semibold text-foreground">
-              Identificação do Grupo
+        {/* Unit Selection */}
+        <div className="max-w-2xl mx-auto">
+          <div className="card-simulator p-8 space-y-6">
+            <h2 className="text-xl font-semibold text-foreground text-center">
+              Selecione a Usina
             </h2>
 
-            <div className="space-y-3">
-              <label htmlFor="groupName" className="text-sm text-muted-foreground">
-                Nome do Grupo
-              </label>
-              <div className="flex gap-3">
-                <Input
-                  id="groupName"
-                  type="text"
-                  placeholder="Digite o nome do grupo..."
-                  value={groupName}
-                  onChange={(e) => setGroupName(e.target.value)}
-                  className="flex-1"
-                />
-                <Button onClick={handleSaveGroupName} className="gap-2">
-                  <Save className="h-4 w-4" />
-                  Salvar
-                </Button>
-              </div>
-
-              {savedGroupName && (
-                <p className="text-sm text-success">
-                  ✓ Grupo salvo: <strong>{savedGroupName}</strong>
-                </p>
-              )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {UNITS.map((unit) => {
+                const isLoading = loadingUnit === unit.code;
+                return (
+                  <Button
+                    key={unit.code}
+                    onClick={() => handleSelectUnit(unit.code)}
+                    disabled={loadingUnit !== null}
+                    variant="outline"
+                    className="h-auto py-6 px-4 flex flex-col items-center gap-3 hover:bg-primary/10 hover:border-primary transition-all"
+                  >
+                    {isLoading ? (
+                      <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                    ) : (
+                      <Building2 className="h-8 w-8 text-primary" />
+                    )}
+                    <div className="text-center">
+                      <span className="block text-lg font-bold text-foreground">
+                        {unit.code}
+                      </span>
+                      <span className="block text-sm text-muted-foreground">
+                        {unit.name}
+                      </span>
+                    </div>
+                  </Button>
+                );
+              })}
             </div>
           </div>
         </div>
-
-        {/* Questions List */}
-        <div className="max-w-xl mx-auto">
-          <div className="card-simulator p-6 space-y-4">
-            <h2 className="text-xl font-semibold text-foreground">
-              Perguntas Disponíveis
-            </h2>
-
-            <div className="grid gap-3">
-              {CONFIG.stages.map((stage, index) => (
-                <button
-                  key={stage.id}
-                  onClick={() => handleGoToQuestion(stage.id)}
-                  className="flex items-center justify-between p-4 bg-muted/30 hover:bg-muted/50 border border-border rounded-lg transition-colors text-left group"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-8 h-8 flex items-center justify-center bg-primary/20 text-primary rounded-full text-sm font-medium">
-                      {index + 1}
-                    </span>
-                    <span className="text-foreground font-medium">
-                      {stage.title}
-                    </span>
-                  </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
       </main>
     </div>
   );
