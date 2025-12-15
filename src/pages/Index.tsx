@@ -83,6 +83,13 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Header badges={CONFIG.badges} />
 
+      {/* Aspect Cards - Always visible at top when unit selected */}
+      {selectedUnit && (
+        <div className="container mx-auto px-4 pt-6">
+          <AspectCards score={score} />
+        </div>
+      )}
+
       <main className="container mx-auto px-4 py-12 space-y-10">
         {/* State A: Unit Selection */}
         {!selectedUnit && (
@@ -156,11 +163,6 @@ const Index = () => {
                   Trocar usina
                 </Button>
               </div>
-            </div>
-
-            {/* Aspect Cards */}
-            <div className="max-w-3xl mx-auto">
-              <AspectCards score={score} />
             </div>
 
             {/* Group Name Input */}
