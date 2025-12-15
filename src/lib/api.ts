@@ -73,6 +73,74 @@ export function saveGroupName(name: string): boolean {
 }
 
 /**
+ * Interface para payload de registro de grupo
+ */
+export interface SaveGroupPayload {
+  event_id: number;
+  unit_id: number;
+  group_name: string;
+}
+
+export interface SaveGroupResponse {
+  ok: boolean;
+  group_id?: number;
+  message?: string;
+}
+
+/**
+ * Registra o grupo no backend
+ */
+export async function saveGroupToBackend(payload: SaveGroupPayload): Promise<SaveGroupResponse> {
+  try {
+    const response = await fetch('http://localhost/sensibilizacao_2026/api/save_group.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao registrar grupo:', error);
+    return { ok: false, message: "Erro de conexão com o servidor" };
+  }
+}
+
+/**
+ * Salva dados do grupo no localStorage
+ */
+export function saveGroupData(groupId: number, groupName: string): boolean {
+  try {
+    localStorage.setItem("acao_group_id", String(groupId));
+    localStorage.setItem("acao_group_name", groupName);
+    return true;
+  } catch (e) {
+    console.error("Erro ao salvar dados do grupo:", e);
+    return false;
+  }
+}
+
+/**
+ * Obtém dados do grupo salvos no localStorage
+ */
+export function getGroupData(): { groupId: string | null; groupName: string | null } {
+  try {
+    return {
+      groupId: localStorage.getItem("acao_group_id"),
+      groupName: localStorage.getItem("acao_group_name"),
+    };
+  } catch (e) {
+    console.error("Erro ao ler dados do grupo:", e);
+    return { groupId: null, groupName: null };
+  }
+}
+
+/**
  * Mapeamento de códigos de usina para unit_id
  */
 export const UNIT_MAP: Record<string, number> = {
