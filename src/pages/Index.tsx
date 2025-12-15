@@ -90,7 +90,7 @@ const Index = () => {
         </div>
       )}
 
-      <main className="container mx-auto px-4 py-12 space-y-10">
+      <main className={`container mx-auto px-4 ${selectedUnit ? 'py-8 space-y-6' : 'py-12 space-y-10'}`}>
         {/* State A: Unit Selection */}
         {!selectedUnit && (
           <>
