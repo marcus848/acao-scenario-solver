@@ -8,6 +8,8 @@ import { Building2, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AspectCards } from "@/components/AspectCards";
+import { useScores } from "@/hooks/useScores";
 
 const UNITS = [
   { code: "USM", name: "Usina São Martinho" },
@@ -21,6 +23,7 @@ const Index = () => {
   const [loadingUnit, setLoadingUnit] = useState<string | null>(null);
   const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
   const [groupName, setGroupName] = useState("");
+  const { score } = useScores();
 
   // Check if there's already a selected unit on mount
   useEffect(() => {
@@ -71,7 +74,7 @@ const Index = () => {
   };
 
   const handleNavigateToQuestion = (questionId: number) => {
-    navigate(`/pergunta/${questionId}`);
+    navigate(`/question/${questionId}`);
   };
 
   const isGroupNameValid = groupName.trim().length > 0;
@@ -153,6 +156,11 @@ const Index = () => {
                   Trocar usina
                 </Button>
               </div>
+            </div>
+
+            {/* Aspect Cards */}
+            <div className="max-w-3xl mx-auto">
+              <AspectCards score={score} />
             </div>
 
             {/* Group Name Input */}
