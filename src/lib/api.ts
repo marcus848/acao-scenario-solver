@@ -71,3 +71,79 @@ export function saveGroupName(name: string): boolean {
     return false;
   }
 }
+
+/**
+ * Mapeamento de códigos de usina para unit_id
+ */
+export const UNIT_MAP: Record<string, number> = {
+  USM: 2,
+  UIR: 1,
+  USC: 3,
+  UBV: 4,
+};
+
+export interface ActiveEventResponse {
+  ok: boolean;
+  event_id?: number;
+  message?: string;
+}
+
+/**
+ * Busca evento ativo para uma usina
+ */
+export async function getActiveEvent(unitCode: string): Promise<ActiveEventResponse> {
+  const unitId = UNIT_MAP[unitCode];
+  if (!unitId) {
+    console.error("Código de usina inválido:", unitCode);
+    return { ok: false, message: "Código de usina inválido" };
+  }
+
+  try {
+    const response = await fetch(`http://localhost/sensibilizacao_2026/api/get_active_event.php?unit_id=${unitId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao buscar evento ativo:', error);
+    return { ok: false, message: "Erro de conexão com o servidor" };
+  }
+}
+
+/**
+ * Salva dados da usina e evento no localStorage
+ */
+export function saveUnitEventData(unitCode: string, unitId: number, eventId: number): boolean {
+  try {
+    localStorage.setItem("acao_unit_code", unitCode);
+    localStorage.setItem("acao_unit_id", String(unitId));
+    localStorage.setItem("acao_event_id", String(eventId));
+    return true;
+  } catch (e) {
+    console.error("Erro ao salvar dados da usina:", e);
+    return false;
+  }
+}
+
+/**
+ * Obtém dados da usina salvos no localStorage
+ */
+export function getUnitEventData(): { unitCode: string | null; unitId: string | null; eventId: string | null } {
+  try {
+    return {
+      unitCode: localStorage.getItem("acao_unit_code"),
+      unitId: localStorage.getItem("acao_unit_id"),
+      eventId: localStorage.getItem("acao_event_id"),
+    };
+  } catch (e) {
+    console.error("Erro ao ler dados da usina:", e);
+    return { unitCode: null, unitId: null, eventId: null };
+  }
+}
