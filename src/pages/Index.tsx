@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CONFIG } from "@/config/simulador";
-import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP } from "@/lib/api";
+import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData } from "@/lib/api";
 import { toast } from "sonner";
 import { Building2, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,19 +21,24 @@ const UNITS = [
 const Index = () => {
   const navigate = useNavigate();
   const [loadingUnit, setLoadingUnit] = useState<string | null>(null);
+  const [loadingGroup, setLoadingGroup] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
   const [groupName, setGroupName] = useState("");
+  const [groupId, setGroupId] = useState<number | null>(null);
   const { score } = useScores();
 
-  // Check if there's already a selected unit on mount
+  // Check if there's already a selected unit and group on mount
   useEffect(() => {
     const stored = getUnitEventData();
     if (stored?.unitCode && stored?.eventId) {
       setSelectedUnit(stored.unitCode);
     }
-    const storedGroupName = localStorage.getItem("acao_group_name");
-    if (storedGroupName) {
-      setGroupName(storedGroupName);
+    const storedGroup = getGroupData();
+    if (storedGroup.groupName) {
+      setGroupName(storedGroup.groupName);
+    }
+    if (storedGroup.groupId) {
+      setGroupId(Number(storedGroup.groupId));
     }
   }, []);
 
@@ -61,15 +66,42 @@ const Index = () => {
 
   const handleChangeUnit = () => {
     setSelectedUnit(null);
+    setGroupId(null);
+    setGroupName("");
     localStorage.removeItem("acao_unit_code");
     localStorage.removeItem("acao_unit_id");
     localStorage.removeItem("acao_event_id");
+    localStorage.removeItem("acao_group_id");
+    localStorage.removeItem("acao_group_name");
   };
 
-  const handleSaveGroupName = () => {
-    if (groupName.trim()) {
-      localStorage.setItem("acao_group_name", groupName.trim());
-      toast.success("Nome do grupo salvo!");
+  const handleConfirmGroup = async () => {
+    const stored = getUnitEventData();
+    if (!stored.eventId || !stored.unitId || !groupName.trim()) {
+      toast.error("Dados incompletos. Selecione uma usina e preencha o nome do grupo.");
+      return;
+    }
+
+    setLoadingGroup(true);
+    try {
+      const response = await saveGroupToBackend({
+        event_id: Number(stored.eventId),
+        unit_id: Number(stored.unitId),
+        group_name: groupName.trim(),
+      });
+
+      if (response.ok && response.group_id) {
+        saveGroupData(response.group_id, groupName.trim());
+        setGroupId(response.group_id);
+        toast.success("Grupo registrado com sucesso!");
+      } else {
+        toast.error(response.message || "Erro ao registrar grupo.");
+      }
+    } catch (error) {
+      console.error("Erro ao registrar grupo:", error);
+      toast.error("Erro ao conectar com o servidor.");
+    } finally {
+      setLoadingGroup(false);
     }
   };
 
@@ -78,6 +110,7 @@ const Index = () => {
   };
 
   const isGroupNameValid = groupName.trim().length > 0;
+  const isGroupRegistered = groupId !== null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -179,15 +212,27 @@ const Index = () => {
                       onChange={(e) => setGroupName(e.target.value)}
                       placeholder="Digite o nome do grupo"
                       className="flex-1"
+                      disabled={isGroupRegistered || loadingGroup}
                     />
                     <Button
-                      onClick={handleSaveGroupName}
-                      disabled={!isGroupNameValid}
+                      onClick={handleConfirmGroup}
+                      disabled={!isGroupNameValid || isGroupRegistered || loadingGroup}
                       variant="default"
                     >
-                      Salvar
+                      {loadingGroup ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : isGroupRegistered ? (
+                        "Confirmado"
+                      ) : (
+                        "Confirmar grupo"
+                      )}
                     </Button>
                   </div>
+                  {isGroupRegistered && (
+                    <p className="text-sm text-green-500">
+                      Grupo registrado com sucesso (ID: {groupId})
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -204,7 +249,7 @@ const Index = () => {
                     <Button
                       key={stage.id}
                       onClick={() => handleNavigateToQuestion(stage.id)}
-                      disabled={!isGroupNameValid}
+                      disabled={!isGroupRegistered}
                       variant="outline"
                       className="h-auto py-4 px-4 flex flex-col items-center gap-2 hover:bg-primary/10 hover:border-primary transition-all disabled:opacity-50"
                     >
@@ -215,9 +260,9 @@ const Index = () => {
                   ))}
                 </div>
 
-                {!isGroupNameValid && (
+                {!isGroupRegistered && (
                   <p className="text-center text-sm text-muted-foreground">
-                    Preencha o nome do grupo para habilitar as perguntas
+                    Confirme o nome do grupo para habilitar as perguntas
                   </p>
                 )}
               </div>
