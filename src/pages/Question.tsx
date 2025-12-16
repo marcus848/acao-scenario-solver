@@ -5,6 +5,8 @@ import { AspectCards } from "@/components/AspectCards";
 import { Question as QuestionComponent } from "@/components/Question";
 import { WordSelection1 } from "@/components/WordSelection1";
 import { WordSelection2 } from "@/components/WordSelection2";
+import { CuidarQuestion, CuidarAnswers } from "@/components/CuidarQuestion";
+import { ProcedimentosQuestion, ProcedimentosAnswers } from "@/components/ProcedimentosQuestion";
 import { Split } from "@/components/layout/Split";
 import { RenderBlock } from "@/components/blocks/RenderBlock";
 import { CONFIG, Score, Choice } from "@/config/simulador";
@@ -29,8 +31,8 @@ const Question = () => {
   const navigate = useNavigate();
   const { score, applyEffect } = useScores();
   const [pendingAnswer, setPendingAnswer] = useState<{
-    type: "choice" | "rating" | "word-selection";
-    value: string | Record<string, number> | string[];
+    type: "choice" | "rating" | "word-selection" | "cuidar" | "procedimentos";
+    value: unknown;
     label?: string;
     effect: Partial<Score>;
   } | null>(null);
@@ -127,6 +129,72 @@ const Question = () => {
     setShowConfirm(true);
   };
 
+  const handleCuidarComplete = (answers: CuidarAnswers) => {
+    // Count praticado vs nao_praticado
+    const praticadoCount = Object.values(answers).filter((v) => v === "praticado").length;
+    const naoPraticadoCount = Object.values(answers).filter((v) => v === "nao_praticado").length;
+    
+    // Effect based on how many were "praticado"
+    const effect: Partial<Score> = {
+      pessoas: praticadoCount * 2 - naoPraticadoCount,
+      atitudes: praticadoCount * 2 - naoPraticadoCount,
+      negocio: praticadoCount - naoPraticadoCount,
+    };
+
+    setPendingAnswer({
+      type: "cuidar",
+      value: answers,
+      label: `Praticado: ${praticadoCount}, Não praticado: ${naoPraticadoCount}`,
+      effect,
+    });
+    setShowConfirm(true);
+  };
+
+  const handleProcedimentosComplete = (answers: ProcedimentosAnswers) => {
+    // Simple effect based on answers
+    let effect: Partial<Score> = {};
+    
+    // Q1: Se respondeu "sim", pequeno bonus
+    if (answers.q1 === "sim") {
+      effect = { pessoas: 2, atitudes: 2, negocio: 2 };
+    }
+    
+    // Q2: Effect based on frequency
+    const q2Effects: Record<string, Partial<Score>> = {
+      sempre: { pessoas: 5, atitudes: 5, negocio: 5 },
+      quase_sempre: { pessoas: 3, atitudes: 3, negocio: 3 },
+      as_vezes: { pessoas: 1, atitudes: 1, negocio: 1 },
+      raramente: { pessoas: -1, atitudes: -1, negocio: -1 },
+      nunca: { pessoas: -3, atitudes: -3, negocio: -3 },
+    };
+    
+    if (answers.q2) {
+      const q2Effect = q2Effects[answers.q2] || {};
+      effect = {
+        pessoas: (effect.pessoas || 0) + (q2Effect.pessoas || 0),
+        atitudes: (effect.atitudes || 0) + (q2Effect.atitudes || 0),
+        negocio: (effect.negocio || 0) + (q2Effect.negocio || 0),
+      };
+    }
+
+    const q1Label = answers.q1 === "sim" ? "Sim" : "Não";
+    const q2Labels: Record<string, string> = {
+      sempre: "Sempre",
+      quase_sempre: "Quase Sempre",
+      as_vezes: "Às vezes",
+      raramente: "Raramente",
+      nunca: "Nunca",
+    };
+
+    setPendingAnswer({
+      type: "procedimentos",
+      value: answers,
+      label: `Q1: ${q1Label}, Q2: ${answers.q2 ? q2Labels[answers.q2] : "-"}`,
+      effect,
+    });
+    setShowConfirm(true);
+  };
+
   const handleConfirmSend = async () => {
     if (!pendingAnswer) return;
 
@@ -194,6 +262,12 @@ const Question = () => {
     }
     if (injected.component === "RatingQuestion" && injected.props.onSubmit === "useIndexHandleRating") {
       injected.props.onSubmit = handleRatingSubmit;
+    }
+    if (injected.component === "CuidarQuestion" && injected.props.onComplete === "useIndexHandleCuidar") {
+      injected.props.onComplete = handleCuidarComplete;
+    }
+    if (injected.component === "ProcedimentosQuestion" && injected.props.onComplete === "useIndexHandleProcedimentos") {
+      injected.props.onComplete = handleProcedimentosComplete;
     }
 
     return injected;
