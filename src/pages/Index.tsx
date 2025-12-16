@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CONFIG } from "@/config/simulador";
-import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData } from "@/lib/api";
+import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData, listGroups, GroupItem } from "@/lib/api";
 import { toast } from "sonner";
 import { Building2, Loader2, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { AspectCards } from "@/components/AspectCards";
 import { useScores } from "@/hooks/useScores";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const UNITS = [
   { code: "USM", name: "Usina São Martinho" },
@@ -17,6 +24,8 @@ const UNITS = [
   { code: "USC", name: "Usina Santa Cruz" },
   { code: "UBV", name: "Usina Boa Vista" },
 ];
+
+type GroupMode = "register" | "recover";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -26,6 +35,12 @@ const Index = () => {
   const [groupName, setGroupName] = useState("");
   const [groupId, setGroupId] = useState<number | null>(null);
   const { score } = useScores();
+
+  // Group mode state
+  const [groupMode, setGroupMode] = useState<GroupMode>("register");
+  const [availableGroups, setAvailableGroups] = useState<GroupItem[]>([]);
+  const [loadingGroups, setLoadingGroups] = useState(false);
+  const [selectedRecoverGroupId, setSelectedRecoverGroupId] = useState<string>("");
 
   // Check if there's already a selected unit and group on mount
   useEffect(() => {
@@ -41,6 +56,38 @@ const Index = () => {
       setGroupId(Number(storedGroup.groupId));
     }
   }, []);
+
+  // Fetch groups when switching to recover mode
+  useEffect(() => {
+    if (groupMode === "recover" && selectedUnit && !isGroupRegistered) {
+      fetchGroups();
+    }
+  }, [groupMode, selectedUnit]);
+
+  const fetchGroups = async () => {
+    const stored = getUnitEventData();
+    if (!stored.eventId || !stored.unitId) {
+      toast.error("Selecione a usina primeiro.");
+      return;
+    }
+
+    setLoadingGroups(true);
+    try {
+      const response = await listGroups(Number(stored.eventId), Number(stored.unitId));
+      if (response.ok && response.groups) {
+        setAvailableGroups(response.groups);
+      } else {
+        toast.error(response.message || "Erro ao buscar grupos.");
+        setAvailableGroups([]);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar grupos:", error);
+      toast.error("Erro ao conectar com o servidor.");
+      setAvailableGroups([]);
+    } finally {
+      setLoadingGroups(false);
+    }
+  };
 
   const handleSelectUnit = async (unitCode: string) => {
     setLoadingUnit(unitCode);
@@ -68,6 +115,9 @@ const Index = () => {
     setSelectedUnit(null);
     setGroupId(null);
     setGroupName("");
+    setGroupMode("register");
+    setAvailableGroups([]);
+    setSelectedRecoverGroupId("");
     localStorage.removeItem("acao_unit_code");
     localStorage.removeItem("acao_unit_id");
     localStorage.removeItem("acao_event_id");
@@ -103,6 +153,24 @@ const Index = () => {
     } finally {
       setLoadingGroup(false);
     }
+  };
+
+  const handleRecoverGroup = () => {
+    if (!selectedRecoverGroupId) {
+      toast.error("Selecione um grupo.");
+      return;
+    }
+
+    const selectedGroup = availableGroups.find(g => String(g.id) === selectedRecoverGroupId);
+    if (!selectedGroup) {
+      toast.error("Grupo não encontrado.");
+      return;
+    }
+
+    saveGroupData(selectedGroup.id, selectedGroup.name);
+    setGroupId(selectedGroup.id);
+    setGroupName(selectedGroup.name);
+    toast.success("Grupo selecionado com sucesso!");
   };
 
   const handleNavigateToQuestion = (questionId: number) => {
@@ -198,42 +266,116 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Group Name Input */}
+            {/* Group Card */}
             <div className="max-w-md mx-auto">
               <div className="card-simulator p-6 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="groupName" className="text-foreground">
-                    Nome do Grupo *
-                  </Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="groupName"
-                      value={groupName}
-                      onChange={(e) => setGroupName(e.target.value)}
-                      placeholder="Digite o nome do grupo"
-                      className="flex-1"
-                      disabled={isGroupRegistered || loadingGroup}
-                    />
-                    <Button
-                      onClick={handleConfirmGroup}
-                      disabled={!isGroupNameValid || isGroupRegistered || loadingGroup}
-                      variant="default"
+                {/* Mode Toggle */}
+                {!isGroupRegistered && (
+                  <div className="flex gap-1 p-1 bg-muted rounded-lg">
+                    <button
+                      onClick={() => setGroupMode("register")}
+                      className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${
+                        groupMode === "register"
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
                     >
-                      {loadingGroup ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : isGroupRegistered ? (
-                        "Confirmado"
-                      ) : (
-                        "Confirmar grupo"
-                      )}
-                    </Button>
+                      Cadastrar grupo
+                    </button>
+                    <button
+                      onClick={() => setGroupMode("recover")}
+                      className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${
+                        groupMode === "recover"
+                          ? "bg-background text-foreground shadow-sm"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      Recuperar grupo
+                    </button>
                   </div>
-                  {isGroupRegistered && (
-                    <p className="text-sm text-green-500">
-                      Grupo registrado com sucesso (ID: {groupId})
-                    </p>
-                  )}
-                </div>
+                )}
+
+                {/* Mode: Register */}
+                {groupMode === "register" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="groupName" className="text-foreground">
+                      Nome do Grupo *
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="groupName"
+                        value={groupName}
+                        onChange={(e) => setGroupName(e.target.value)}
+                        placeholder="Digite o nome do grupo"
+                        className="flex-1"
+                        disabled={isGroupRegistered || loadingGroup}
+                      />
+                      <Button
+                        onClick={handleConfirmGroup}
+                        disabled={!isGroupNameValid || isGroupRegistered || loadingGroup}
+                        variant="default"
+                      >
+                        {loadingGroup ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : isGroupRegistered ? (
+                          "Confirmado"
+                        ) : (
+                          "Confirmar grupo"
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Mode: Recover */}
+                {groupMode === "recover" && !isGroupRegistered && (
+                  <div className="space-y-2">
+                    <Label className="text-foreground">
+                      Selecione o Grupo *
+                    </Label>
+                    {loadingGroups ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      </div>
+                    ) : availableGroups.length === 0 ? (
+                      <p className="text-sm text-muted-foreground py-2">
+                        Nenhum grupo cadastrado ainda para esta rodada.
+                      </p>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Select
+                          value={selectedRecoverGroupId}
+                          onValueChange={setSelectedRecoverGroupId}
+                        >
+                          <SelectTrigger className="flex-1">
+                            <SelectValue placeholder="Selecione um grupo" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {availableGroups.map((group) => (
+                              <SelectItem key={group.id} value={String(group.id)}>
+                                {group.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          onClick={handleRecoverGroup}
+                          disabled={!selectedRecoverGroupId}
+                          variant="default"
+                        >
+                          Continuar
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Success Message */}
+                {isGroupRegistered && (
+                  <p className="text-sm text-green-500">
+                    Grupo selecionado (ID: {groupId}) - {groupName}
+                  </p>
+                )}
               </div>
             </div>
 
