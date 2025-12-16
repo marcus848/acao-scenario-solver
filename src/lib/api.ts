@@ -3,30 +3,47 @@
  * 
  * Backend endpoints:
  * - /api/save_answer.php - Salva resposta individual de pergunta
+ * - /api/save_group.php - Registra grupo
+ * - /api/list_groups.php - Lista grupos de um evento/usina
+ * - /api/get_active_event.php - Busca evento ativo
  */
 
-import { Score } from "@/config/simulador";
+// ============ ANSWER PAYLOAD (novo formato) ============
 
-export interface AnswerPayload {
+export interface AnswerItemPayload {
+  item_key: string;
+  item_label: string;
+  value_text?: string | null;
+  value_num?: number | null;
+  is_correct?: number; // -1 incorreto | 0 neutro | 1 correto
+  delta_pessoas?: number;
+  delta_atitudes?: number;
+  delta_negocio?: number;
+}
+
+export interface SaveAnswerPayload {
+  event_id: number;
+  unit_id: number;
+  group_id: number;
   group_name: string;
   question_id: number;
-  answer: {
-    type: "choice" | "rating" | "word-selection" | "cuidar" | "procedimentos";
-    value: unknown;
-    label?: string;
+  delta: {
+    pessoas: number;
+    atitudes: number;
+    negocio: number;
   };
-  effect: Partial<Score>;
-  date: string;      // YYYY-MM-DD
-  time: string;      // HH:MM:SS
+  items: AnswerItemPayload[];
+}
+
+export interface SaveAnswerResponse {
+  ok: boolean;
+  message?: string;
 }
 
 /**
- * Envia a resposta de uma pergunta para o backend PHP
- * 
- * @param payload - Dados da resposta formatados conforme AnswerPayload
- * @returns Promise com a resposta do backend ou null em caso de erro
+ * Envia a resposta de uma pergunta para o backend PHP (novo formato)
  */
-export async function sendAnswerToBackend(payload: AnswerPayload) {
+export async function sendAnswerToBackend(payload: SaveAnswerPayload): Promise<SaveAnswerResponse> {
   try {
     const response = await fetch('http://localhost/sensibilizacao_2026/api/save_answer.php', {
       method: 'POST',
@@ -43,8 +60,38 @@ export async function sendAnswerToBackend(payload: AnswerPayload) {
     return await response.json();
   } catch (error) {
     console.error('Erro ao enviar resposta para backend:', error);
-    return null;
+    return { ok: false, message: "Erro de conexão com o servidor" };
   }
+}
+
+/**
+ * Obtém dados necessários para envio de resposta do localStorage
+ */
+export function getAnswerContext(): { 
+  eventId: number | null; 
+  unitId: number | null; 
+  groupId: number | null; 
+  groupName: string | null;
+  missingFields: string[];
+} {
+  const eventId = localStorage.getItem("acao_event_id");
+  const unitId = localStorage.getItem("acao_unit_id");
+  const groupId = localStorage.getItem("acao_group_id");
+  const groupName = localStorage.getItem("acao_group_name");
+
+  const missingFields: string[] = [];
+  if (!eventId) missingFields.push("evento");
+  if (!unitId) missingFields.push("usina");
+  if (!groupId) missingFields.push("grupo (ID)");
+  if (!groupName) missingFields.push("grupo (nome)");
+
+  return {
+    eventId: eventId ? parseInt(eventId, 10) : null,
+    unitId: unitId ? parseInt(unitId, 10) : null,
+    groupId: groupId ? parseInt(groupId, 10) : null,
+    groupName,
+    missingFields,
+  };
 }
 
 /**
