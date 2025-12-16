@@ -141,6 +141,46 @@ export function getGroupData(): { groupId: string | null; groupName: string | nu
 }
 
 /**
+ * Interface para grupo retornado pelo backend
+ */
+export interface GroupItem {
+  id: number;
+  name: string;
+}
+
+export interface ListGroupsResponse {
+  ok: boolean;
+  groups?: GroupItem[];
+  message?: string;
+}
+
+/**
+ * Busca lista de grupos para um evento/usina
+ */
+export async function listGroups(eventId: number, unitId: number): Promise<ListGroupsResponse> {
+  try {
+    const response = await fetch(
+      `http://localhost/sensibilizacao_2026/api/list_groups.php?event_id=${eventId}&unit_id=${unitId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao buscar grupos:', error);
+    return { ok: false, message: "Erro de conexão com o servidor" };
+  }
+}
+
+/**
  * Mapeamento de códigos de usina para unit_id
  */
 export const UNIT_MAP: Record<string, number> = {
