@@ -140,12 +140,13 @@ const Index = () => {
         group_name: groupName.trim(),
       });
 
-      if (response.ok && response.group_id) {
+      if (response.ok === true && response.group_id) {
         saveGroupData(response.group_id, groupName.trim());
         setGroupId(response.group_id);
         toast.success("Grupo registrado com sucesso!");
       } else {
-        toast.error(response.message || "Erro ao registrar grupo.");
+        // Grupo já existe ou outro erro
+        toast.error("Este grupo já existe nesta rodada. Use 'Recuperar grupo'.");
       }
     } catch (error) {
       console.error("Erro ao registrar grupo:", error);
