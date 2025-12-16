@@ -6,7 +6,7 @@ export type CuidarKey = "consciencia" | "uniao" | "integridade" | "disciplina" |
 export type CuidarValue = "praticado" | "nao_praticado";
 export type CuidarAnswers = Record<CuidarKey, CuidarValue>;
 
-const CUIDAR_ITEMS: { key: CuidarKey; name: string; description: string }[] = [
+export const CUIDAR_ITEMS: { key: CuidarKey; name: string; description: string }[] = [
   { key: "consciencia", name: "Consciência", description: "Estar presente, atento, perceber riscos e consequências." },
   { key: "uniao", name: "União", description: "Operação Segura é coletiva: eu protejo você, você me protege." },
   { key: "integridade", name: "Integridade", description: "Fazer sempre o certo, mesmo quando ninguém está olhando." },

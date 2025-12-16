@@ -5,12 +5,17 @@ import { AspectCards } from "@/components/AspectCards";
 import { Question as QuestionComponent } from "@/components/Question";
 import { WordSelection1 } from "@/components/WordSelection1";
 import { WordSelection2 } from "@/components/WordSelection2";
-import { CuidarQuestion, CuidarAnswers } from "@/components/CuidarQuestion";
+import { CuidarQuestion, CuidarAnswers, CUIDAR_ITEMS } from "@/components/CuidarQuestion";
 import { ProcedimentosQuestion, ProcedimentosAnswers } from "@/components/ProcedimentosQuestion";
 import { Split } from "@/components/layout/Split";
 import { RenderBlock } from "@/components/blocks/RenderBlock";
 import { CONFIG, Score, Choice } from "@/config/simulador";
-import { sendAnswerToBackend, getGroupName, AnswerPayload } from "@/lib/api";
+import { 
+  sendAnswerToBackend, 
+  getAnswerContext,
+  SaveAnswerPayload,
+  AnswerItemPayload 
+} from "@/lib/api";
 import { useScores } from "@/hooks/useScores";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
@@ -26,16 +31,16 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
+interface PendingAnswer {
+  items: AnswerItemPayload[];
+  delta: { pessoas: number; atitudes: number; negocio: number };
+}
+
 const Question = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { score, applyEffect } = useScores();
-  const [pendingAnswer, setPendingAnswer] = useState<{
-    type: "choice" | "rating" | "word-selection" | "cuidar" | "procedimentos";
-    value: unknown;
-    label?: string;
-    effect: Partial<Score>;
-  } | null>(null);
+  const [pendingAnswer, setPendingAnswer] = useState<PendingAnswer | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSending, setIsSending] = useState(false);
 
@@ -54,36 +59,58 @@ const Question = () => {
   }
 
   const handleChoice = (choice: Choice) => {
-    setPendingAnswer({
-      type: "choice",
-      value: choice.label,
-      label: choice.label,
-      effect: choice.effect,
-    });
+    const items: AnswerItemPayload[] = [{
+      item_key: choice.id || choice.label,
+      item_label: choice.label,
+      value_text: "selected",
+      is_correct: 0,
+      delta_pessoas: choice.effect.pessoas || 0,
+      delta_atitudes: choice.effect.atitudes || 0,
+      delta_negocio: choice.effect.negocio || 0,
+    }];
+
+    const delta = {
+      pessoas: choice.effect.pessoas || 0,
+      atitudes: choice.effect.atitudes || 0,
+      negocio: choice.effect.negocio || 0,
+    };
+
+    setPendingAnswer({ items, delta });
     setShowConfirm(true);
   };
 
   const handleRatingSubmit = (ratings: Record<string, number>) => {
-    setPendingAnswer({
-      type: "rating",
-      value: ratings,
-      label: `Avaliação: ${Object.entries(ratings).map(([k, v]) => `${k}=${v}`).join(", ")}`,
-      effect: {}, // Ratings don't have direct effects
-    });
+    const items: AnswerItemPayload[] = Object.entries(ratings).map(([key, value]) => ({
+      item_key: key,
+      item_label: key,
+      value_num: value,
+      is_correct: 0,
+      delta_pessoas: 0,
+      delta_atitudes: 0,
+      delta_negocio: 0,
+    }));
+
+    setPendingAnswer({ items, delta: { pessoas: 0, atitudes: 0, negocio: 0 } });
     setShowConfirm(true);
   };
 
   const handleWordSelection = (selectedIds: string[], type: "word-selection-1" | "word-selection-2") => {
     const words = stageData.words || [];
-    let effect: Partial<Score> = {};
+    const rightBlockProps = stageData.rightBlock?.props as Record<string, unknown> | undefined;
+    const rightBlockWords = (rightBlockProps?.words as typeof words) || [];
+    const allWords = words.length > 0 ? words : rightBlockWords;
+
+    const items: AnswerItemPayload[] = [];
+    let totalDelta = { pessoas: 0, atitudes: 0, negocio: 0 };
 
     if (type === "word-selection-1") {
       const correctSelected = selectedIds.filter((id) =>
-        words.find((w) => w.id === id && w.isCorrect)
+        allWords.find((w) => w.id === id && w.isCorrect)
       );
       const correctPercentage =
         selectedIds.length > 0 ? (correctSelected.length / selectedIds.length) * 100 : 0;
 
+      let effect: Partial<Score>;
       if (correctPercentage >= 80) {
         effect = { pessoas: +5, atitudes: +5, negocio: +5 };
       } else if (correctPercentage >= 60) {
@@ -91,148 +118,167 @@ const Question = () => {
       } else {
         effect = { pessoas: +1, atitudes: +1, negocio: +1 };
       }
-    } else {
-      const aspectTotals: Partial<Score> = {};
+
       selectedIds.forEach((id) => {
-        const word = words.find((w) => w.id === id);
+        const word = allWords.find((w) => w.id === id);
         if (word) {
-          if (word.effectByAspect) {
-            Object.entries(word.effectByAspect).forEach(([key, value]) => {
-              if (value !== undefined) {
-                aspectTotals[key as keyof Score] = (aspectTotals[key as keyof Score] || 0) + value;
-              }
-            });
-          } else if (word.points) {
-            const pointsPerAspect = Math.round(word.points / 3);
-            ["pessoas", "atitudes", "negocio"].forEach((key) => {
-              aspectTotals[key as keyof Score] = (aspectTotals[key as keyof Score] || 0) + pointsPerAspect;
-            });
-          }
+          items.push({
+            item_key: word.id,
+            item_label: word.text,
+            value_text: "selected",
+            is_correct: word.isCorrect ? 1 : -1,
+            delta_pessoas: 0,
+            delta_atitudes: 0,
+            delta_negocio: 0,
+          });
         }
       });
-      effect = aspectTotals;
+
+      totalDelta = {
+        pessoas: effect.pessoas || 0,
+        atitudes: effect.atitudes || 0,
+        negocio: effect.negocio || 0,
+      };
+    } else {
+      // word-selection-2: each word has its own effectByAspect
+      selectedIds.forEach((id) => {
+        const word = allWords.find((w) => w.id === id);
+        if (word) {
+          const dp = word.effectByAspect?.pessoas || 0;
+          const da = word.effectByAspect?.atitudes || 0;
+          const dn = word.effectByAspect?.negocio || 0;
+
+          items.push({
+            item_key: word.id,
+            item_label: word.text,
+            value_text: "selected",
+            is_correct: 0,
+            delta_pessoas: dp,
+            delta_atitudes: da,
+            delta_negocio: dn,
+          });
+
+          totalDelta.pessoas += dp;
+          totalDelta.atitudes += da;
+          totalDelta.negocio += dn;
+        }
+      });
     }
 
-    const selectedLabels = selectedIds
-      .map((id) => {
-        const index = words.findIndex((w) => w.id === id);
-        return index >= 0 ? `Opção ${index + 1}` : id;
-      })
-      .join(", ");
-
-    setPendingAnswer({
-      type: "word-selection",
-      value: selectedIds,
-      label: `Selecionou: ${selectedLabels}`,
-      effect,
-    });
+    setPendingAnswer({ items, delta: totalDelta });
     setShowConfirm(true);
   };
 
   const handleCuidarComplete = (answers: CuidarAnswers) => {
-    // Count praticado vs nao_praticado
+    const items: AnswerItemPayload[] = CUIDAR_ITEMS.map((item) => ({
+      item_key: item.key,
+      item_label: item.name,
+      value_text: answers[item.key],
+      is_correct: answers[item.key] === "praticado" ? 1 : -1,
+      delta_pessoas: 0,
+      delta_atitudes: 0,
+      delta_negocio: 0,
+    }));
+
+    // Calculate total delta based on praticado/nao_praticado
     const praticadoCount = Object.values(answers).filter((v) => v === "praticado").length;
     const naoPraticadoCount = Object.values(answers).filter((v) => v === "nao_praticado").length;
-    
-    // Effect based on how many were "praticado"
-    const effect: Partial<Score> = {
+
+    const totalDelta = {
       pessoas: praticadoCount * 2 - naoPraticadoCount,
       atitudes: praticadoCount * 2 - naoPraticadoCount,
       negocio: praticadoCount - naoPraticadoCount,
     };
 
-    setPendingAnswer({
-      type: "cuidar",
-      value: answers,
-      label: `Praticado: ${praticadoCount}, Não praticado: ${naoPraticadoCount}`,
-      effect,
-    });
+    setPendingAnswer({ items, delta: totalDelta });
     setShowConfirm(true);
   };
 
   const handleProcedimentosComplete = (answers: ProcedimentosAnswers) => {
-    // Simple effect based on answers
-    let effect: Partial<Score> = {};
-    
-    // Q1: Se respondeu "sim", pequeno bonus
+    const q1Label = "O procedimento construído pelo seu grupo, teria evitado a fatalidade do vídeo?";
+    const q2Label = "Em nosso caso, os procedimentos são seguidos mesmo sob pressão?";
+
+    const items: AnswerItemPayload[] = [
+      {
+        item_key: "q4_1",
+        item_label: q1Label,
+        value_text: answers.q1 || null,
+        is_correct: 0,
+        delta_pessoas: 0,
+        delta_atitudes: 0,
+        delta_negocio: 0,
+      },
+      {
+        item_key: "q4_2",
+        item_label: q2Label,
+        value_text: answers.q2 || null,
+        is_correct: 0,
+        delta_pessoas: 0,
+        delta_atitudes: 0,
+        delta_negocio: 0,
+      },
+    ];
+
+    // Calculate total delta
+    let totalDelta = { pessoas: 0, atitudes: 0, negocio: 0 };
+
     if (answers.q1 === "sim") {
-      effect = { pessoas: 2, atitudes: 2, negocio: 2 };
+      totalDelta.pessoas += 2;
+      totalDelta.atitudes += 2;
+      totalDelta.negocio += 2;
     }
-    
-    // Q2: Effect based on frequency
-    const q2Effects: Record<string, Partial<Score>> = {
+
+    const q2Effects: Record<string, { pessoas: number; atitudes: number; negocio: number }> = {
       sempre: { pessoas: 5, atitudes: 5, negocio: 5 },
       quase_sempre: { pessoas: 3, atitudes: 3, negocio: 3 },
       as_vezes: { pessoas: 1, atitudes: 1, negocio: 1 },
       raramente: { pessoas: -1, atitudes: -1, negocio: -1 },
       nunca: { pessoas: -3, atitudes: -3, negocio: -3 },
     };
-    
-    if (answers.q2) {
-      const q2Effect = q2Effects[answers.q2] || {};
-      effect = {
-        pessoas: (effect.pessoas || 0) + (q2Effect.pessoas || 0),
-        atitudes: (effect.atitudes || 0) + (q2Effect.atitudes || 0),
-        negocio: (effect.negocio || 0) + (q2Effect.negocio || 0),
-      };
+
+    if (answers.q2 && q2Effects[answers.q2]) {
+      const q2Effect = q2Effects[answers.q2];
+      totalDelta.pessoas += q2Effect.pessoas;
+      totalDelta.atitudes += q2Effect.atitudes;
+      totalDelta.negocio += q2Effect.negocio;
     }
 
-    const q1Label = answers.q1 === "sim" ? "Sim" : "Não";
-    const q2Labels: Record<string, string> = {
-      sempre: "Sempre",
-      quase_sempre: "Quase Sempre",
-      as_vezes: "Às vezes",
-      raramente: "Raramente",
-      nunca: "Nunca",
-    };
-
-    setPendingAnswer({
-      type: "procedimentos",
-      value: answers,
-      label: `Q1: ${q1Label}, Q2: ${answers.q2 ? q2Labels[answers.q2] : "-"}`,
-      effect,
-    });
+    setPendingAnswer({ items, delta: totalDelta });
     setShowConfirm(true);
   };
 
   const handleConfirmSend = async () => {
     if (!pendingAnswer) return;
 
-    const groupName = getGroupName();
-    if (!groupName) {
-      toast.error("Nome do grupo não encontrado. Volte para a Home e salve o nome do grupo.");
+    const ctx = getAnswerContext();
+    
+    if (ctx.missingFields.length > 0) {
+      toast.error(`Dados faltando: ${ctx.missingFields.join(", ")}. Volte para a Home e configure corretamente.`);
       setShowConfirm(false);
       return;
     }
 
     setIsSending(true);
 
-    const now = new Date();
-    const date = now.toISOString().split("T")[0];
-    const time = now.toTimeString().split(" ")[0];
-
-    const payload: AnswerPayload = {
-      group_name: groupName,
+    const payload: SaveAnswerPayload = {
+      event_id: ctx.eventId!,
+      unit_id: ctx.unitId!,
+      group_id: ctx.groupId!,
+      group_name: ctx.groupName!,
       question_id: questionId,
-      answer: {
-        type: pendingAnswer.type,
-        value: pendingAnswer.value,
-        label: pendingAnswer.label,
-      },
-      effect: pendingAnswer.effect,
-      date,
-      time,
+      delta: pendingAnswer.delta,
+      items: pendingAnswer.items,
     };
 
     const response = await sendAnswerToBackend(payload);
 
-    if (response) {
+    if (response.ok) {
       // Apply effect to scores after successful submission
-      applyEffect(pendingAnswer.effect);
+      applyEffect(pendingAnswer.delta);
       toast.success("Resposta enviada com sucesso!");
       navigate("/");
     } else {
-      toast.error("Erro ao enviar resposta. Verifique o console.");
+      toast.error(response.message || "Erro ao enviar resposta. Tente novamente.");
     }
 
     setIsSending(false);
@@ -359,9 +405,9 @@ const Question = () => {
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar resposta?</AlertDialogTitle>
+            <AlertDialogTitle>Confirmar envio?</AlertDialogTitle>
             <AlertDialogDescription>
-              Deseja confirmar e enviar sua resposta?
+              Deseja confirmar e enviar sua resposta? Não será possível responder novamente.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
