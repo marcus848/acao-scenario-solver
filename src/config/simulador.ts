@@ -20,14 +20,16 @@ export type BlockDef =
   | { component: "Question"; props: Record<string, unknown> }
   | { component: "WordSelection1"; props: Record<string, unknown> }
   | { component: "WordSelection2"; props: Record<string, unknown> }
-  | { component: "RatingQuestion"; props: Record<string, unknown> };
+  | { component: "RatingQuestion"; props: Record<string, unknown> }
+  | { component: "CuidarQuestion"; props: Record<string, unknown> }
+  | { component: "ProcedimentosQuestion"; props: Record<string, unknown> };
 
 export type Stage = {
   id: number;
   title: string;
   text: string;
   choices: Choice[];
-  type?: "default" | "split" | "word-selection-1" | "word-selection-2";
+  type?: "default" | "split" | "word-selection-1" | "word-selection-2" | "cuidar" | "procedimentos";
   words?: Array<{
     id: string;
     text: string;
@@ -148,7 +150,58 @@ export const CONFIG: SimulatorConfig = {
     },
     {
       id: 3,
-      title: "Pergunta 3",
+      title: "CUIDAR",
+      text: `Consciência: Estar presente, atento, perceber riscos e consequências.
+União: Operação Segura é coletiva: eu protejo você, você me protege.
+Integridade: Fazer sempre o certo, mesmo quando ninguém está olhando.
+Disciplina: Cumprir o combinado, seguir procedimentos.
+Atenção: Não ficar no automático: pausar, processar e prosseguir.
+Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
+      layout: "split",
+      leftBlock: {
+        component: "Video",
+        props: {
+          src: Video1,
+        }
+      },
+      rightBlock: {
+        component: "CuidarQuestion",
+        props: {
+          title: "CUIDAR",
+          description: `Consciência: Estar presente, atento, perceber riscos e consequências.
+União: Operação Segura é coletiva: eu protejo você, você me protege.
+Integridade: Fazer sempre o certo, mesmo quando ninguém está olhando.
+Disciplina: Cumprir o combinado, seguir procedimentos.
+Atenção: Não ficar no automático: pausar, processar e prosseguir.
+Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
+          onComplete: "useIndexHandleCuidar"
+        }
+      },
+      choices: []
+    },
+    {
+      id: 4,
+      title: "Procedimentos",
+      text: "Avalie os procedimentos em relação ao vídeo apresentado.",
+      layout: "split",
+      leftBlock: {
+        component: "Video",
+        props: {
+          src: Video1,
+        }
+      },
+      rightBlock: {
+        component: "ProcedimentosQuestion",
+        props: {
+          title: "Procedimentos",
+          onComplete: "useIndexHandleProcedimentos"
+        }
+      },
+      choices: []
+    },
+    {
+      id: 5,
+      title: "Pergunta 5",
       text: "O Nosso Jeito Seguro de Ser, apresenta 10 situações de riscos que precisam ser observadas para termos uma operação segura. Quais delas não foram seguidas nesta cena?",
       layout: "split",
       leftBlock: {
@@ -164,16 +217,16 @@ export const CONFIG: SimulatorConfig = {
           description: "O Nosso Jeito Seguro de Ser, apresenta 10 situações de riscos que precisam ser observadas para termos uma operação segura. Quais delas não foram seguidas nesta cena?",
           maxSelections: 3,
           words: [
-            { id: "p3_01", text: "1. Utilizamos os Equipamentos de Proteção Individual (EPI) recomendados e as ferramentas requeridas e adequadas para cada atividade", effectByAspect: { pessoas: +3, atitudes: +3, negocio: +2 } },
-            { id: "p3_02", text: "2. Só realizamos trabalhos de risco com a Autorização para Trabalhos Críticos ou Especiais (ATC/ATE) liberada no local e com implantação das medidas preventivas necessárias", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p3_03", text: "3. Sempre trabalhamos com máquinas ou equipamentos com as devidas proteções de partes que podem gerar acidentes", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p3_04", text: "4. Comunicamos imediatamente todo acidente à liderança, à Saúde Ocupacional ou à Segurança do Trabalho", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
-            { id: "p3_05", text: "5. Sempre trabalhamos sem fazer o uso de bebidas alcoólicas ou drogas", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +1 } },
-            { id: "p3_06", text: "6. Respeitamos os limites de velocidade, conduzimos veículos sem utilizar aparelhos celulares simultaneamente e usamos o cinto de segurança, mesmo quando somos passageiros", effectByAspect: { pessoas: +3, atitudes: +2, negocio: +2 } },
-            { id: "p3_07", text: "7. Respeitamos as áreas restritas, classificadas e isoladas e não entramos sem autorização", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p3_08", text: "8. Realizamos toda e qualquer atividade em condição segura e temos conhecimento do direito de recusar a execução de uma atividade se considerá-la insegura", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
-            { id: "p3_09", text: "9. Somente executamos atividades em equipamentos e instalações após certificar que todas as fontes de energia foram isoladas de forma segura", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p3_10", text: "10. Somente operamos equipamentos de força motriz própria se tivermos habilitação, capacitação e autorização", effectByAspect: { pessoas: +3, atitudes: +3, negocio: +3 } }
+            { id: "p5_01", text: "1. Utilizamos os Equipamentos de Proteção Individual (EPI) recomendados e as ferramentas requeridas e adequadas para cada atividade", effectByAspect: { pessoas: +3, atitudes: +3, negocio: +2 } },
+            { id: "p5_02", text: "2. Só realizamos trabalhos de risco com a Autorização para Trabalhos Críticos ou Especiais (ATC/ATE) liberada no local e com implantação das medidas preventivas necessárias", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
+            { id: "p5_03", text: "3. Sempre trabalhamos com máquinas ou equipamentos com as devidas proteções de partes que podem gerar acidentes", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
+            { id: "p5_04", text: "4. Comunicamos imediatamente todo acidente à liderança, à Saúde Ocupacional ou à Segurança do Trabalho", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
+            { id: "p5_05", text: "5. Sempre trabalhamos sem fazer o uso de bebidas alcoólicas ou drogas", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +1 } },
+            { id: "p5_06", text: "6. Respeitamos os limites de velocidade, conduzimos veículos sem utilizar aparelhos celulares simultaneamente e usamos o cinto de segurança, mesmo quando somos passageiros", effectByAspect: { pessoas: +3, atitudes: +2, negocio: +2 } },
+            { id: "p5_07", text: "7. Respeitamos as áreas restritas, classificadas e isoladas e não entramos sem autorização", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
+            { id: "p5_08", text: "8. Realizamos toda e qualquer atividade em condição segura e temos conhecimento do direito de recusar a execução de uma atividade se considerá-la insegura", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
+            { id: "p5_09", text: "9. Somente executamos atividades em equipamentos e instalações após certificar que todas as fontes de energia foram isoladas de forma segura", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
+            { id: "p5_10", text: "10. Somente operamos equipamentos de força motriz própria se tivermos habilitação, capacitação e autorização", effectByAspect: { pessoas: +3, atitudes: +3, negocio: +3 } }
           ],
           onComplete: "useIndexHandleWordSel2"
         }

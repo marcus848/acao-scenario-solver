@@ -11,8 +11,8 @@ export interface AnswerPayload {
   group_name: string;
   question_id: number;
   answer: {
-    type: "choice" | "rating" | "word-selection";
-    value: string | Record<string, number> | string[];
+    type: "choice" | "rating" | "word-selection" | "cuidar" | "procedimentos";
+    value: unknown;
     label?: string;
   };
   effect: Partial<Score>;
