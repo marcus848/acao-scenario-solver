@@ -2,6 +2,8 @@ import { Question } from "@/components/Question";
 import { WordSelection1 } from "@/components/WordSelection1";
 import { WordSelection2 } from "@/components/WordSelection2";
 import { RatingQuestion } from "@/components/RatingQuestion";
+import { CuidarQuestion } from "@/components/CuidarQuestion";
+import { ProcedimentosQuestion } from "@/components/ProcedimentosQuestion";
 
 export type BlockDef =
   | { component: "Text"; props: { title?: string; text?: string } }
@@ -10,7 +12,9 @@ export type BlockDef =
   | { component: "Question"; props: React.ComponentProps<typeof Question> }
   | { component: "WordSelection1"; props: React.ComponentProps<typeof WordSelection1> }
   | { component: "WordSelection2"; props: React.ComponentProps<typeof WordSelection2> }
-  | { component: "RatingQuestion"; props: React.ComponentProps<typeof RatingQuestion> };
+  | { component: "RatingQuestion"; props: React.ComponentProps<typeof RatingQuestion> }
+  | { component: "CuidarQuestion"; props: React.ComponentProps<typeof CuidarQuestion> }
+  | { component: "ProcedimentosQuestion"; props: React.ComponentProps<typeof ProcedimentosQuestion> };
 
 export const RenderBlock = ({ def }: { def?: BlockDef }) => {
   if (!def) return null;
@@ -68,6 +72,10 @@ export const RenderBlock = ({ def }: { def?: BlockDef }) => {
       return <WordSelection2 {...props} />;
     case "RatingQuestion":
       return <RatingQuestion {...props} />;
+    case "CuidarQuestion":
+      return <CuidarQuestion {...props} />;
+    case "ProcedimentosQuestion":
+      return <ProcedimentosQuestion {...props} />;
     default:
       return null;
   }
