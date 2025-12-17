@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CONFIG } from "@/config/simulador";
-import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData, listGroups, GroupItem, checkAnswered } from "@/lib/api";
+import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData, listGroups, GroupItem, checkAnswered, listAnsweredQuestions } from "@/lib/api";
 import { toast } from "sonner";
 import { Building2, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -45,6 +45,39 @@ const Index = () => {
   // Question answered state
   const [checkingQuestion, setCheckingQuestion] = useState<number | null>(null);
   const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
+  const [loadingAnsweredQuestions, setLoadingAnsweredQuestions] = useState(false);
+
+  // Refresh answered questions from backend
+  const refreshAnsweredQuestions = async () => {
+    const stored = getUnitEventData();
+    const groupData = getGroupData();
+
+    if (!stored.eventId || !stored.unitId || !groupData.groupId) {
+      setAnsweredQuestions(new Set());
+      return;
+    }
+
+    setLoadingAnsweredQuestions(true);
+    try {
+      const response = await listAnsweredQuestions(
+        Number(stored.eventId),
+        Number(stored.unitId),
+        Number(groupData.groupId)
+      );
+
+      if (response.ok && response.answered) {
+        setAnsweredQuestions(new Set(response.answered));
+      } else {
+        console.warn("Erro ao buscar perguntas respondidas:", response.message);
+        setAnsweredQuestions(new Set());
+      }
+    } catch (error) {
+      console.error("Erro ao buscar perguntas respondidas:", error);
+      setAnsweredQuestions(new Set());
+    } finally {
+      setLoadingAnsweredQuestions(false);
+    }
+  };
 
   // Check if there's already a selected unit and group on mount
   useEffect(() => {
@@ -62,6 +95,15 @@ const Index = () => {
       refreshGroupScore();
     }
   }, [refreshGroupScore]);
+
+  // Refresh answered questions when group changes
+  useEffect(() => {
+    if (groupId !== null) {
+      refreshAnsweredQuestions();
+    } else {
+      setAnsweredQuestions(new Set());
+    }
+  }, [groupId]);
 
   // Fetch groups when switching to recover mode
   useEffect(() => {
@@ -124,6 +166,7 @@ const Index = () => {
     setGroupMode("register");
     setAvailableGroups([]);
     setSelectedRecoverGroupId("");
+    setAnsweredQuestions(new Set());
     localStorage.removeItem("acao_unit_code");
     localStorage.removeItem("acao_unit_id");
     localStorage.removeItem("acao_event_id");
