@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { Score, CONFIG, clamp } from "@/config/simulador";
+import { fetchAndCalculateGroupScore, getUnitEventData, getGroupData } from "@/lib/api";
 
 const STORAGE_KEY = "acao_scores";
 
@@ -19,6 +20,7 @@ const getInitialScores = (): Score => {
 
 export const useScores = () => {
   const [score, setScore] = useState<Score>(getInitialScores);
+  const [loading, setLoading] = useState(false);
 
   // Sync with localStorage on mount and when storage changes
   useEffect(() => {
@@ -54,7 +56,41 @@ export const useScores = () => {
     setScore(CONFIG.initial);
   }, []);
 
-  return { score, applyEffect, resetScores };
+  // Set score directly (from backend)
+  const setScoreFromBackend = useCallback((newScore: Score) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newScore));
+    setScore(newScore);
+  }, []);
+
+  // Fetch score from backend and update state
+  const refreshGroupScore = useCallback(async (): Promise<Score> => {
+    const unitEventData = getUnitEventData();
+    const groupData = getGroupData();
+
+    if (!unitEventData.eventId || !unitEventData.unitId || !groupData.groupId) {
+      console.warn("Dados insuficientes para buscar score do grupo");
+      return CONFIG.initial;
+    }
+
+    setLoading(true);
+    try {
+      const calculatedScore = await fetchAndCalculateGroupScore(
+        Number(unitEventData.eventId),
+        Number(unitEventData.unitId),
+        Number(groupData.groupId)
+      );
+      
+      setScoreFromBackend(calculatedScore);
+      return calculatedScore;
+    } catch (error) {
+      console.error("Erro ao atualizar score do grupo:", error);
+      return CONFIG.initial;
+    } finally {
+      setLoading(false);
+    }
+  }, [setScoreFromBackend]);
+
+  return { score, applyEffect, resetScores, setScoreFromBackend, refreshGroupScore, loading };
 };
 
 // Utility to get scores from localStorage (for non-hook contexts)

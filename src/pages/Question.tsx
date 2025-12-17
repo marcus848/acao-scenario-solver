@@ -39,7 +39,7 @@ interface PendingAnswer {
 const Question = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { score, applyEffect } = useScores();
+  const { score, refreshGroupScore } = useScores();
   const [pendingAnswer, setPendingAnswer] = useState<PendingAnswer | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [isSending, setIsSending] = useState(false);
@@ -273,8 +273,8 @@ const Question = () => {
     const response = await sendAnswerToBackend(payload);
 
     if (response.ok) {
-      // Apply effect to scores after successful submission
-      applyEffect(pendingAnswer.delta);
+      // Refresh score from backend after successful submission
+      await refreshGroupScore();
       toast.success("Resposta enviada com sucesso!");
       navigate("/");
     } else {
