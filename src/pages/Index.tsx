@@ -34,7 +34,7 @@ const Index = () => {
   const [selectedUnit, setSelectedUnit] = useState<string | null>(null);
   const [groupName, setGroupName] = useState("");
   const [groupId, setGroupId] = useState<number | null>(null);
-  const { score } = useScores();
+  const { score, refreshGroupScore } = useScores();
 
   // Group mode state
   const [groupMode, setGroupMode] = useState<GroupMode>("register");
@@ -58,8 +58,10 @@ const Index = () => {
     }
     if (storedGroup.groupId) {
       setGroupId(Number(storedGroup.groupId));
+      // Refresh score from backend if group is already set
+      refreshGroupScore();
     }
-  }, []);
+  }, [refreshGroupScore]);
 
   // Fetch groups when switching to recover mode
   useEffect(() => {
@@ -148,6 +150,8 @@ const Index = () => {
         saveGroupData(response.group_id, groupName.trim());
         setGroupId(response.group_id);
         toast.success("Grupo registrado com sucesso!");
+        // Refresh score from backend after group registration
+        refreshGroupScore();
       } else {
         // Grupo já existe ou outro erro
         toast.error("Este grupo já existe nesta rodada. Use 'Recuperar grupo'.");
@@ -176,6 +180,8 @@ const Index = () => {
     setGroupId(selectedGroup.id);
     setGroupName(selectedGroup.name);
     toast.success("Grupo selecionado com sucesso!");
+    // Refresh score from backend after group recovery
+    refreshGroupScore();
   };
 
   const handleNavigateToQuestion = async (questionId: number) => {
