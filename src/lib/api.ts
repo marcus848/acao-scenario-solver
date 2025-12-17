@@ -6,6 +6,7 @@
  * - /api/save_group.php - Registra grupo
  * - /api/list_groups.php - Lista grupos de um evento/usina
  * - /api/get_active_event.php - Busca evento ativo
+ * - /api/list_answered_questions.php - Lista perguntas já respondidas por um grupo
  */
 
 // ============ API BASE URL ============
@@ -344,6 +345,49 @@ export async function checkAnswered(
   } catch (error) {
     console.error('Erro ao verificar resposta:', error);
     return { ok: false, answered: false, message: "Erro de conexão com o servidor" };
+  }
+}
+
+// ============ LIST ANSWERED QUESTIONS ============
+
+export interface ListAnsweredQuestionsResponse {
+  ok: boolean;
+  answered: number[];
+  message?: string;
+}
+
+/**
+ * Lista todas as perguntas já respondidas por um grupo no evento
+ * GET /api/list_answered_questions.php?event_id=...&unit_id=...&group_id=...
+ */
+export async function listAnsweredQuestions(
+  eventId: number,
+  unitId: number,
+  groupId: number
+): Promise<ListAnsweredQuestionsResponse> {
+  try {
+    const params = new URLSearchParams({
+      event_id: String(eventId),
+      unit_id: String(unitId),
+      group_id: String(groupId),
+    });
+
+    const response = await fetch(`${API_BASE_URL}/list_answered_questions.php?${params}`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Erro ao buscar perguntas respondidas:", response.status);
+      return { ok: false, answered: [], message: "Erro ao buscar perguntas" };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Erro ao buscar perguntas respondidas:", error);
+    return { ok: false, answered: [], message: "Erro de conexão com o servidor" };
   }
 }
 
