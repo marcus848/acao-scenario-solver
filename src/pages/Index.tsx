@@ -187,7 +187,7 @@ const Index = () => {
   const handleNavigateToQuestion = async (questionId: number) => {
     const stored = getUnitEventData();
     const groupData = getGroupData();
-    
+
     if (!stored.eventId || !groupData.groupId) {
       toast.error("Selecione usina e confirme grupo antes de responder.");
       return;
@@ -238,7 +238,7 @@ const Index = () => {
           <>
             <div className="max-w-3xl mx-auto text-center space-y-4">
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Pesquisa de Ação Transformadora
+                Sensibilização 2026
               </h1>
               <p className="text-muted-foreground text-lg">
                 Selecione a sua usina para iniciar
@@ -315,21 +315,19 @@ const Index = () => {
                   <div className="flex gap-1 p-1 bg-muted rounded-lg">
                     <button
                       onClick={() => setGroupMode("register")}
-                      className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${
-                        groupMode === "register"
-                          ? "bg-background text-foreground shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
+                      className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${groupMode === "register"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                        }`}
                     >
                       Cadastrar grupo
                     </button>
                     <button
                       onClick={() => setGroupMode("recover")}
-                      className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${
-                        groupMode === "recover"
-                          ? "bg-background text-foreground shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
-                      }`}
+                      className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${groupMode === "recover"
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                        }`}
                     >
                       Recuperar grupo
                     </button>
@@ -431,18 +429,17 @@ const Index = () => {
                   {CONFIG.stages.map((stage) => {
                     const isAnswered = answeredQuestions.has(stage.id);
                     const isChecking = checkingQuestion === stage.id;
-                    
+
                     return (
                       <Button
                         key={stage.id}
                         onClick={() => handleNavigateToQuestion(stage.id)}
                         disabled={!isGroupRegistered || isAnswered || isChecking}
                         variant={isAnswered ? "secondary" : "outline"}
-                        className={`h-auto py-4 px-4 flex flex-col items-center gap-2 transition-all disabled:opacity-50 ${
-                          isAnswered 
-                            ? "bg-green-500/10 border-green-500/30 text-green-500" 
-                            : "hover:bg-primary/10 hover:border-primary"
-                        }`}
+                        className={`h-auto py-4 px-4 flex flex-col items-center gap-2 transition-all disabled:opacity-50 ${isAnswered
+                          ? "bg-green-500/10 border-green-500/30 text-green-500"
+                          : "hover:bg-primary/10 hover:border-primary"
+                          }`}
                       >
                         {isChecking ? (
                           <Loader2 className="h-5 w-5 animate-spin" />

@@ -168,12 +168,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
         component: "CuidarQuestion",
         props: {
           title: "CUIDAR",
-          description: `Consciência: Estar presente, atento, perceber riscos e consequências.
-União: Operação Segura é coletiva: eu protejo você, você me protege.
-Integridade: Fazer sempre o certo, mesmo quando ninguém está olhando.
-Disciplina: Cumprir o combinado, seguir procedimentos.
-Atenção: Não ficar no automático: pausar, processar e prosseguir.
-Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
+          description: `Selecione o nível de CUIDAR que você acredita ter sido demonstrado na cena apresentada.`,
           onComplete: "useIndexHandleCuidar"
         }
       },
