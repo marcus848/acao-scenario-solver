@@ -8,6 +8,10 @@
  * - /api/get_active_event.php - Busca evento ativo
  */
 
+// ============ API BASE URL ============
+// URL do Apache (PHP backend) - ajustar conforme ambiente
+const API_BASE_URL = "http://localhost/sensibilizacao_2026/api";
+
 // ============ ANSWER PAYLOAD (novo formato) ============
 
 export interface AnswerItemPayload {
@@ -45,7 +49,7 @@ export interface SaveAnswerResponse {
  */
 export async function sendAnswerToBackend(payload: SaveAnswerPayload): Promise<SaveAnswerResponse> {
   try {
-    const response = await fetch('http://localhost/sensibilizacao_2026/api/save_answer.php', {
+    const response = await fetch(`${API_BASE_URL}/save_answer.php`, {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json' 
@@ -139,7 +143,7 @@ export interface SaveGroupResponse {
  */
 export async function saveGroupToBackend(payload: SaveGroupPayload): Promise<SaveGroupResponse> {
   try {
-    const response = await fetch('http://localhost/sensibilizacao_2026/api/save_group.php', {
+    const response = await fetch(`${API_BASE_URL}/save_group.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -207,7 +211,7 @@ export interface ListGroupsResponse {
 export async function listGroups(eventId: number, unitId: number): Promise<ListGroupsResponse> {
   try {
     const response = await fetch(
-      `http://localhost/sensibilizacao_2026/api/list_groups.php?event_id=${eventId}&unit_id=${unitId}`,
+      `${API_BASE_URL}/list_groups.php?event_id=${eventId}&unit_id=${unitId}`,
       {
         method: 'GET',
         headers: {
@@ -254,7 +258,7 @@ export async function getActiveEvent(unitCode: string): Promise<ActiveEventRespo
   }
 
   try {
-    const response = await fetch(`http://localhost/sensibilizacao_2026/api/get_active_event.php?unit_id=${unitId}`, {
+    const response = await fetch(`${API_BASE_URL}/get_active_event.php?unit_id=${unitId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
