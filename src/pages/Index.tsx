@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CONFIG } from "@/config/simulador";
-import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData, listGroups, GroupItem } from "@/lib/api";
+import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData, listGroups, GroupItem, checkAnswered } from "@/lib/api";
 import { toast } from "sonner";
-import { Building2, Loader2, ArrowLeft } from "lucide-react";
+import { Building2, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,6 +41,10 @@ const Index = () => {
   const [availableGroups, setAvailableGroups] = useState<GroupItem[]>([]);
   const [loadingGroups, setLoadingGroups] = useState(false);
   const [selectedRecoverGroupId, setSelectedRecoverGroupId] = useState<string>("");
+
+  // Question answered state
+  const [checkingQuestion, setCheckingQuestion] = useState<number | null>(null);
+  const [answeredQuestions, setAnsweredQuestions] = useState<Set<number>>(new Set());
 
   // Check if there's already a selected unit and group on mount
   useEffect(() => {
@@ -174,8 +178,38 @@ const Index = () => {
     toast.success("Grupo selecionado com sucesso!");
   };
 
-  const handleNavigateToQuestion = (questionId: number) => {
-    navigate(`/question/${questionId}`);
+  const handleNavigateToQuestion = async (questionId: number) => {
+    const stored = getUnitEventData();
+    const groupData = getGroupData();
+    
+    if (!stored.eventId || !groupData.groupId) {
+      toast.error("Selecione usina e confirme grupo antes de responder.");
+      return;
+    }
+
+    // Check if already answered
+    setCheckingQuestion(questionId);
+    try {
+      const response = await checkAnswered(
+        Number(stored.eventId),
+        Number(groupData.groupId),
+        questionId
+      );
+
+      if (response.ok && response.answered) {
+        toast.error("Este grupo já respondeu esta pergunta.");
+        setAnsweredQuestions(prev => new Set(prev).add(questionId));
+        return;
+      }
+
+      // Navigate if not answered
+      navigate(`/question/${questionId}`);
+    } catch (error) {
+      console.error("Erro ao verificar resposta:", error);
+      toast.error("Erro ao verificar status da pergunta.");
+    } finally {
+      setCheckingQuestion(null);
+    }
   };
 
   const isGroupNameValid = groupName.trim().length > 0;
@@ -388,19 +422,36 @@ const Index = () => {
                 </h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {CONFIG.stages.map((stage) => (
-                    <Button
-                      key={stage.id}
-                      onClick={() => handleNavigateToQuestion(stage.id)}
-                      disabled={!isGroupRegistered}
-                      variant="outline"
-                      className="h-auto py-4 px-4 flex flex-col items-center gap-2 hover:bg-primary/10 hover:border-primary transition-all disabled:opacity-50"
-                    >
-                      <span className="text-lg font-bold text-foreground">
-                        {stage.title}
-                      </span>
-                    </Button>
-                  ))}
+                  {CONFIG.stages.map((stage) => {
+                    const isAnswered = answeredQuestions.has(stage.id);
+                    const isChecking = checkingQuestion === stage.id;
+                    
+                    return (
+                      <Button
+                        key={stage.id}
+                        onClick={() => handleNavigateToQuestion(stage.id)}
+                        disabled={!isGroupRegistered || isAnswered || isChecking}
+                        variant={isAnswered ? "secondary" : "outline"}
+                        className={`h-auto py-4 px-4 flex flex-col items-center gap-2 transition-all disabled:opacity-50 ${
+                          isAnswered 
+                            ? "bg-green-500/10 border-green-500/30 text-green-500" 
+                            : "hover:bg-primary/10 hover:border-primary"
+                        }`}
+                      >
+                        {isChecking ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : isAnswered ? (
+                          <CheckCircle2 className="h-5 w-5" />
+                        ) : null}
+                        <span className={`text-lg font-bold ${isAnswered ? "text-green-500" : "text-foreground"}`}>
+                          {stage.title}
+                        </span>
+                        {isAnswered && (
+                          <span className="text-xs text-green-500/80">Respondida</span>
+                        )}
+                      </Button>
+                    );
+                  })}
                 </div>
 
                 {!isGroupRegistered && (
