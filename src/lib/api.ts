@@ -306,3 +306,41 @@ export function getUnitEventData(): { unitCode: string | null; unitId: string | 
     return { unitCode: null, unitId: null, eventId: null };
   }
 }
+
+// ============ CHECK ANSWERED ============
+
+export interface CheckAnsweredResponse {
+  ok: boolean;
+  answered: boolean;
+  message?: string;
+}
+
+/**
+ * Verifica se o grupo já respondeu uma pergunta na rodada ativa
+ */
+export async function checkAnswered(
+  eventId: number,
+  groupId: number,
+  questionId: number
+): Promise<CheckAnsweredResponse> {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/check_answered.php?event_id=${eventId}&group_id=${groupId}&question_id=${questionId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Erro ao verificar resposta:', error);
+    return { ok: false, answered: false, message: "Erro de conexão com o servidor" };
+  }
+}
