@@ -78,7 +78,7 @@ export const Header = ({ badges = [] }: HeaderProps) => {
               CUIDAR
             </h1>
             <p className="text-xs md:text-sm text-muted-foreground mt-0.5 md:mt-1">
-              Sensibilização 2026
+              COMPROMISSO DIÁRIO DE TODOS NÓS
             </p>
           </div>
 
