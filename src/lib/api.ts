@@ -10,6 +10,8 @@
 
 // ============ API BASE URL ============
 // URL do Apache (PHP backend) - ajustar conforme ambiente
+import { Score, clamp } from "@/config/simulador";
+
 const API_BASE_URL = "http://localhost/sensibilizacao_2026/api";
 
 // ============ ANSWER PAYLOAD (novo formato) ============
@@ -342,5 +344,93 @@ export async function checkAnswered(
   } catch (error) {
     console.error('Erro ao verificar resposta:', error);
     return { ok: false, answered: false, message: "Erro de conexão com o servidor" };
+  }
+}
+
+// ============ GET GROUP SCORE ============
+
+export interface ScoreTotals {
+  pessoas: number;
+  atitudes: number;
+  negocio: number;
+}
+
+export interface GetGroupScoreResponse {
+  ok: boolean;
+  totals?: ScoreTotals;
+  message?: string;
+}
+
+/**
+ * Busca os deltas acumulados do grupo no backend
+ * GET /api/get_group_score.php?event_id=...&unit_id=...&group_id=...
+ */
+export async function getGroupScore(
+  eventId: number,
+  unitId: number,
+  groupId: number
+): Promise<GetGroupScoreResponse> {
+  try {
+    const params = new URLSearchParams({
+      event_id: String(eventId),
+      unit_id: String(unitId),
+      group_id: String(groupId),
+    });
+
+    const response = await fetch(`${API_BASE_URL}/get_group_score.php?${params}`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Erro ao buscar score do grupo:", response.status);
+      return { ok: false, message: "Erro ao buscar score" };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Erro ao buscar score do grupo:", error);
+    return { ok: false, message: "Erro de conexão com o servidor" };
+  }
+}
+
+const BASE_SCORE = 70;
+
+/**
+ * Calcula o score atual do grupo: base (70) + deltas do backend, clampado 0-100
+ */
+export function calculateScoreFromTotals(totals: ScoreTotals): Score {
+  return {
+    pessoas: clamp(BASE_SCORE + (totals.pessoas || 0)),
+    atitudes: clamp(BASE_SCORE + (totals.atitudes || 0)),
+    negocio: clamp(BASE_SCORE + (totals.negocio || 0)),
+  };
+}
+
+/**
+ * Busca e calcula o score atual do grupo
+ * Retorna { pessoas: 70, atitudes: 70, negocio: 70 } se falhar
+ */
+export async function fetchAndCalculateGroupScore(
+  eventId: number,
+  unitId: number,
+  groupId: number
+): Promise<Score> {
+  const defaultScore: Score = { pessoas: BASE_SCORE, atitudes: BASE_SCORE, negocio: BASE_SCORE };
+  
+  try {
+    const response = await getGroupScore(eventId, unitId, groupId);
+    
+    if (response.ok && response.totals) {
+      return calculateScoreFromTotals(response.totals);
+    }
+    
+    console.warn("Score não encontrado, usando valores padrão (70)");
+    return defaultScore;
+  } catch (error) {
+    console.error("Erro ao calcular score do grupo:", error);
+    return defaultScore;
   }
 }
