@@ -6,13 +6,13 @@ export type CuidarKey = "consciencia" | "uniao" | "integridade" | "disciplina" |
 export type CuidarValue = "praticado" | "nao_praticado";
 export type CuidarAnswers = Record<CuidarKey, CuidarValue>;
 
-export const CUIDAR_ITEMS: { key: CuidarKey; name: string; description: string }[] = [
-  { key: "consciencia", name: "Consciência", description: "Estar presente, atento, perceber riscos e consequências." },
-  { key: "uniao", name: "União", description: "Operação Segura é coletiva: eu protejo você, você me protege." },
-  { key: "integridade", name: "Integridade", description: "Fazer sempre o certo, mesmo quando ninguém está olhando." },
-  { key: "disciplina", name: "Disciplina", description: "Cumprir o combinado, seguir procedimentos." },
-  { key: "atencao", name: "Atenção", description: "Não ficar no automático: pausar, processar e prosseguir." },
-  { key: "responsabilidade", name: "Responsabilidade", description: "Com as Pessoas, com as Atitudes e com o Negócio." },
+export const CUIDAR_ITEMS: { key: CuidarKey; itemKey: string; name: string; description: string }[] = [
+  { key: "consciencia", itemKey: "cuidar_consciencia", name: "Consciência", description: "Estar presente, atento, perceber riscos e consequências." },
+  { key: "uniao", itemKey: "cuidar_uniao", name: "União", description: "Operação Segura é coletiva: eu protejo você, você me protege." },
+  { key: "integridade", itemKey: "cuidar_integridade", name: "Integridade", description: "Fazer sempre o certo, mesmo quando ninguém está olhando." },
+  { key: "disciplina", itemKey: "cuidar_disciplina", name: "Disciplina", description: "Cumprir o combinado, seguir procedimentos." },
+  { key: "atencao", itemKey: "cuidar_atencao", name: "Atenção", description: "Não ficar no automático: pausar, processar e prosseguir." },
+  { key: "responsabilidade", itemKey: "cuidar_responsabilidade", name: "Responsabilidade", description: "Com as Pessoas, com as Atitudes e com o Negócio." },
 ];
 
 interface CuidarQuestionProps {
