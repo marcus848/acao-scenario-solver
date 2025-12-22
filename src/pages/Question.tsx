@@ -171,7 +171,7 @@ const Question = () => {
 
   const handleCuidarComplete = (answers: CuidarAnswers) => {
     const items: AnswerItemPayload[] = CUIDAR_ITEMS.map((item) => ({
-      item_key: item.key,
+      item_key: item.itemKey,
       item_label: item.name,
       value_text: answers[item.key],
       is_correct: answers[item.key] === "praticado" ? 1 : -1,
@@ -198,26 +198,43 @@ const Question = () => {
     const q1Label = "O procedimento construído pelo seu grupo, teria evitado a fatalidade do vídeo?";
     const q2Label = "Em nosso caso, os procedimentos são seguidos mesmo sob pressão?";
 
-    const items: AnswerItemPayload[] = [
-      {
-        item_key: "q4_1",
+    // Map answer values to exact item_keys from question_options table
+    const q1ItemKey = answers.q1 === "sim" ? "q4_1_sim" : answers.q1 === "nao" ? "q4_1_nao" : null;
+    
+    const q2ItemKeyMap: Record<string, string> = {
+      sempre: "q4_2_sempre",
+      quase_sempre: "q4_2_quase_sempre",
+      as_vezes: "q4_2_as_vezes",
+      raramente: "q4_2_raramente",
+      nunca: "q4_2_nunca",
+    };
+    const q2ItemKey = answers.q2 ? q2ItemKeyMap[answers.q2] : null;
+
+    const items: AnswerItemPayload[] = [];
+
+    if (q1ItemKey) {
+      items.push({
+        item_key: q1ItemKey,
         item_label: q1Label,
         value_text: answers.q1 || null,
         is_correct: 0,
         delta_pessoas: 0,
         delta_atitudes: 0,
         delta_negocio: 0,
-      },
-      {
-        item_key: "q4_2",
+      });
+    }
+
+    if (q2ItemKey) {
+      items.push({
+        item_key: q2ItemKey,
         item_label: q2Label,
         value_text: answers.q2 || null,
         is_correct: 0,
         delta_pessoas: 0,
         delta_atitudes: 0,
         delta_negocio: 0,
-      },
-    ];
+      });
+    }
 
     // Calculate total delta
     let totalDelta = { pessoas: 0, atitudes: 0, negocio: 0 };
