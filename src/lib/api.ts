@@ -14,6 +14,7 @@
 import { Score, clamp } from "@/config/simulador";
 
 const API_BASE_URL = "http://localhost/sensibilizacao_2026/api";
+// const API_BASE_URL = "https://solv4tech.com.br/api";
 
 // ============ ANSWER PAYLOAD (novo formato) ============
 
@@ -54,8 +55,8 @@ export async function sendAnswerToBackend(payload: SaveAnswerPayload): Promise<S
   try {
     const response = await fetch(`${API_BASE_URL}/save_answer.php`, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json' 
+      headers: {
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(payload),
     });
@@ -74,10 +75,10 @@ export async function sendAnswerToBackend(payload: SaveAnswerPayload): Promise<S
 /**
  * Obtém dados necessários para envio de resposta do localStorage
  */
-export function getAnswerContext(): { 
-  eventId: number | null; 
-  unitId: number | null; 
-  groupId: number | null; 
+export function getAnswerContext(): {
+  eventId: number | null;
+  unitId: number | null;
+  groupId: number | null;
   groupName: string | null;
   missingFields: string[];
 } {
@@ -505,14 +506,14 @@ export async function fetchAndCalculateGroupScore(
   groupId: number
 ): Promise<Score> {
   const defaultScore: Score = { pessoas: BASE_SCORE, atitudes: BASE_SCORE, negocio: BASE_SCORE };
-  
+
   try {
     const response = await getGroupScore(eventId, unitId, groupId);
-    
+
     if (response.ok && response.totals) {
       return calculateScoreFromTotals(response.totals);
     }
-    
+
     console.warn("Score não encontrado, usando valores padrão (70)");
     return defaultScore;
   } catch (error) {
