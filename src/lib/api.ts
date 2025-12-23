@@ -391,6 +391,48 @@ export async function listAnsweredQuestions(
   }
 }
 
+// ============ QUESTION LOCKS ============
+
+export interface QuestionLocks {
+  q1: number;
+  q2: number;
+  q3: number;
+  q4: number;
+  q5: number;
+}
+
+export interface GetQuestionLocksResponse {
+  ok: boolean;
+  event_id?: number;
+  locks?: QuestionLocks;
+  message?: string;
+}
+
+/**
+ * Busca status de bloqueio das perguntas para o evento ativo
+ * GET /api/get_question_locks.php?event_id=XXX
+ */
+export async function getQuestionLocks(eventId: number): Promise<GetQuestionLocksResponse> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/get_question_locks.php?event_id=${eventId}`, {
+      method: "GET",
+      headers: {
+        "Accept": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      console.error("Erro ao buscar locks:", response.status);
+      return { ok: false, message: "Erro ao buscar locks" };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Erro ao buscar locks:", error);
+    return { ok: false, message: "Erro de conexão com o servidor" };
+  }
+}
+
 // ============ GET GROUP SCORE ============
 
 export interface ScoreTotals {
