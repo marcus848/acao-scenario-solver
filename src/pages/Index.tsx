@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { CONFIG } from "@/config/simulador";
-import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData, listGroups, GroupItem, checkAnswered, listAnsweredQuestions } from "@/lib/api";
+import { getActiveEvent, saveUnitEventData, getUnitEventData, UNIT_MAP, saveGroupToBackend, saveGroupData, getGroupData, listGroups, GroupItem, checkAnswered, listAnsweredQuestions, getQuestionLocks } from "@/lib/api";
 import { toast } from "sonner";
 import { Building2, Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -236,9 +236,21 @@ const Index = () => {
       return;
     }
 
-    // Check if already answered
     setCheckingQuestion(questionId);
     try {
+      // 1. Check if question is unlocked by current round
+      const locksResponse = await getQuestionLocks(Number(stored.eventId));
+      if (locksResponse.ok && locksResponse.locks) {
+        const lockKey = `q${questionId}` as keyof typeof locksResponse.locks;
+        if (locksResponse.locks[lockKey] === 0) {
+          toast.error("Pergunta bloqueada. Aguarde a liberação do consultor.");
+          return;
+        }
+      } else {
+        console.warn("Não foi possível verificar locks, permitindo acesso.");
+      }
+
+      // 2. Check if already answered
       const response = await checkAnswered(
         Number(stored.eventId),
         Number(groupData.groupId),
@@ -251,7 +263,7 @@ const Index = () => {
         return;
       }
 
-      // Navigate if not answered
+      // Navigate if unlocked and not answered
       navigate(`/question/${questionId}`);
     } catch (error) {
       console.error("Erro ao verificar resposta:", error);
