@@ -1,8 +1,11 @@
 export type AspectKey = "pessoas" | "atitudes" | "negocio";
 export type Score = Record<AspectKey, number>;
 import Video from "@/assets/videos/Video.mp4";
-import ImageQ from "@/assets/images/Q.jpeg";
-import ImageQ3 from "@/assets/images/Q3.png";
+// import VideoQ1 from "@/assets/videos/VideoQ1.mp4";
+// import VideoQ2 from "@/assets/videos/VideoQ2.mp4";
+// import VideoQ3 from "@/assets/videos/VideoQ3.mp4";
+// import VideoQ4 from "@/assets/videos/VideoQ4.mp4";
+// import VideoQ5 from "@/assets/videos/VideoQ5.mp4";
 
 export type Choice = {
   id?: string;
@@ -93,7 +96,7 @@ export const CONFIG: SimulatorConfig = {
         props: {
           // title: "Selecione até 5 opções",
           description: "Se este evento se passasse aqui na empresa, quais ações, ferramentas e equipamentos poderiam e deveriam ser utilizadas para redução de perigos e riscos e termos assim, uma operação segura?",
-          maxSelections: 5,
+          maxSelections: 10,
           words: [
             { id: "p1_01", text: "ATC – Autorização para Trabalho Crítico", effectByAspect: { pessoas: +1, atitudes: +3, negocio: +2 } },
             { id: "p1_02", text: "Direito de Recusa", effectByAspect: { pessoas: +4, atitudes: +2, negocio: -1 } },
