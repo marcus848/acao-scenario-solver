@@ -1,11 +1,8 @@
 export type AspectKey = "pessoas" | "atitudes" | "negocio";
 export type Score = Record<AspectKey, number>;
 import Video from "@/assets/videos/Video.mp4";
-// import VideoQ1 from "@/assets/videos/VideoQ1.mp4";
-// import VideoQ2 from "@/assets/videos/VideoQ2.mp4";
-// import VideoQ3 from "@/assets/videos/VideoQ3.mp4";
-// import VideoQ4 from "@/assets/videos/VideoQ4.mp4";
-// import VideoQ5 from "@/assets/videos/VideoQ5.mp4";
+import ImageQ from "@/assets/images/Q.jpeg";
+import ImageQ3 from "@/assets/images/Q3.png";
 
 export type Choice = {
   id?: string;
@@ -96,7 +93,7 @@ export const CONFIG: SimulatorConfig = {
         props: {
           // title: "Selecione até 5 opções",
           description: "Se este evento se passasse aqui na empresa, quais ações, ferramentas e equipamentos poderiam e deveriam ser utilizadas para redução de perigos e riscos e termos assim, uma operação segura?",
-          maxSelections: 10,
+          maxSelections: 5,
           words: [
             { id: "p1_01", text: "ATC – Autorização para Trabalho Crítico", effectByAspect: { pessoas: +1, atitudes: +3, negocio: +2 } },
             { id: "p1_02", text: "Direito de Recusa", effectByAspect: { pessoas: +4, atitudes: +2, negocio: -1 } },
@@ -130,7 +127,7 @@ export const CONFIG: SimulatorConfig = {
         props: {
           // title: "Selecione até 5 opções",
           description: "Felizmente algo pior não aconteceu, pois ele estava com o ponto de segurança, ainda assim, o incidente aconteceu e precisará ser devidamente comunicado, para que não aconteça mais.\nO que deve ser feito para garantir a máxima segurança do trabalhador daqui pra frente? Assinale todas que julgar correta:",
-          maxSelections: 13,
+          maxSelections: 5,
           words: [
             { id: "p2_01", text: "Treinamento em Saúde e Segurança Ocupacional", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +1 } },
             { id: "p2_02", text: "Treinamento e autorização para desempenhar sua função", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
