@@ -127,7 +127,7 @@ export const CONFIG: SimulatorConfig = {
         props: {
           // title: "Selecione até 5 opções",
           description: "Felizmente algo pior não aconteceu, pois ele estava com o ponto de segurança, ainda assim, o incidente aconteceu e precisará ser devidamente comunicado, para que não aconteça mais.\nO que deve ser feito para garantir a máxima segurança do trabalhador daqui pra frente? Assinale todas que julgar correta:",
-          maxSelections: 5,
+          maxSelections: 13,
           words: [
             { id: "p2_01", text: "Treinamento em Saúde e Segurança Ocupacional", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +1 } },
             { id: "p2_02", text: "Treinamento e autorização para desempenhar sua função", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
