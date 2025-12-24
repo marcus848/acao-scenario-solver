@@ -1,8 +1,10 @@
 export type AspectKey = "pessoas" | "atitudes" | "negocio";
 export type Score = Record<AspectKey, number>;
-import ImageQ from "@/assets/images/Q.jpeg";
-import ImageQ3 from "@/assets/images/Q3.png";
-import Video1 from "@/assets/videos/Video.mp4";
+import VideoQ1 from "@/assets/videos/VideoQ1.mp4";
+import VideoQ2 from "@/assets/videos/VideoQ2.mp4";
+import VideoQ3 from "@/assets/videos/VideoQ3.mp4";
+import VideoQ4 from "@/assets/videos/VideoQ4.mp4";
+import VideoQ5 from "@/assets/videos/VideoQ5.mp4";
 
 export type Choice = {
   id?: string;
@@ -85,7 +87,7 @@ export const CONFIG: SimulatorConfig = {
       leftBlock: {
         component: "Video",
         props: {
-          src: Video1,
+          src: VideoQ1,
         }
       },
       rightBlock: {
@@ -93,7 +95,7 @@ export const CONFIG: SimulatorConfig = {
         props: {
           // title: "Selecione até 5 opções",
           description: "Se este evento se passasse aqui na empresa, quais ações, ferramentas e equipamentos poderiam e deveriam ser utilizadas para redução de perigos e riscos e termos assim, uma operação segura?",
-          maxSelections: 5,
+          maxSelections: 10,
           words: [
             { id: "p1_01", text: "ATC – Autorização para Trabalho Crítico", effectByAspect: { pessoas: +1, atitudes: +3, negocio: +2 } },
             { id: "p1_02", text: "Direito de Recusa", effectByAspect: { pessoas: +4, atitudes: +2, negocio: -1 } },
@@ -119,7 +121,7 @@ export const CONFIG: SimulatorConfig = {
       leftBlock: {
         component: "Video",
         props: {
-          src: Video1,
+          src: VideoQ2,
         }
       },
       rightBlock: {
@@ -127,7 +129,7 @@ export const CONFIG: SimulatorConfig = {
         props: {
           // title: "Selecione até 5 opções",
           description: "Felizmente algo pior não aconteceu, pois ele estava com o ponto de segurança, ainda assim, o incidente aconteceu e precisará ser devidamente comunicado, para que não aconteça mais.\nO que deve ser feito para garantir a máxima segurança do trabalhador daqui pra frente? Assinale todas que julgar correta:",
-          maxSelections: 5,
+          maxSelections: 13,
           words: [
             { id: "p2_01", text: "Treinamento em Saúde e Segurança Ocupacional", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +1 } },
             { id: "p2_02", text: "Treinamento e autorização para desempenhar sua função", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
@@ -150,7 +152,7 @@ export const CONFIG: SimulatorConfig = {
     },
     {
       id: 3,
-      title: "CUIDAR",
+      title: "Pergunta 3",
       text: `Consciência: Estar presente, atento, perceber riscos e consequências.
 União: Operação Segura é coletiva: eu protejo você, você me protege.
 Integridade: Fazer sempre o certo, mesmo quando ninguém está olhando.
@@ -161,14 +163,14 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
       leftBlock: {
         component: "Video",
         props: {
-          src: Video1,
+          src: VideoQ3,
         }
       },
       rightBlock: {
         component: "CuidarQuestion",
         props: {
-          title: "CUIDAR",
-          description: `Selecione o nível de CUIDAR que você acredita ter sido demonstrado na cena apresentada.`,
+          title: "Pergunta 3",
+          description: `Para cada aspecto do CUIDAR, indique se ele foi praticado ou não na cena apresentada:`,
           onComplete: "useIndexHandleCuidar"
         }
       },
@@ -176,13 +178,13 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
     },
     {
       id: 4,
-      title: "Procedimentos",
+      title: "Pergunta 4",
       text: "Avalie os procedimentos em relação ao vídeo apresentado.",
       layout: "split",
       leftBlock: {
         component: "Video",
         props: {
-          src: Video1,
+          src: VideoQ4,
         }
       },
       rightBlock: {
@@ -202,7 +204,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
       leftBlock: {
         component: "Video",
         props: {
-          src: Video1,
+          src: VideoQ5,
         }
       },
       rightBlock: {
@@ -210,7 +212,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
         props: {
           // title: "Selecione até 3 opções",
           description: "O Nosso Jeito Seguro de Ser, apresenta 10 situações de riscos que precisam ser observadas para termos uma operação segura. Quais delas não foram seguidas nesta cena?",
-          maxSelections: 3,
+          maxSelections: 10,
           words: [
             { id: "p5_01", text: "1. Utilizamos os Equipamentos de Proteção Individual (EPI) recomendados e as ferramentas requeridas e adequadas para cada atividade", effectByAspect: { pessoas: +3, atitudes: +3, negocio: +2 } },
             { id: "p5_02", text: "2. Só realizamos trabalhos de risco com a Autorização para Trabalhos Críticos ou Especiais (ATC/ATE) liberada no local e com implantação das medidas preventivas necessárias", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
