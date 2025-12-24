@@ -1,10 +1,11 @@
 export type AspectKey = "pessoas" | "atitudes" | "negocio";
 export type Score = Record<AspectKey, number>;
-import VideoQ1 from "@/assets/videos/VideoQ1.mp4";
-import VideoQ2 from "@/assets/videos/VideoQ2.mp4";
-import VideoQ3 from "@/assets/videos/VideoQ3.mp4";
-import VideoQ4 from "@/assets/videos/VideoQ4.mp4";
-import VideoQ5 from "@/assets/videos/VideoQ5.mp4";
+import Video from "@/assets/videos/Video.mp4";
+// import VideoQ1 from "@/assets/videos/VideoQ1.mp4";
+// import VideoQ2 from "@/assets/videos/VideoQ2.mp4";
+// import VideoQ3 from "@/assets/videos/VideoQ3.mp4";
+// import VideoQ4 from "@/assets/videos/VideoQ4.mp4";
+// import VideoQ5 from "@/assets/videos/VideoQ5.mp4";
 
 export type Choice = {
   id?: string;
@@ -87,7 +88,7 @@ export const CONFIG: SimulatorConfig = {
       leftBlock: {
         component: "Video",
         props: {
-          src: VideoQ1,
+          src: Video,
         }
       },
       rightBlock: {
@@ -121,7 +122,7 @@ export const CONFIG: SimulatorConfig = {
       leftBlock: {
         component: "Video",
         props: {
-          src: VideoQ2,
+          src: Video,
         }
       },
       rightBlock: {
@@ -163,7 +164,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
       leftBlock: {
         component: "Video",
         props: {
-          src: VideoQ3,
+          src: Video,
         }
       },
       rightBlock: {
@@ -184,7 +185,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
       leftBlock: {
         component: "Video",
         props: {
-          src: VideoQ4,
+          src: Video,
         }
       },
       rightBlock: {
@@ -204,7 +205,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
       leftBlock: {
         component: "Video",
         props: {
-          src: VideoQ5,
+          src: Video,
         }
       },
       rightBlock: {
