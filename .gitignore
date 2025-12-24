@@ -24,8 +24,8 @@ dist-ssr
 *.sw?
 
 # videos
-front/src/assets/videos/VideoQ1.mp4
-front/src/assets/videos/VideoQ2.mp4 
-front/src/assets/videos/VideoQ3.mp4
-front/src/assets/videos/VideoQ4.mp4
-front/src/assets/videos/VideoQ5.mp4
+src/assets/videos/VideoQ1.mp4
+src/assets/videos/VideoQ2.mp4
+src/assets/videos/VideoQ3.mp4
+src/assets/videos/VideoQ4.mp4
+src/assets/videos/VideoQ5.mp4
