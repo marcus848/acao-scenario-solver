@@ -59,8 +59,8 @@ export const CuidarQuestion = ({ title, description, onComplete }: CuidarQuestio
                 size="sm"
                 onClick={() => handleSelect(item.key, "praticado")}
                 className={cn(
-                  "flex-1 border-2 border-primary/30 hover:border-primary hover:bg-transparent transition-all",
-                  answers[item.key] === "praticado" && "border-primary bg-primary text-primary-foreground hover:bg-primary"
+                  "flex-1 border border-border hover:border-primary hover:text-foreground transition-all",
+                  answers[item.key] === "praticado" && "border-primary bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
                 )}
               >
                 Praticado
@@ -70,8 +70,8 @@ export const CuidarQuestion = ({ title, description, onComplete }: CuidarQuestio
                 size="sm"
                 onClick={() => handleSelect(item.key, "nao_praticado")}
                 className={cn(
-                  "flex-1 border-2 border-primary/30 hover:border-primary hover:bg-transparent transition-all",
-                  answers[item.key] === "nao_praticado" && "border-destructive bg-destructive text-destructive-foreground hover:bg-destructive"
+                  "flex-1 border border-border hover:border-primary hover:text-foreground transition-all",
+                  answers[item.key] === "nao_praticado" && "border-destructive bg-destructive text-destructive-foreground hover:bg-destructive hover:text-destructive-foreground"
                 )}
               >
                 Não praticado
