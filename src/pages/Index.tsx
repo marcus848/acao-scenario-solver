@@ -354,7 +354,7 @@ const Index = () => {
                   variant="ghost"
                   size="sm"
                   onClick={handleChangeUnit}
-                  className="text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-white"
                 >
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   Trocar usina
