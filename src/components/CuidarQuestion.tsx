@@ -55,23 +55,23 @@ export const CuidarQuestion = ({ title, description, onComplete }: CuidarQuestio
             </div>
             <div className="flex gap-3">
               <Button
-                variant={answers[item.key] === "praticado" ? "default" : "outline"}
+                variant="outline"
                 size="sm"
                 onClick={() => handleSelect(item.key, "praticado")}
                 className={cn(
-                  "flex-1",
-                  answers[item.key] === "praticado" && "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                  "flex-1 border-2 border-primary/30 hover:border-primary hover:bg-transparent transition-all",
+                  answers[item.key] === "praticado" && "border-primary bg-primary text-primary-foreground hover:bg-primary"
                 )}
               >
                 Praticado
               </Button>
               <Button
-                variant={answers[item.key] === "nao_praticado" ? "destructive" : "outline"}
+                variant="outline"
                 size="sm"
                 onClick={() => handleSelect(item.key, "nao_praticado")}
                 className={cn(
-                  "flex-1",
-                  answers[item.key] === "nao_praticado" && "ring-2 ring-destructive ring-offset-2 ring-offset-background"
+                  "flex-1 border-2 border-primary/30 hover:border-primary hover:bg-transparent transition-all",
+                  answers[item.key] === "nao_praticado" && "border-destructive bg-destructive text-destructive-foreground hover:bg-destructive"
                 )}
               >
                 Não praticado

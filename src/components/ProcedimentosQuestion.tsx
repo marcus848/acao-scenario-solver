@@ -77,11 +77,11 @@ export const ProcedimentosQuestion = ({ title, onComplete }: ProcedimentosQuesti
               onValueChange={(v) => handleQ1Change(v as ProcedimentosQ1)}
               className="space-y-3"
             >
-              <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors">
+              <div className="flex items-center space-x-3 p-3 rounded-lg border-2 border-primary/30 hover:border-primary transition-all">
                 <RadioGroupItem value="sim" id="q1-sim" />
                 <Label htmlFor="q1-sim" className="flex-1 cursor-pointer">Sim</Label>
               </div>
-              <div className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors">
+              <div className="flex items-center space-x-3 p-3 rounded-lg border-2 border-primary/30 hover:border-primary transition-all">
                 <RadioGroupItem value="nao" id="q1-nao" />
                 <Label htmlFor="q1-nao" className="flex-1 cursor-pointer">Não</Label>
               </div>
@@ -120,7 +120,7 @@ export const ProcedimentosQuestion = ({ title, onComplete }: ProcedimentosQuesti
               ].map((option) => (
                 <div
                   key={option.value}
-                  className="flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-accent/50 transition-colors"
+                  className="flex items-center space-x-3 p-3 rounded-lg border-2 border-primary/30 hover:border-primary transition-all"
                 >
                   <RadioGroupItem value={option.value} id={`q2-${option.value}`} />
                   <Label htmlFor={`q2-${option.value}`} className="flex-1 cursor-pointer">
