@@ -8,101 +8,101 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Ação Consultoria Theme - Dark Mode */
-    --background: 11 22% 6%;
+    /* Cliente Theme - Dark Mode */
+    --background: 214 56% 8%;
     --foreground: 210 40% 98%;
 
-    --card: 220 27% 6%;
+    --card: 214 56% 10%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 220 27% 6%;
+    --popover: 214 56% 10%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 186 100% 33%; /* #0097A7 */
-    --primary-foreground: 11 22% 6%; /* #0b1220 */
+    --primary: 214 56% 21%; /* #183255 */
+    --primary-foreground: 210 40% 98%;
 
-    --accent: 50 100% 50%; /* #FFD600 */
-    --accent-foreground: 11 22% 6%; /* #0b1220 */
+    --accent: 140 84% 30%; /* #0C8C37 */
+    --accent-foreground: 210 40% 98%;
 
-    --secondary: 220 27% 12%;
+    --secondary: 214 40% 15%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 220 27% 12%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 214 40% 15%;
+    --muted-foreground: 215 20% 65%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --success: 142 76% 36%;
+    --success: 140 84% 30%;
     --success-foreground: 210 40% 98%;
 
     --warning: 45 93% 47%;
-    --warning-foreground: 11 22% 6%;
+    --warning-foreground: 214 56% 10%;
 
-    --border: 220 27% 15%;
-    --input: 220 27% 15%;
-    --ring: 186 100% 33%;
+    --border: 214 40% 20%;
+    --input: 214 40% 20%;
+    --ring: 140 84% 30%;
 
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-radial: radial-gradient(1200px 600px at 70% 0%, hsl(220 27% 6%), hsl(11 22% 6%) 60%);
+    --gradient-radial: radial-gradient(1200px 600px at 70% 0%, hsl(214 56% 12%), hsl(214 56% 8%) 60%);
     --gradient-aspect: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
-    --gradient-card: linear-gradient(135deg, rgba(2,6,23,0.6), rgba(20,30,45,0.3));
+    --gradient-card: linear-gradient(135deg, rgba(24,50,85,0.6), rgba(12,140,55,0.1));
 
     /* Shadows */
     --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-    --shadow-choice: 0 8px 25px -8px rgba(0, 151, 167, 0.3);
+    --shadow-choice: 0 8px 25px -8px rgba(12, 140, 55, 0.3);
   }
 
   :root.light,
   [data-theme="light"],
   .light {
-    /* Ação Consultoria Theme - Light Mode */
-    --background: 210 20% 98%; /* #f9fafb */
-    --foreground: 220 13% 13%; /* gray-900 */
+    /* Cliente Theme - Light Mode */
+    --background: 210 20% 98%;
+    --foreground: 214 56% 21%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 13% 13%;
+    --card-foreground: 214 56% 21%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 13% 13%;
+    --popover-foreground: 214 56% 21%;
 
-    --primary: 186 100% 33%; /* #0097A7 - teal */
+    --primary: 214 56% 21%; /* #183255 */
     --primary-foreground: 0 0% 100%;
 
-    --accent: 50 100% 50%; /* #FFD600 - yellow */
-    --accent-foreground: 220 13% 13%;
+    --accent: 140 84% 30%; /* #0C8C37 */
+    --accent-foreground: 0 0% 100%;
 
-    --secondary: 220 13% 91%;
-    --secondary-foreground: 220 13% 13%;
+    --secondary: 214 20% 90%;
+    --secondary-foreground: 214 56% 21%;
 
-    --muted: 220 13% 95%;
-    --muted-foreground: 220 9% 46%;
+    --muted: 214 20% 95%;
+    --muted-foreground: 214 20% 40%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 142 76% 36%;
+    --success: 140 84% 30%;
     --success-foreground: 0 0% 100%;
 
     --warning: 45 93% 47%;
-    --warning-foreground: 220 13% 13%;
+    --warning-foreground: 214 56% 21%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 186 100% 33%;
+    --border: 214 20% 90%;
+    --input: 214 20% 90%;
+    --ring: 140 84% 30%;
 
     --radius: 0.75rem;
 
     /* Gradients */
-    --gradient-radial: radial-gradient(1200px 600px at 70% 0%, hsl(210 20% 98%), hsl(220 13% 95%) 60%);
+    --gradient-radial: radial-gradient(1200px 600px at 70% 0%, hsl(210 20% 98%), hsl(214 20% 95%) 60%);
     --gradient-aspect: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
     --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(249,250,251,0.8));
 
     /* Shadows */
     --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-choice: 0 8px 25px -8px rgba(0, 151, 167, 0.2);
+    --shadow-choice: 0 8px 25px -8px rgba(12, 140, 55, 0.2);
   }
 }
 
