@@ -18,10 +18,10 @@ All colors MUST be HSL.
     --popover: 220 27% 8%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 214 56% 21%; /* #183255 */
+    --primary: 140 84% 30%; /* #0C8C37 - verde como primary no dark */
     --primary-foreground: 210 40% 98%;
 
-    --accent: 140 84% 30%; /* #0C8C37 */
+    --accent: 140 70% 45%; /* Verde mais claro para melhor visibilidade */
     --accent-foreground: 210 40% 98%;
 
     --secondary: 220 27% 12%;

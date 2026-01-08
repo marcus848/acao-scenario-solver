@@ -38,7 +38,7 @@ export const Header = ({ badges = [] }: HeaderProps) => {
             {badges.map((badge, index) => (
               <div
                 key={index}
-                className="badge-status bg-primary/20 text-primary border-primary/30 px-3 py-1.5 rounded-lg text-sm"
+                className="badge-status bg-accent/20 text-foreground border-accent/30 px-3 py-1.5 rounded-lg text-sm"
               >
                 <span className="font-medium">{badge.label}:</span>{" "}
                 <span>{badge.value}</span>
@@ -76,7 +76,7 @@ export const Header = ({ badges = [] }: HeaderProps) => {
               {badges.map((badge, index) => (
                 <div
                   key={index}
-                  className="bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 rounded text-[10px] md:text-xs whitespace-nowrap"
+                  className="bg-accent/20 text-foreground border border-accent/30 px-2 py-0.5 rounded text-[10px] md:text-xs whitespace-nowrap"
                 >
                   <span className="font-medium">{badge.label}:</span>{" "}
                   <span>{badge.value}</span>
