@@ -348,7 +348,7 @@ const Index = () => {
               </h1>
               <div className="flex items-center justify-center gap-3">
                 <p className="text-muted-foreground text-lg">
-                  Usina selecionada: <span className="text-primary font-semibold">{selectedUnit}</span>
+                  Usina selecionada: <span className="text-accent font-semibold">{selectedUnit}</span>
                 </p>
                 <Button
                   variant="ghost"
