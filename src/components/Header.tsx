@@ -1,5 +1,4 @@
-import { Upload, Sun, Moon } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
 import acaoLogo from "@/assets/images/logo_header.webp";
 
@@ -9,36 +8,6 @@ interface HeaderProps {
 
 export const Header = ({ badges = [] }: HeaderProps) => {
   const { theme, setTheme } = useTheme();
-  const [logo, setLogo] = useState<string | null>(
-    localStorage.getItem("acao_logo")
-  );
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    try {
-      const stored = typeof window !== "undefined" ? localStorage.getItem("acao_logo") : null;
-      setLogo(stored ?? acaoLogo);
-    } catch {
-      setLogo(acaoLogo);
-    }
-  }, []);
-
-  const handleLogoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setLogo(result);
-        try {
-          localStorage.setItem("acao_logo", result);
-        } catch {
-          console.error("Failed to save logo to localStorage");
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/20 backdrop-blur-lg bg-background/80">
@@ -47,22 +16,11 @@ export const Header = ({ badges = [] }: HeaderProps) => {
         <div className="hidden lg:flex items-center justify-between gap-4">
           {/* Logo */}
           <div className="flex items-center">
-            {logo ? (
-              <img
-                src={logo ?? acaoLogo}
-                alt="Logo da Ação Consultoria"
-                className="h-10 w-auto object-contain cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
-              />
-            ) : (
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors"
-              >
-                <Upload className="h-4 w-4" />
-                <span className="text-sm">Carregar Logo</span>
-              </button>
-            )}
+            <img
+              src={acaoLogo}
+              alt="Logo da Ação Consultoria"
+              className="h-10 w-auto object-contain"
+            />
           </div>
 
           {/* Title - Center */}
@@ -104,22 +62,11 @@ export const Header = ({ badges = [] }: HeaderProps) => {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center min-w-0">
-              {logo ? (
-                <img
-                  src={logo ?? acaoLogo}
-                  alt="Logo da Ação Consultoria"
-                  className="h-7 md:h-9 w-auto object-contain cursor-pointer"
-                  onClick={() => fileInputRef.current?.click()}
-                />
-              ) : (
-                <button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-1.5 px-2 py-1 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors"
-                >
-                  <Upload className="h-3 w-3" />
-                  <span className="text-xs">Logo</span>
-                </button>
-              )}
+              <img
+                src={acaoLogo}
+                alt="Logo da Ação Consultoria"
+                className="h-7 md:h-9 w-auto object-contain"
+              />
             </div>
 
             {/* Meta Badge + Theme Toggle */}
@@ -157,15 +104,6 @@ export const Header = ({ badges = [] }: HeaderProps) => {
             </p>
           </div>
         </div>
-
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleLogoUpload}
-          className="hidden"
-        />
       </div>
     </header>
   );
