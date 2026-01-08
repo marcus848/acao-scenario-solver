@@ -46,7 +46,7 @@ export const Header = ({ badges = [] }: HeaderProps) => {
             ))}
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 transition-colors"
+              className="p-2 rounded-lg border border-primary/30 bg-accent/20 hover:bg-accent/40 transition-colors"
               aria-label="Alternar tema"
             >
               {theme === "dark" ? (

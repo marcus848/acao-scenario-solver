@@ -344,7 +344,7 @@ const Index = () => {
           <>
             <div className="max-w-3xl mx-auto text-center space-y-4">
               <h1 className="text-3xl md:text-4xl font-bold text-foreground">
-                Pesquisa de Ação Transformadora
+                Sensibilização Comportamental
               </h1>
               <div className="flex items-center justify-center gap-3">
                 <p className="text-muted-foreground text-lg">
