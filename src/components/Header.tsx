@@ -1,6 +1,7 @@
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
-import acaoLogo from "@/assets/images/logo_header.webp";
+import acaoLogoDark from "@/assets/images/logo_header.webp";
+import acaoLogoLight from "@/assets/images/logo_header_light.png";
 
 interface HeaderProps {
   badges?: { label: string; value: string }[];
@@ -8,6 +9,7 @@ interface HeaderProps {
 
 export const Header = ({ badges = [] }: HeaderProps) => {
   const { theme, setTheme } = useTheme();
+  const logo = theme === "dark" ? acaoLogoDark : acaoLogoLight;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/20 backdrop-blur-lg bg-background/80">
@@ -17,7 +19,7 @@ export const Header = ({ badges = [] }: HeaderProps) => {
           {/* Logo */}
           <div className="flex items-center">
             <img
-              src={acaoLogo}
+              src={logo}
               alt="Logo da Ação Consultoria"
               className="h-10 w-auto object-contain"
             />
@@ -63,7 +65,7 @@ export const Header = ({ badges = [] }: HeaderProps) => {
             {/* Logo */}
             <div className="flex items-center min-w-0">
               <img
-                src={acaoLogo}
+                src={logo}
                 alt="Logo da Ação Consultoria"
                 className="h-7 md:h-9 w-auto object-contain"
               />
