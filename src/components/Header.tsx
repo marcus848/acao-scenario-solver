@@ -1,6 +1,6 @@
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "next-themes";
-import acaoLogoDark from "@/assets/images/logo_header.webp";
+import acaoLogoDark from "@/assets/images/logo_header_dark.png";
 import acaoLogoLight from "@/assets/images/logo_header_light.png";
 
 interface HeaderProps {
