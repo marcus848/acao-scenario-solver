@@ -13,8 +13,8 @@
 // URL do Apache (PHP backend) - ajustar conforme ambiente
 import { Score, clamp } from "@/config/simulador";
 
-const API_BASE_URL = "http://localhost/sensibilizacao_2026/api";
-// const API_BASE_URL = "https://solv4tech.com.br/api";
+// const API_BASE_URL = "http://localhost/sensibilizacao_2026/api";
+const API_BASE_URL = "https://solv4tech.com.br/api";
 
 // ============ ANSWER PAYLOAD (novo formato) ============
 

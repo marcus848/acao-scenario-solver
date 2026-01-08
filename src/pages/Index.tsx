@@ -149,7 +149,7 @@ const Index = () => {
         setSelectedUnit(unitCode);
         toast.success(`Usina ${unitCode} selecionada!`);
       } else {
-        toast.error("Nenhuma rodada ativa para esta usina. Peça ao consultor para iniciar.");
+        toast.error("Nenhuma Turma ativa para esta usina. Peça ao consultor para iniciar.");
       }
     } catch (error) {
       console.error("Erro ao selecionar usina:", error);

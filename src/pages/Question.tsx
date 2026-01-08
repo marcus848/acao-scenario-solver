@@ -10,11 +10,11 @@ import { ProcedimentosQuestion, ProcedimentosAnswers } from "@/components/Proced
 import { Split } from "@/components/layout/Split";
 import { RenderBlock } from "@/components/blocks/RenderBlock";
 import { CONFIG, Score, Choice } from "@/config/simulador";
-import { 
-  sendAnswerToBackend, 
+import {
+  sendAnswerToBackend,
   getAnswerContext,
   SaveAnswerPayload,
-  AnswerItemPayload 
+  AnswerItemPayload
 } from "@/lib/api";
 import { useScores } from "@/hooks/useScores";
 import { toast } from "sonner";
@@ -185,10 +185,11 @@ const Question = () => {
     const naoPraticadoCount = Object.values(answers).filter((v) => v === "nao_praticado").length;
 
     const totalDelta = {
-      pessoas: praticadoCount * 2 - naoPraticadoCount,
-      atitudes: praticadoCount * 2 - naoPraticadoCount,
-      negocio: praticadoCount - naoPraticadoCount,
+      pessoas: naoPraticadoCount - praticadoCount,
+      atitudes: naoPraticadoCount / 1.5 - praticadoCount / 1.5,
+      negocio: naoPraticadoCount - praticadoCount,
     };
+    console.log("Cuidar totalDelta:", totalDelta);
 
     setPendingAnswer({ items, delta: totalDelta });
     setShowConfirm(true);
@@ -200,7 +201,7 @@ const Question = () => {
 
     // Map answer values to exact item_keys from question_options table
     const q1ItemKey = answers.q1 === "sim" ? "q4_1_sim" : answers.q1 === "nao" ? "q4_1_nao" : null;
-    
+
     const q2ItemKeyMap: Record<string, string> = {
       sempre: "q4_2_sempre",
       quase_sempre: "q4_2_quase_sempre",
@@ -237,20 +238,24 @@ const Question = () => {
     }
 
     // Calculate total delta
-    let totalDelta = { pessoas: 0, atitudes: 0, negocio: 0 };
+    const totalDelta = { pessoas: 0, atitudes: 0, negocio: 0 };
 
     if (answers.q1 === "sim") {
-      totalDelta.pessoas += 2;
-      totalDelta.atitudes += 2;
+      totalDelta.pessoas += 3;
+      totalDelta.atitudes += 3;
       totalDelta.negocio += 2;
+    } else if (answers.q1 === "nao") {
+      totalDelta.pessoas += -3;
+      totalDelta.atitudes += -3;
+      totalDelta.negocio += -2;
     }
 
     const q2Effects: Record<string, { pessoas: number; atitudes: number; negocio: number }> = {
-      sempre: { pessoas: 5, atitudes: 5, negocio: 5 },
-      quase_sempre: { pessoas: 3, atitudes: 3, negocio: 3 },
-      as_vezes: { pessoas: 1, atitudes: 1, negocio: 1 },
-      raramente: { pessoas: -1, atitudes: -1, negocio: -1 },
-      nunca: { pessoas: -3, atitudes: -3, negocio: -3 },
+      sempre: { pessoas: 3, atitudes: 3, negocio: 2 },
+      quase_sempre: { pessoas: -3, atitudes: -3, negocio: -2 },
+      as_vezes: { pessoas: -3, atitudes: -3, negocio: -2 },
+      raramente: { pessoas: -3, atitudes: -3, negocio: -2 },
+      nunca: { pessoas: -3, atitudes: -3, negocio: -2 },
     };
 
     if (answers.q2 && q2Effects[answers.q2]) {
@@ -268,7 +273,7 @@ const Question = () => {
     if (!pendingAnswer) return;
 
     const ctx = getAnswerContext();
-    
+
     if (ctx.missingFields.length > 0) {
       toast.error(`Dados faltando: ${ctx.missingFields.join(", ")}. Volte para a Home e configure corretamente.`);
       setShowConfirm(false);

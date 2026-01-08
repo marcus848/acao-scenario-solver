@@ -1,11 +1,11 @@
 export type AspectKey = "pessoas" | "atitudes" | "negocio";
 export type Score = Record<AspectKey, number>;
-import Video from "@/assets/videos/Video.mp4";
-// import VideoQ1 from "@/assets/videos/VideoQ1.mp4";
-// import VideoQ2 from "@/assets/videos/VideoQ2.mp4";
-// import VideoQ3 from "@/assets/videos/VideoQ3.mp4";
-// import VideoQ4 from "@/assets/videos/VideoQ4.mp4";
-// import VideoQ5 from "@/assets/videos/VideoQ5.mp4";
+// import Video from "@/assets/videos/Video.mp4";
+import VideoQ1 from "@/assets/videos/VideoQ1.mp4";
+import VideoQ2 from "@/assets/videos/VideoQ2.mp4";
+import VideoQ3 from "@/assets/videos/VideoQ3.mp4";
+import VideoQ4 from "@/assets/videos/VideoQ4.mp4";
+import VideoQ5 from "@/assets/videos/VideoQ5.mp4";
 
 export type Choice = {
   id?: string;
@@ -88,7 +88,7 @@ export const CONFIG: SimulatorConfig = {
       leftBlock: {
         component: "Video",
         props: {
-          src: Video,
+          src: VideoQ1,
         }
       },
       rightBlock: {
@@ -98,16 +98,16 @@ export const CONFIG: SimulatorConfig = {
           description: "Se este evento se passasse aqui na empresa, quais ações, ferramentas e equipamentos poderiam e deveriam ser utilizadas para redução de perigos e riscos e termos assim, uma operação segura?",
           maxSelections: 10,
           words: [
-            { id: "p1_01", text: "ATC – Autorização para Trabalho Crítico", effectByAspect: { pessoas: +1, atitudes: +3, negocio: +2 } },
-            { id: "p1_02", text: "Direito de Recusa", effectByAspect: { pessoas: +4, atitudes: +2, negocio: -1 } },
-            { id: "p1_03", text: "Uso de Perneira", effectByAspect: { pessoas: +3, atitudes: +1, negocio: +1 } },
-            { id: "p1_04", text: "Identificação como Área Classificada", effectByAspect: { pessoas: +2, atitudes: +3, negocio: +2 } },
-            { id: "p1_05", text: "ATE – Autorização de Trabalho Especial", effectByAspect: { pessoas: +1, atitudes: +3, negocio: +2 } },
-            { id: "p1_06", text: "OPS Comportamental", effectByAspect: { pessoas: +3, atitudes: +2, negocio: +1 } },
-            { id: "p1_07", text: "OPS Condição", effectByAspect: { pessoas: +2, atitudes: +3, negocio: +2 } },
-            { id: "p1_08", text: "Isolamento de Área", effectByAspect: { pessoas: +2, atitudes: +3, negocio: +2 } },
-            { id: "p1_09", text: "Bloqueio de Energia", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p1_10", text: "Implementação de guarda-corpo", effectByAspect: { pessoas: +3, atitudes: +2, negocio: +1 } }
+            { id: "p1_01", text: "ATC – Autorização para Trabalho Crítico", effectByAspect: { pessoas: +1.2, atitudes: +1.2, negocio: +1.6 } },
+            { id: "p1_02", text: "Direito de Recusa", effectByAspect: { pessoas: +1.2, atitudes: +1.2, negocio: +1.6 } },
+            { id: "p1_03", text: "Uso de Perneira", effectByAspect: { pessoas: -1.2, atitudes: -1.2, negocio: -1.6 } },
+            { id: "p1_04", text: "Identificação como Área Classificada", effectByAspect: { pessoas: +1.2, atitudes: +1.2, negocio: +1.6 } },
+            { id: "p1_05", text: "ATE – Autorização de Trabalho Especial", effectByAspect: { pessoas: -1.2, atitudes: -1.2, negocio: -1.6 } },
+            { id: "p1_06", text: "OPS Comportamental", effectByAspect: { pessoas: -1.2, atitudes: - 1.2, negocio: -1.6 } },
+            { id: "p1_07", text: "OPS Condição", effectByAspect: { pessoas: +1.2, atitudes: +1.2, negocio: +1.6 } },
+            { id: "p1_08", text: "Isolamento de Área", effectByAspect: { pessoas: -1.2, atitudes: -1.2, negocio: -1.6 } },
+            { id: "p1_09", text: "Bloqueio de Energia", effectByAspect: { pessoas: -1.2, atitudes: -1.2, negocio: -1.6 } },
+            { id: "p1_10", text: "Implementação de guarda-corpo", effectByAspect: { pessoas: +1.2, atitudes: +1.2, negocio: +1.6 } }
           ],
           onComplete: "useIndexHandleWordSel2"
         }
@@ -122,7 +122,7 @@ export const CONFIG: SimulatorConfig = {
       leftBlock: {
         component: "Video",
         props: {
-          src: Video,
+          src: VideoQ2,
         }
       },
       rightBlock: {
@@ -130,21 +130,22 @@ export const CONFIG: SimulatorConfig = {
         props: {
           // title: "Selecione até 5 opções",
           description: "Felizmente algo pior não aconteceu, pois ele estava com o ponto de segurança, ainda assim, o incidente aconteceu e precisará ser devidamente comunicado, para que não aconteça mais.\nO que deve ser feito para garantir a máxima segurança do trabalhador daqui pra frente? Assinale todas que julgar correta:",
-          maxSelections: 13,
+          maxSelections: 14,
           words: [
-            { id: "p2_01", text: "Treinamento em Saúde e Segurança Ocupacional", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +1 } },
-            { id: "p2_02", text: "Treinamento e autorização para desempenhar sua função", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
-            { id: "p2_03", text: "Uso adequado de todos os EPIs", effectByAspect: { pessoas: +3, atitudes: +2, negocio: +1 } },
-            { id: "p2_04", text: "ATC – Autorização para Trabalho Crítico", effectByAspect: { pessoas: +1, atitudes: +3, negocio: +2 } },
-            { id: "p2_05", text: "Direito de Recusa", effectByAspect: { pessoas: +4, atitudes: +2, negocio: -1 } },
-            { id: "p2_06", text: "Uso de Perneira", effectByAspect: { pessoas: +2, atitudes: +1, negocio: +1 } },
-            { id: "p2_07", text: "Identificação como Área Classificada", effectByAspect: { pessoas: +2, atitudes: +3, negocio: +2 } },
-            { id: "p2_08", text: "ATE – Autorização de Trabalho Especial", effectByAspect: { pessoas: +1, atitudes: +3, negocio: +2 } },
-            { id: "p2_09", text: "OPS Comportamental para os amigos", effectByAspect: { pessoas: +3, atitudes: +2, negocio: +1 } },
-            { id: "p2_10", text: "OPS Condição pelos amigos", effectByAspect: { pessoas: +2, atitudes: +3, negocio: +1 } },
-            { id: "p2_11", text: "Isolamento de Área", effectByAspect: { pessoas: +2, atitudes: +3, negocio: +2 } },
-            { id: "p2_12", text: "Bloqueio de Energia", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p2_13", text: "Implementação de guarda-corpo", effectByAspect: { pessoas: +3, atitudes: +2, negocio: +1 } }
+            { id: "p2_01", text: "Treinamento em Saúde e Segurança Ocupacional", effectByAspect: { pessoas: +1, atitudes: +1, negocio: +0.67 } },
+            { id: "p2_02", text: "Treinamento e autorização para desempenhar sua função", effectByAspect: { pessoas: +1, atitudes: +1, negocio: +0.67 } },
+            { id: "p2_03", text: "Uso adequado de todos os EPIs", effectByAspect: { pessoas: +1, atitudes: +1, negocio: +0.67 } },
+            { id: "p2_04", text: "ATC – Autorização para Trabalho Crítico", effectByAspect: { pessoas: +1, atitudes: +1, negocio: +0.67 } },
+            { id: "p2_05", text: "Direito de Recusa", effectByAspect: { pessoas: +1, atitudes: +1, negocio: +0.67 } },
+            { id: "p2_06", text: "Uso de Perneira", effectByAspect: { pessoas: -1, atitudes: -1, negocio: -0.67 } },
+            { id: "p2_07", text: "Identificação como Área Classificada", effectByAspect: { pessoas: -1, atitudes: -1, negocio: -0.67 } },
+            { id: "p2_08", text: "ATE – Autorização de Trabalho Especial", effectByAspect: { pessoas: -1, atitudes: -1, negocio: -0.67 } },
+            { id: "p2_09", text: "OPS Comportamental para os amigos", effectByAspect: { pessoas: -1, atitudes: -1, negocio: -0.67 } },
+            { id: "p2_10", text: "OPS Condição pelos amigos", effectByAspect: { pessoas: -1, atitudes: -1, negocio: -0.67 } },
+            { id: "p2_11", text: "Isolamento de Área", effectByAspect: { pessoas: -1, atitudes: -1, negocio: -0.67 } },
+            { id: "p2_12", text: "Bloqueio de Energia", effectByAspect: { pessoas: -1, atitudes: -1, negocio: -0.67 } },
+            { id: "p2_13", text: "Comunicação do Acidente", effectByAspect: { pessoas: +1, atitudes: +1, negocio: +0.67 } },
+            { id: "p2_14", text: "Implementação de guarda-corpo", effectByAspect: { pessoas: -1, atitudes: -1, negocio: -0.67 } }
           ],
           onComplete: "useIndexHandleWordSel2"
         }
@@ -164,7 +165,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
       leftBlock: {
         component: "Video",
         props: {
-          src: Video,
+          src: VideoQ3,
         }
       },
       rightBlock: {
@@ -185,7 +186,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
       leftBlock: {
         component: "Video",
         props: {
-          src: Video,
+          src: VideoQ4,
         }
       },
       rightBlock: {
@@ -205,7 +206,7 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
       leftBlock: {
         component: "Video",
         props: {
-          src: Video,
+          src: VideoQ5,
         }
       },
       rightBlock: {
@@ -215,16 +216,16 @@ Responsabilidade: Com as Pessoas, com as Atitudes e com o Negócio.`,
           description: "O Nosso Jeito Seguro de Ser, apresenta 10 situações de riscos que precisam ser observadas para termos uma operação segura. Quais delas não foram seguidas nesta cena?",
           maxSelections: 10,
           words: [
-            { id: "p5_01", text: "1. Utilizamos os Equipamentos de Proteção Individual (EPI) recomendados e as ferramentas requeridas e adequadas para cada atividade", effectByAspect: { pessoas: +3, atitudes: +3, negocio: +2 } },
-            { id: "p5_02", text: "2. Só realizamos trabalhos de risco com a Autorização para Trabalhos Críticos ou Especiais (ATC/ATE) liberada no local e com implantação das medidas preventivas necessárias", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p5_03", text: "3. Sempre trabalhamos com máquinas ou equipamentos com as devidas proteções de partes que podem gerar acidentes", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p5_04", text: "4. Comunicamos imediatamente todo acidente à liderança, à Saúde Ocupacional ou à Segurança do Trabalho", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
-            { id: "p5_05", text: "5. Sempre trabalhamos sem fazer o uso de bebidas alcoólicas ou drogas", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +1 } },
-            { id: "p5_06", text: "6. Respeitamos os limites de velocidade, conduzimos veículos sem utilizar aparelhos celulares simultaneamente e usamos o cinto de segurança, mesmo quando somos passageiros", effectByAspect: { pessoas: +3, atitudes: +2, negocio: +2 } },
-            { id: "p5_07", text: "7. Respeitamos as áreas restritas, classificadas e isoladas e não entramos sem autorização", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p5_08", text: "8. Realizamos toda e qualquer atividade em condição segura e temos conhecimento do direito de recusar a execução de uma atividade se considerá-la insegura", effectByAspect: { pessoas: +4, atitudes: +3, negocio: +2 } },
-            { id: "p5_09", text: "9. Somente executamos atividades em equipamentos e instalações após certificar que todas as fontes de energia foram isoladas de forma segura", effectByAspect: { pessoas: +2, atitudes: +4, negocio: +3 } },
-            { id: "p5_10", text: "10. Somente operamos equipamentos de força motriz própria se tivermos habilitação, capacitação e autorização", effectByAspect: { pessoas: +3, atitudes: +3, negocio: +3 } }
+            { id: "p5_01", text: "1. Utilizamos os Equipamentos de Proteção Individual (EPI) recomendados e as ferramentas requeridas e adequadas para cada atividade", effectByAspect: { pessoas: +1.2, atitudes: +1.6, negocio: +1.6 } },
+            { id: "p5_02", text: "2. Só realizamos trabalhos de risco com a Autorização para Trabalhos Críticos ou Especiais (ATC/ATE) liberada no local e com implantação das medidas preventivas necessárias", effectByAspect: { pessoas: +1.2, atitudes: +1.6, negocio: +1.6 } },
+            { id: "p5_03", text: "3. Sempre trabalhamos com máquinas ou equipamentos com as devidas proteções de partes que podem gerar acidentes", effectByAspect: { pessoas: +1.2, atitudes: +1.6, negocio: +1.6 } },
+            { id: "p5_04", text: "4. Comunicamos imediatamente todo acidente à liderança, à Saúde Ocupacional ou à Segurança do Trabalho", effectByAspect: { pessoas: +1.2, atitudes: +1.6, negocio: +1.6 } },
+            { id: "p5_05", text: "5. Sempre trabalhamos sem fazer o uso de bebidas alcoólicas ou drogas", effectByAspect: { pessoas: -1.2, atitudes: -1.6, negocio: -1.6 } },
+            { id: "p5_06", text: "6. Respeitamos os limites de velocidade, conduzimos veículos sem utilizar aparelhos celulares simultaneamente e usamos o cinto de segurança, mesmo quando somos passageiros", effectByAspect: { pessoas: -1.2, atitudes: -1.6, negocio: -1.6 } },
+            { id: "p5_07", text: "7. Respeitamos as áreas restritas, classificadas e isoladas e não entramos sem autorização", effectByAspect: { pessoas: -1.2, atitudes: -1.6, negocio: -1.6 } },
+            { id: "p5_08", text: "8. Realizamos toda e qualquer atividade em condição segura e temos conhecimento do direito de recusar a execução de uma atividade se considerá-la insegura", effectByAspect: { pessoas: -1.2, atitudes: -1.6, negocio: -1.6 } },
+            { id: "p5_09", text: "9. Somente executamos atividades em equipamentos e instalações após certificar que todas as fontes de energia foram isoladas de forma segura", effectByAspect: { pessoas: -1.2, atitudes: -1.6, negocio: -1.6 } },
+            { id: "p5_10", text: "10. Somente operamos equipamentos de força motriz própria (veículos, empilhadeiras, colhedoras, tratores, guindastes ou PTA’s) se tivermos habilitação, capacitação e autorização", effectByAspect: { pessoas: +1.2, atitudes: +1.6, negocio: +1.6 } }
           ],
           onComplete: "useIndexHandleWordSel2"
         }
