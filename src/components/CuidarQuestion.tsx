@@ -54,28 +54,24 @@ export const CuidarQuestion = ({ title, description, onComplete }: CuidarQuestio
               <p className="text-sm text-muted-foreground">{item.description}</p>
             </div>
             <div className="flex gap-3">
-              <Button
-                variant="outline"
-                size="sm"
+              <button
                 onClick={() => handleSelect(item.key, "praticado")}
                 className={cn(
-                  "flex-1 border border-border hover:border-primary hover:bg-transparent transition-all",
-                  answers[item.key] === "praticado" && "border-primary bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground"
+                  "flex-1 h-9 px-3 rounded-md text-sm font-medium border border-border bg-transparent hover:border-primary transition-all",
+                  answers[item.key] === "praticado" && "border-primary bg-primary text-primary-foreground"
                 )}
               >
                 Praticado
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
+              </button>
+              <button
                 onClick={() => handleSelect(item.key, "nao_praticado")}
                 className={cn(
-                  "flex-1 border border-border hover:border-primary hover:bg-transparent transition-all",
-                  answers[item.key] === "nao_praticado" && "border-destructive bg-destructive text-destructive-foreground hover:bg-destructive hover:text-destructive-foreground"
+                  "flex-1 h-9 px-3 rounded-md text-sm font-medium border border-border bg-transparent hover:border-primary transition-all",
+                  answers[item.key] === "nao_praticado" && "border-destructive bg-destructive text-destructive-foreground"
                 )}
               >
                 Não praticado
-              </Button>
+              </button>
             </div>
           </div>
         ))}
